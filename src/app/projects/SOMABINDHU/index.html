@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>somabindhu - Ayurvedic Product</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        // Handle accordion behavior
+        function updateRatingFeedback(rating) {
+            const feedback = getRatingFeedback(rating);
+            const feedbackDiv = document.querySelector('.rating-feedback');
+            const starCount = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+            feedbackDiv.innerHTML = `
+                <span class="emoji">${feedback.emoji}</span>
+                <span class="message">${feedback.message}</span>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            displayFeedback();
+            // Initialize with 5-star feedback
+            updateRatingFeedback(5);
+            const details = document.querySelectorAll('.accordion details');
+            
+            details.forEach((detail) => {
+                detail.addEventListener('click', (e) => {
+                    // Prevent this from firing when clicking on content inside details
+                    if (!e.target.closest('summary')) return;
+                    
+                    // Close all other details
+                    details.forEach((otherDetail) => {
+                        if (otherDetail !== detail) {
+                            otherDetail.removeAttribute('open');
+                        }
+                    });
+                });
+            });
+        });
+
+        function submitFeedback() {
+            const name = document.getElementById('feedback-name').value;
+            const comment = document.getElementById('feedback-comment').value;
+            const rating = document.querySelector('input[name="rating"]:checked').value;
+            const userType = document.querySelector('input[name="user-type"]:checked').value;
+            
+            const now = new Date();
+            const feedback = {
+                name,
+                comment,
+                rating,
+                userType,
+                timestamp: now.getTime(),
+                date: now.toLocaleString('en-IN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+
+            // Get existing feedback from localStorage
+            let feedbacks = JSON.parse(localStorage.getItem('somabindhuFeedback') || '[]');
+            feedbacks.push(feedback);
+            localStorage.setItem('somabindhuFeedback', JSON.stringify(feedbacks));
+
+            // Update feedback display
+            displayFeedback();
+
+            // Clear form
+            document.getElementById('feedback-form').reset();
+        }
+
+        function getRatingFeedback(rating) {
+            const feedback = {
+                1: { emoji: '😞', message: 'Sorry to hear that you didn\'t like this' },
+                2: { emoji: '😕', message: 'We\'ll try to do better next time' },
+                3: { emoji: '😊', message: 'Thank you for your feedback' },
+                4: { emoji: '😃', message: 'Glad you enjoyed it!' },
+                5: { emoji: '🤩', message: 'Amazing! Thank you so much!' }
+            };
+            return feedback[rating] || { emoji: '', message: '' };
+        }
+
+        function displayFeedback() {
+            const feedbacks = JSON.parse(localStorage.getItem('somabindhuFeedback') || '[]');
+            const container = document.getElementById('feedback-list');
+            // Sort feedbacks by timestamp (newest first)
+            feedbacks.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            
+            container.innerHTML = feedbacks.map(feedback => `
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <div class="feedback-user-info">
+                            <span class="feedback-name">${feedback.name}</span>
+                            <span class="feedback-type">${feedback.userType}</span>
+                        </div>
+                        <div class="feedback-rating-display">
+                            <span class="feedback-rating">${'★'.repeat(feedback.rating)}${'☆'.repeat(5-feedback.rating)}</span>
+                            <span class="rating-emoji">${getRatingFeedback(parseInt(feedback.rating)).emoji}</span>
+                        </div>
+                    </div>
+                    <p class="feedback-comment">${feedback.comment}</p>
+                    <div class="feedback-date">${feedback.date}</div>
+                </div>
+            `).join('');
+        }
+
+        window.onload = displayFeedback;
+    </script>
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #4CAF50;
+            --accent-color: #81C784;
+            --text-color: #333;
+            --light-bg: #E8F5E9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        details {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        details > summary {
+            padding: 20px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details > summary::after {
+            content: '+';
+            margin-left: auto;
+            font-size: 1.5em;
+        }
+
+        details[open] > summary::after {
+            content: '-';
+        }
+
+        details > div {
+            padding: 30px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .feedback-section {
+            margin-top: 40px;
+        }
+
+        .feedback-form {
+            display: grid;
+            gap: 20px;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary-color);
+        }
+
+        .feedback-form label {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .feedback-form input[type="text"],
+        .feedback-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+        }
+
+        .rating-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .rating {
+            display: inline-flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 10px 0;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 2em;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        /* Hover effect */
+        .rating:not(:checked) label:hover,
+        .rating:not(:checked) label:hover ~ label {
+            color: gold;
+        }
+
+        /* Selected stars */
+        .rating input:checked ~ label {
+            color: gold;
+        }
+
+        .rating-feedback {
+            min-height: 30px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.1em;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .rating-feedback .emoji {
+            font-size: 1.5em;
+        }
+
+        .rating input[type="radio"] {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 2em;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .rating label:hover,
+        .rating label:hover ~ label,
+        .rating input:checked ~ label {
+            color: gold;
+        }
+
+        .star-count {
+            margin-top: 5px;
+            font-size: 1.2em;
+            color: gold;
+            font-weight: bold;
+        }
+
+        .rating input[type="radio"]:checked + label ~ label {
+            color: #ccc;
+        }
+
+        .rating-emoji {
+            font-size: 24px;
+            margin-left: 10px;
+        }
+
+        .feedback-rating-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rating-label {
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .feedback-list {
+            margin-top: 30px;
+        }
+
+        .ingredients-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .ingredient-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .ingredient-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .ingredients-note {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--light-bg);
+            border-radius: 10px;
+            color: #555;
+        }
+
+        .ingredients-note i {
+            color: var(--primary-color);
+            margin-right: 8px;
+        }
+
+        .inspiration-section {
+            background-color: var(--light-bg);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 2px solid var(--accent-color);
+        }
+
+        .inspiration-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .inspiration-section h2 i {
+            color: #e74c3c;
+        }
+
+        .inspiration-section p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .feedback-item {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--accent-color);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        .feedback-user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .feedback-type {
+            font-size: 0.8em;
+            color: var(--primary-color);
+            background-color: var(--light-bg);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .user-type-selection {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .user-type-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-type-option input[type="radio"] {
+            accent-color: var(--primary-color);
+        }
+
+        .feedback-name {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .feedback-rating {
+            color: #FFD700;
+        }
+
+        .feedback-date {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 15px;
+            text-align: right;
+            font-style: italic;
+        }
+
+        .ingredient-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: var(--light-bg);
+            border-radius: 10px;
+        }
+
+        .ingredient-item i {
+            color: var(--primary-color);
+            font-size: 1.5em;
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .benefit-card {
+            background-color: var(--light-bg);
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .benefit-card i {
+            color: var(--primary-color);
+            font-size: 2em;
+        }
+
+        .school-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .school-logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .team-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--light-bg);
+            border-radius: 10px;
+        }
+
+        .team-member i {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .preparation-steps {
+            padding: 20px;
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .step-content i {
+            color: var(--primary-color);
+            font-size: 1.2em;
+        }
+
+        .usage-tip {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .usage-tip i {
+            color: #f1c40f;
+            font-size: 1.2em;
+        }
+
+        .benefit-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .herbal-note {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 30px 15px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to SOMABINDHU</h1>
+        <p>Experience the Power of Traditional Ayurvedic Medicine</p>
+        <div class="welcome-note">
+            <p>Discover our natural healing blend, crafted with ancient wisdom for modern wellness.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="inspiration-section">
+            <h2><i class="fas fa-heart"></i> Inspired by</br> Our Grandparents' Wisdom</h2>
+            <p>This project was inspired by the traditional herbal remedies prepared lovingly by our grandparents. They used to make kashayam from herbs to treat cough, cold, and mild fever.</p>
+        </div>
+        <div class="accordion">
+            <details open>
+                <summary><i class="fas fa-mortar-pestle"></i> Natural Ingredients 🌱</summary>
+                <div>
+                    <div class="ingredients-list">
+                        <div class="ingredient-item">
+                            <i class="fas fa-leaf"></i>
+                            <span>Tulsi (Holy Basil)</span>
+                        </div>
+                        <div class="ingredient-item">
+                            <i class="fas fa-pepper-hot"></i>
+                            <span>Ginger</span>
+                        </div>
+                        <div class="ingredient-item">
+                            <i class="fas fa-spa"></i>
+                            <span>Clove</span>
+                        </div>
+                        <div class="ingredient-item">
+                            <i class="fas fa-scroll"></i>
+                            <span>Cinnamon</span>
+                        </div>
+                        <div class="ingredient-item">
+                            <i class="fas fa-seedling"></i>
+                            <span>Cardamom</span>
+                        </div>
+                        <div class="ingredient-item">
+                            <i class="fas fa-fill-drip"></i>
+                            <span>Honey</span>
+                        </div>
+                    </div>
+                    <div class="ingredients-note">
+                        <p><i class="fas fa-info-circle"></i> All ingredients are sun-dried, powdered, and compressed into a pill.</p>
+                    </div>
+                </div>
+            </details>
+
+            <details>
+                <summary><i class="fas fa-mug-hot"></i> Easy to Prepare 🍵</summary>
+                <div class="preparation-steps">
+                    <div class="step-list">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <i class="fas fa-fire"></i>
+                                <span>Boil 1 cup of water.</span>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <i class="fas fa-pills"></i>
+                                <span>Drop one SOMABINDHU pill into the hot water.</span>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <i class="fas fa-hourglass-half"></i>
+                                <span>Let it dissolve and steep for 3–4 minutes.</span>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <i class="fas fa-mug-hot"></i>
+                                <span>Stir and sip like tea (best taken warm).</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="usage-tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>Tip: Consume once or twice a day during cold or fever.</p>
+                    </div>
+                </div>
+            </details>
+            </div>
+        </details>
+
+        <details>
+            <summary><i class="fas fa-heart"></i> Why This Works 💚</summary>
+            <div>
+                <div class="benefits">
+                    <div class="benefit-card">
+                        <i class="fas fa-shield-virus"></i>
+                        <div>
+                            <h3>Immunity Boost</h3>
+                            <p>Boosts immunity naturally</p>
+                        </div>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-head-side-cough"></i>
+                        <div>
+                            <h3>Throat Relief</h3>
+                            <p>Soothes sore throat</p>
+                        </div>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-lungs"></i>
+                        <div>
+                            <h3>Clear Breathing</h3>
+                            <p>Eases nasal congestion</p>
+                        </div>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-thermometer-half"></i>
+                        <div>
+                            <h3>Temperature Control</h3>
+                            <p>Reduces body temperature during mild fever</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="herbal-note">
+                    <i class="fas fa-leaf"></i>
+                    <p>100% herbal and safe</p>
+                </div>
+            </div>
+        </details>
+
+        </div>
+        <!-- End of accordion -->
+
+        <div class="section">
+            <h2><i class="fas fa-users"></i> Project Team</h2>
+            <div class="school-logo">
+                <img src="logo_2.png" alt="Ganges Valley School Logo">
+            </div>
+            <div class="team-members">
+                <div class="team-member">
+                    <img src="Lokesh.jpg" alt="Lokesh Ch">
+                    <h3>Lokesh Ch</h3>
+                    <p>X-B</p>
+                </div>
+                <div class="team-member">
+                    <img src="Humsini.jpg" alt="Humsini N">
+                    <h3>Humsini N</h3>
+                    <p>X-B</p>
+                </div>
+                <div class="team-member">
+                    <img src="sahiti.jpg" alt="Sahiti M">
+                    <h3>Sahiti M</h3>
+                    <p>X-B</p>
+                </div>
+            </div>
+            </div>
+            </div>
+        </details>
+
+        <div class="feedback-section">
+            <form id="feedback-form" class="feedback-form" onsubmit="event.preventDefault(); submitFeedback();">
+                <h2><i class="fas fa-comments"></i> Feedback</h2>
+                <div>
+                    <label for="feedback-name">Your Name:</label>
+                    <input type="text" id="feedback-name" required>
+                </div>
+                <div class="user-type-selection">
+                    <div class="user-type-option">
+                        <input type="radio" name="user-type" id="student" value="Student" required>
+                        <label for="student">Student</label>
+                    </div>
+                    <div class="user-type-option">
+                        <input type="radio" name="user-type" id="faculty" value="Faculty/Staff">
+                        <label for="faculty">Faculty/Staff</label>
+                    </div>
+                    <div class="user-type-option">
+                        <input type="radio" name="user-type" id="other" value="Other">
+                        <label for="other">Other</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="feedback-comment">Your Comment:</label>
+                    <textarea id="feedback-comment" rows="4" required></textarea>
+                </div>
+                <div>
+                <div class="rating-container">
+                    <div class="rating-label">Rate your experience</div>
+                    <div class="rating">
+                        <input type="radio" name="rating" value="5" id="star5" checked required onchange="updateRatingFeedback(5)">
+                        <label for="star5"><i class="fas fa-star"></i></label>
+                        <input type="radio" name="rating" value="4" id="star4" onchange="updateRatingFeedback(4)">
+                        <label for="star4"><i class="fas fa-star"></i></label>
+                        <input type="radio" name="rating" value="3" id="star3" onchange="updateRatingFeedback(3)">
+                        <label for="star3"><i class="fas fa-star"></i></label>
+                        <input type="radio" name="rating" value="2" id="star2" onchange="updateRatingFeedback(2)">
+                        <label for="star2"><i class="fas fa-star"></i></label>
+                        <input type="radio" name="rating" value="1" id="star1" onchange="updateRatingFeedback(1)">
+                        <label for="star1"><i class="fas fa-star"></i></label>
+                    </div>
+                    <div class="rating-feedback">
+                        <span class="emoji">🤩</span>
+                        <span class="message">Amazing! Thank you so much!</span>
+                    </div>
+                </div>
+                </div>
+                <button type="submit" class="submit-btn">Submit Feedback</button>
+            </form>
+            <div id="feedback-list" class="feedback-list"></div>
+        </div>
+    </div>
+</body>
+</html>
