@@ -8,7 +8,7 @@ const LatestBlogs = () => {
       title: 'The Future of Technology',
       excerpt: 'Exploring upcoming trends in technology and their impact on our lives.',
       date: '2025-05-01',
-      image: '/blog/tech-future.jpg',
+      image: '/projects/bizkids/board/placeholders.png',
       slug: 'future-of-technology',
     },
     {
@@ -16,7 +16,7 @@ const LatestBlogs = () => {
       title: 'Building Sustainable Solutions',
       excerpt: 'How we can create technology solutions that are environmentally conscious.',
       date: '2025-04-28',
-      image: '/blog/sustainability.jpg',
+      image: '/projects/bizkids/board/placeholders.png',
       slug: 'sustainable-solutions',
     },
     {
@@ -24,7 +24,7 @@ const LatestBlogs = () => {
       title: 'Innovation in Education',
       excerpt: 'New approaches to learning and teaching in the digital age.',
       date: '2025-04-25',
-      image: '/blog/education.jpg',
+      image: '/projects/bizkids/board/placeholders.png',
       slug: 'innovation-education',
     },
   ];
