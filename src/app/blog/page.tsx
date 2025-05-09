@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '../../components/layout/Layout';
+import SectionTitle from '../../components/common/SectionTitle';
 
 export default function Blog() {
   const posts = [
@@ -58,44 +59,20 @@ export default function Blog() {
 
   return (
     <Layout>
-      <div className="pt-0">
-        {/* Header Section */}
-        <div className="text-center mb-5 bg-gray-50 pt-16 pb-16">
-          <h1 className="text-5xl font-bold mb-4 text-gray-900">Our Blog</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">Insights, stories, and ideas from our journey of innovation and impact.</p>
-        </div>
-        {/* Blog Posts Grid */}
-        <div className="container mx-auto px-4 pb-16">
-          <h1 className="text-4xl font-bold mb-8">Blog</h1>
-          
-          {/* Featured Post */}
-          <div className="mb-16">
-            <Link href={`/blog/${posts[0].slug}`} className="group">
-              <div className="relative h-[400px] w-full rounded-xl overflow-hidden">
-                <Image
-                  src={posts[0].image}
-                  alt={posts[0].title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <span className="inline-block px-3 py-1 bg-blue-600 text-white text-sm rounded-full mb-3">
-                    {posts[0].category}
-                  </span>
-                  <h2 className="text-3xl font-bold text-white mb-2">
-                    {posts[0].title}
-                  </h2>
-                  <p className="text-gray-200 mb-4">{posts[0].excerpt}</p>
-                  <div className="flex items-center text-gray-200 text-sm">
-                    <span>{posts[0].date}</span>
-                    <span className="mx-2">•</span>
-                    <span>{posts[0].readTime}</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
+      <div className="min-h-screen bg-blue-50">
+        {/* Hero Section */}
+        <div className="bg-blue-100 py-20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center text-white">
+              <SectionTitle title="Our Blog" subtitle="Stories, insights, and updates from our journey of making a difference" />
+            </div>
           </div>
+        </div>
+
+        {/* Blog Posts Grid */}
+        <div className="container mx-auto px-4 py-16">
+          
+
 
           {/* Post Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

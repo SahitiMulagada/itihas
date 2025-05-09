@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SectionTitle from '../common/SectionTitle';
 
 export default function RecentWorks() {
   const works = [
@@ -26,19 +27,27 @@ export default function RecentWorks() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      {/* Distinct header for Recent Works */}
-
+    <div className="container mx-auto px-4 py-8" >
+      <SectionTitle title="Recent Works" />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {works.map((work, index) => (
           <Link 
-            key={index} 
+            key={index}
             href={work.link}
-            className={`block ${work.color} rounded-3xl p-8 text-center transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg`}
+            className={`group block rounded-lg transition-all duration-300 hover:scale-105 ${work.color}`}
           >
-            <h3 className={`text-2xl ${work.fontFamily} mb-2`}>{work.title}</h3>
-            <p className="text-gray-600">{work.description}</p>
+            <div className="m-1.5 p-6 rounded-lg border-2 border-gray-800 relative text-center">
+              <div className="absolute inset-2 border border-gray-800 rounded-md pointer-events-none"></div>
+              <div className="relative">
+                <h3 className={`text-xl font-bold mb-2 ${work.fontFamily} group-hover:text-gray-900 transition-colors duration-300`}>
+                  {work.title}
+                </h3>
+                <p className="text-gray-700 group-hover:text-gray-800 transition-colors duration-300">
+                  {work.description}
+                </p>
+              </div>
+            </div>
           </Link>
         ))}
       </div>

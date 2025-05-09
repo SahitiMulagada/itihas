@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import AnimatedBackground from '../common/AnimatedBackground';
+import SectionTitle from '../common/SectionTitle';
 
 const projects = [
   {
@@ -55,16 +56,8 @@ const LatestProjects = () => {
       </div>
 
       <div className="container mx-auto px-4 relative">
-        {/* Stylish Header */}
-        <div className="text-center mb-16 relative">
-          <span className="inline-block px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">Explore Our Work</span>
-          <div className="relative inline-block">
-            <h2 className="text-5xl font-bold relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
-              Latest Projects
-            </h2>
-            <div className="absolute -bottom-4 left-0 right-0 h-4 bg-yellow-200 transform -skew-x-12 opacity-50"></div>
-            <div className="absolute -bottom-4 left-2 right-2 h-4 bg-purple-200 transform skew-x-12 opacity-50"></div>
-          </div>
+        <SectionTitle title="Latest Projects" />
+        <div className="text-center mb-16 relative"> 
           <p className="text-gray-600 mt-8 max-w-2xl mx-auto text-lg">
             Discover our most recent work and innovative solutions
           </p>
@@ -101,7 +94,7 @@ const LatestProjects = () => {
             View All Projects
           </Link>
         </div>
-      </div>
+        </div>
     </section>
   );
 };

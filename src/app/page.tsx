@@ -39,7 +39,7 @@ export default function Home() {
   return (
     <Layout>
       <Hero />
-      <div className="bg-gradient-to-b from-white to-gray-50">
+      <div className="bg-gradient-to-b from-white " style={{ backgroundColor: '#f5f5f5' }}>
         <RecentWorks />
       </div>
       <div className="scroll-animate opacity-0 translate-y-10 transition-all duration-1000 ease-out bg-white">

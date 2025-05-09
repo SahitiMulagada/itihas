@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import SectionTitle from '../common/SectionTitle';
 
 const LatestBlogs = () => {
   const blogs = [
@@ -30,9 +31,9 @@ const LatestBlogs = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12">Latest from the Blog</h2>
+        <SectionTitle title="Latest Blogs" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogs.map((blog) => (
             <Link

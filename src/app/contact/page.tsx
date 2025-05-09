@@ -1,17 +1,34 @@
 import Layout from '../../components/layout/Layout';
+import SectionTitle from '../../components/common/SectionTitle';
 
 export default function Contact() {
   return (
     <Layout>
-      <div className="pt-0">
-        {/* Header Section */}
-        <div className="text-center mb-5 bg-gray-50 pt-16 pb-16">
-          <h1 className="text-5xl font-bold mb-4 text-gray-900">Get in Touch</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">Have a question or want to collaborate? We'd love to hear from you.</p>
+      <div className="bg-blue-50 min-h-screen relative overflow-hidden">
+        {/* Animated Circles - Now spans entire page */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute w-40 h-40 rounded-full bg-blue-200/30 -top-10 -left-10 animate-float-slow"></div>
+          <div className="absolute w-32 h-32 rounded-full bg-blue-300/30 top-1/4 -right-5 animate-float-medium"></div>
+          <div className="absolute w-24 h-24 rounded-full bg-blue-200/30 bottom-1/3 left-1/4 animate-float-fast"></div>
+          <div className="absolute w-20 h-20 rounded-full bg-blue-300/30 top-1/3 right-1/4 animate-float-medium"></div>
+          <div className="absolute w-36 h-36 rounded-full bg-blue-200/30 bottom-1/4 right-1/3 animate-float-slow"></div>
+          <div className="absolute w-16 h-16 rounded-full bg-blue-300/30 top-2/3 left-1/3 animate-float-fast"></div>
+          <div className="absolute w-28 h-28 rounded-full bg-blue-200/30 bottom-10 right-1/4 animate-float-medium"></div>
         </div>
+
+        {/* Header Section */}
+        <div className="bg-blue-100 py-20 relative">
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto text-center">
+              <SectionTitle title="Get in Touch" subtitle="Have a question or want to collaborate? We'd love to hear from you" />
+            </div>
+          </div>
+        </div>
+
+        {/* Body Section */}
+        <div className="container mx-auto px-4 pt-16 relative z-10">
         {/* Contact Form */}
-        <div className="container mx-auto px-4 pb-16">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto ">
             
             <div className="bg-white rounded-lg shadow-lg p-8">
               <form className="space-y-6">
@@ -108,24 +125,12 @@ export default function Contact() {
               </form>
             </div>
 
-            {/* Additional Contact Information */}
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">Email</h3>
-                <p className="text-gray-600">contact@itihas.io</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">Phone</h3>
-                <p className="text-gray-600">+1 (123) 456-7890</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">Location</h3>
-                <p className="text-gray-600">San Francisco, CA</p>
-              </div>
-            </div>
+
           </div>
-        </div>
+      </div>     
       </div>
+
+     
     </Layout>
   );
 }

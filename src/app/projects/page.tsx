@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '../../components/layout/Layout';
+import SectionTitle from '../../components/common/SectionTitle';
 
 export default function Projects() {
   const projects = [
@@ -48,14 +49,18 @@ export default function Projects() {
 
   return (
     <Layout>
-      <div className="pt-0 ">
-        {/* Header Section */}
-        <div className="text-center mb-5 bg-gray-50 pt-16 pb-16">
-          <h1 className="text-5xl font-bold mb-4 text-gray-900">Our Projects</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">Explore our diverse portfolio of initiatives and innovations making a difference in various domains.</p>
+      <div className="min-h-screen bg-blue-50">
+        {/* Hero Section */}
+        <div className="bg-blue-100 py-20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center text-white">
+              <SectionTitle title="Our Projects" subtitle="Discover the initiatives and activities that are making a difference in our community" />
+            </div>
+          </div>
         </div>
+
         {/* Projects Grid */}
-        <div className="container mx-auto px-4 pb-16 ">
+        <div className="container mx-auto px-4 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project) => (
               <Link

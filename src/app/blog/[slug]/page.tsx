@@ -70,7 +70,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
 
   return (
     <Layout>
-      <article className="pt-24 pb-16">
+      <article className="pt-0 pb-16">
         {/* Hero Section */}
         <div className="relative h-[400px] w-full mb-8">
           <Image
