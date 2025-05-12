@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import SessionProvider from "../components/providers/SessionProvider";
+import Header from "../components/layout/Header";
+import Footer from "../components/layout/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,8 +23,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
+      <head>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+      </head>
       <body className="antialiased">
-        {children}
+        <SessionProvider>
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-grow pt-16">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );

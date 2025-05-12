@@ -2,9 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { MdOutlineChevronRight } from 'react-icons/md';
+import RegistrationPanel from '../../../../components/bizkids/RegistrationPanel';
 import Layout from '../../../../components/layout/Layout';
-import { index } from 'langchain/indexes';
 
 interface Stall {
   id: string;
@@ -79,12 +81,12 @@ const boardMembers = [
   {
     name: 'Sarah Johnson',
     role: 'President',
-    image: 'projects/bizkids/board/placeholders.png'
+    image: '/projects/bizkids/board/placeholders.png'
   },
   {
     name: 'Michael Chen',
     role: 'Vice President',
-    image: 'projects/kidsbiz/board/placeholders.png'
+    image: '/projects/kidsbiz/board/placeholders.png'
   },
   {
     name: 'Emma Davis',
@@ -94,8 +96,20 @@ const boardMembers = [
 ];
 
 export default function RainbowVistaBizKids() {
-  const [activeTab, setActiveTab] = useState('about');
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabParam || 'about');
   const [activeFinanceSection, setActiveFinanceSection] = useState('income');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+
+  // Update URL when tab changes
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', tabId);
+    window.history.pushState({}, '', url);
+  };
 
   const tabs = [
     { id: 'about', label: 'About Event' },
@@ -108,10 +122,26 @@ export default function RainbowVistaBizKids() {
   return (
     <Layout>
       <div className="pt-0">
+        {/* Breadcrumb */}
+        <nav className="bg-white border-b px-4 py-3">
+          <div className="container mx-auto">
+            <div className="flex items-center space-x-2 text-sm">
+              <Link href="/projects" className="text-gray-500 hover:text-blue-600">Projects</Link>
+              <span className="text-gray-400">/</span>
+              <Link href="/projects/rainbow-vista/bizkids" className="text-gray-500 hover:text-blue-600">BizKids</Link>
+              {activeTab === 'stalls' && (
+                <>
+                  <span className="text-gray-400">/</span>
+                  <span className="text-gray-900">Stalls</span>
+                </>
+              )}
+            </div>
+          </div>
+        </nav>
         {/* Hero Section */}
         <div className="relative h-[500px] w-full">
           <Image
-            src="/projects/rainbow-vista.jpg"
+            src="/projects/bizkids/header.jpg"
             alt="Rainbow Vista BizKids"
             fill
             className="object-cover"
@@ -137,22 +167,23 @@ export default function RainbowVistaBizKids() {
         <div className="bg-white">
           <div className="container mx-auto px-4 py-8">
             {/* Tabs Navigation */}
-            <div className="flex overflow-x-auto space-x-1 mb-8 border-b border-gray-200">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-200 ${
-                    activeTab === tab.id
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
+            <div className="flex overflow-x-auto mb-8 justify-center">
+              <div className="inline-flex rounded-lg border-2 border-blue-800">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabChange(tab.id)}
+                    className={`px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200 first:rounded-l-lg last:rounded-r-lg ${
+                      activeTab === tab.id
+                        ? 'bg-blue-800 text-white'
+                        : 'text-blue-800 hover:bg-blue-50'
+                    }`}
                 >
                   {tab.label}
                 </button>
               ))}
             </div>
-
+            </div>
             {/* Tab Content */}
             <div className="py-6">
               {/* About Event Tab */}
@@ -235,7 +266,22 @@ export default function RainbowVistaBizKids() {
                         </li>
                       </ol>
                     </div>
+
+                    <div className="text-center mt-8">
+                      <button
+                        onClick={() => setIsRegistrationOpen(true)}
+                        className="px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+                      >
+                        Register Now
+                      </button>
+                    </div>
                   </section>
+
+                  {/* Registration Panel */}
+                  <RegistrationPanel
+                    isOpen={isRegistrationOpen}
+                    onClose={() => setIsRegistrationOpen(false)}
+                  />
                 </div>
               )}
 
@@ -275,281 +321,229 @@ export default function RainbowVistaBizKids() {
 
               {/* Registered Stalls Tab */}
               {activeTab === 'stalls' && (
-                <div>
+                <div className="max-w-6xl mx-auto">
                   <h2 className="text-3xl font-bold mb-8 text-center">Registered Stalls</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {stalls.map((stall) => (
-                  <Link 
-                    href={'/projects/rainbow-vista/bizkids/stalls/' + stall.id} 
-                    key={stall.id}
-                    className="group"
-                  >
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                        <Image
-                          src={stall.image}
-                          alt={stall.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="p-6">
-                        <div className="text-sm text-blue-600 mb-2">{stall.category}</div>
-                        <h3 className="text-xl font-semibold mb-2 group-hover:text-blue-600 transition-colors">
-                          {stall.name}
-                        </h3>
-                        <p className="text-gray-600 mb-4">{stall.description}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {stall.entrepreneurs.map((entrepreneur, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <div className="relative w-6 h-6 rounded-full overflow-hidden">
-                                <Image
-                                  src={entrepreneur.image}
-                                  alt={entrepreneur.name}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                              <span className="text-sm text-gray-600">{entrepreneur.name}</span>
+                  
+                  {/* Category Chips */}
+                  <div className="flex flex-wrap justify-center gap-4 mb-8">
+                    <button
+                      onClick={() => setSelectedCategory(null)}
+                      className={`px-4 py-2 rounded-full transition-all duration-300 ${selectedCategory === null
+                        ? 'bg-blue-800 text-white border-2 border-blue-800'
+                        : 'bg-blue-50 text-blue-800 border-2 border-blue-200 hover:border-blue-400'
+                      }`}
+                    >
+                      <span className="font-medium">All</span>
+                      <span className="ml-2 px-2 py-0.5 bg-white text-blue-800 rounded-full text-xs">{stalls.length}</span>
+                    </button>
+                    {Object.entries(stalls.reduce((acc, stall) => {
+                      acc[stall.category] = (acc[stall.category] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>)).map(([category, count]) => (
+                      <button
+                        key={category}
+                        onClick={() => setSelectedCategory(category)}
+                        className={`px-4 py-2 rounded-full transition-all duration-300 ${selectedCategory === category
+                          ? 'bg-blue-800 text-white border-2 border-blue-800'
+                          : 'bg-blue-50 text-blue-800 border-2 border-blue-200 hover:border-blue-400'
+                        }`}
+                      >
+                        <span className="font-medium">{category}</span>
+                        <span className="ml-2 px-2 py-0.5 bg-white text-blue-800 rounded-full text-xs">{count}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Stalls Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {stalls
+                      .filter(stall => selectedCategory === null || stall.category === selectedCategory)
+                      .map((stall) => (
+                      <Link 
+                        href={'/projects/rainbow-vista/bizkids/stalls/' + stall.id} 
+                        key={stall.id}
+                        className="group block"
+                      >
+                        <div className="bg-white rounded-xl overflow-hidden border-2 border-gray-100 hover:border-blue-500 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                          <div className="relative h-48 overflow-hidden">
+                            <Image
+                              src={stall.image}
+                              alt={stall.name}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="p-6">
+                            <div className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-800 mb-3">
+                              {stall.category}
                             </div>
-                          ))}
+                            <h3 className="text-xl font-semibold mb-2 group-hover:text-blue-600 transition-colors">
+                              {stall.name}
+                            </h3>
+                            <p className="text-gray-600 mb-4 line-clamp-2">{stall.description}</p>
+                            <div className="flex flex-wrap gap-3">
+                              {stall.entrepreneurs.map((entrepreneur, index) => (
+                                <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
+                                  <div className="relative w-6 h-6 rounded-full overflow-hidden border border-gray-200">
+                                    <Image
+                                      src={entrepreneur.image}
+                                      alt={entrepreneur.name}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                  <span className="text-sm text-gray-600">{entrepreneur.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    
-                  </Link>
-                ))}
-              </div>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               )}
 
               {/* Finance Tab */}
               {activeTab === 'finance' && (
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-3xl font-bold mb-4 text-center">Financial Information</h2>
+                  <h2 className="text-3xl font-bold mb-4 text-center">Financial Overview</h2>
                   
-                  {/* Summary Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <button 
+                  {/* Finance Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div 
+                      className={`p-6 rounded-lg shadow-md cursor-pointer transition-all ${activeFinanceSection === 'income' ? 'border-2 border-blue-500 bg-blue-50' : 'bg-white hover:shadow-lg'}`}
                       onClick={() => setActiveFinanceSection('income')}
-                      className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
                     >
                       <h3 className="text-lg font-semibold mb-2">Amount Collected</h3>
-                      <p className="text-2xl font-bold text-green-600">₹3,000</p>
-                      <p className="text-sm text-gray-500 mt-2">From 15 Stalls</p>
-                    </button>
-
-                    <button 
+                      <p className="text-gray-600">Track stall registration payments</p>
+                    </div>
+                    
+                    <div 
+                      className={`p-6 rounded-lg shadow-md cursor-pointer transition-all ${activeFinanceSection === 'expenses' ? 'border-2 border-blue-500 bg-blue-50' : 'bg-white hover:shadow-lg'}`}
                       onClick={() => setActiveFinanceSection('expenses')}
-                      className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
                     >
-                      <h3 className="text-lg font-semibold mb-2">Total Expenses</h3>
-                      <p className="text-2xl font-bold text-red-600">₹3,000</p>
-                      <p className="text-sm text-gray-500 mt-2">View Breakdown</p>
-                    </button>
-
-                    <button 
+                      <h3 className="text-lg font-semibold mb-2">Expenses</h3>
+                      <p className="text-gray-600">Track event expenses</p>
+                    </div>
+                    
+                    <div 
+                      className={`p-6 rounded-lg shadow-md cursor-pointer transition-all ${activeFinanceSection === 'balance' ? 'border-2 border-blue-500 bg-blue-50' : 'bg-white hover:shadow-lg'}`}
                       onClick={() => setActiveFinanceSection('balance')}
-                      className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
                     >
-                      <h3 className="text-lg font-semibold mb-2">Award Money</h3>
-                      <p className="text-2xl font-bold text-blue-600">₹10,000</p>
-                      <p className="text-sm text-gray-500 mt-2">Community Sponsored</p>
-                    </button>
+                      <h3 className="text-lg font-semibold mb-2">Remaining Money</h3>
+                      <p className="text-gray-600">Prize money distribution</p>
+                    </div>
                   </div>
 
-                  {/* Note about awards */}
-                  <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 rounded-r-xl">
-                    <p className="text-blue-700">
-                      <span className="font-semibold">Note:</span> The remaining amount after expenses will be distributed as awards to the top three stalls based on user reviews:
-                      <br />1st Prize: ₹5,000 | 2nd Prize: ₹3,000 | 3rd Prize: ₹2,000
-                    </p>
-                  </div>
-
-                  {/* Detailed Tables */}
+                  {/* Income Section */}
                   {activeFinanceSection === 'income' && (
                     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                       <table className="min-w-full">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S.No</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stall Name</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Date</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Registration Fee</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹200 × 15 stalls</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">₹3,000</td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Total Collection</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"></td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">₹3,000</td>
+                          {stalls.map((stall, index) => (
+                            <tr key={stall.id}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stall.name}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.category}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹200</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 15, 2025</td>
+                            </tr>
+                          ))}
+                          <tr className="bg-gray-50 font-medium">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm" colSpan={3}>Total Collection</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">₹3,000</td>
+                            <td></td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
                   )}
 
+                  {/* Expenses Section */}
                   {activeFinanceSection === 'expenses' && (
                     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                       <table className="min-w-full">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S.No</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estimate</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actual</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Date</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                           <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tables & Chairs</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15 sets @ ₹100 each</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">₹1,500</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Tables & Chairs</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹1,500</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">₹1,500</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 20, 2025</td>
                           </tr>
                           <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Transportation</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Setup & Cleanup</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">₹800</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Banners & Signage</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹500</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">₹500</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 19, 2025</td>
                           </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Banners & Signage</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Event Branding</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">₹500</td>
-                          </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Miscellaneous</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Supplies & Others</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">₹200</td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Total Expenses</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"></td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">₹3,000</td>
+                          <tr className="bg-gray-50 font-medium">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm" colSpan={2}>Total Expenses</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹2,000</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">₹2,000</td>
+                            <td></td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
                   )}
 
+                  {/* Balance Section */}
                   {activeFinanceSection === 'balance' && (
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                      <table className="min-w-full">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Total Collection</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">From 15 Stalls</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">₹3,000</td>
-                          </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Total Expenses</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Event Operations</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">₹3,000</td>
-                          </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Community Sponsorship</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rainbow Vista</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">₹10,000</td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Total Award Money</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"></td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">₹10,000</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <div className="bg-white rounded-xl shadow-lg p-6">
+                      <div className="space-y-6">
+                        <div className="text-center">
+                          <p className="text-lg mb-2">Total Collection: <span className="text-green-600 font-medium">₹3,000</span></p>
+                          <p className="text-lg mb-2">Total Expenses: <span className="text-red-600 font-medium">₹2,000</span></p>
+                          <p className="text-lg font-medium">Remaining Balance: <span className="text-blue-600">₹1,000</span></p>
+                        </div>
+                        
+                        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-xl">
+                          <p className="text-yellow-700">
+                            <span className="font-semibold">Prize Money Distribution:</span><br/>
+                            The remaining amount will be distributed among the top three rated stalls as prize money based on customer reviews and overall performance during the event.
+                          </p>
+                          <ul className="mt-3 list-disc list-inside text-yellow-700">
+                            <li>First Place: ₹500</li>
+                            <li>Second Place: ₹300</li>
+                            <li>Third Place: ₹200</li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   )}
-
-                  <div className="space-y-8">
-                    {/* Income Section */}
-                    <div className="bg-white rounded-xl shadow-lg p-6">
-                      <h3 className="text-xl font-semibold mb-4">Income</h3>
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <span>Total Stalls Registered</span>
-                          <span className="font-semibold">15 stalls</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span>Registration Fee per Stall</span>
-                          <span className="font-semibold">₹200</span>
-                        </div>
-                        <div className="flex justify-between items-center border-t pt-4">
-                          <span className="font-semibold">Total Collection</span>
-                          <span className="font-semibold text-green-600">₹3,000</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Expenses Section */}
-                    <div className="bg-white rounded-xl shadow-lg p-6">
-                      <h3 className="text-xl font-semibold mb-4">Expenses</h3>
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <span>Tables & Chairs Rental (15 sets)</span>
-                          <span className="font-semibold text-red-600">₹1,500</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span>Transportation</span>
-                          <span className="font-semibold text-red-600">₹800</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span>Banners & Signage</span>
-                          <span className="font-semibold text-red-600">₹500</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span>Miscellaneous</span>
-                          <span className="font-semibold text-red-600">₹200</span>
-                        </div>
-                        <div className="flex justify-between items-center border-t pt-4">
-                          <span className="font-semibold">Total Expenses</span>
-                          <span className="font-semibold text-red-600">₹3,000</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Balance Section */}
-                    <div className="bg-white rounded-xl shadow-lg p-6">
-                      <h3 className="text-xl font-semibold mb-4">Balance Sheet</h3>
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <span>Total Collection</span>
-                          <span className="font-semibold text-green-600">₹3,000</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span>Total Expenses</span>
-                          <span className="font-semibold text-red-600">₹3,000</span>
-                        </div>
-                        <div className="flex justify-between items-center border-t pt-4">
-                          <span className="font-semibold">Remaining Amount for Awards</span>
-                          <span className="font-semibold text-blue-600">₹10,000</span>
-                        </div>
-                        <p className="text-sm text-gray-500 mt-2">
-                          * Additional award money is sponsored by Rainbow Vista Community
-                        </p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               )}
-
               {/* Gallery Tab */}
               {activeTab === 'gallery' && (
-                <div>
+                <div className="max-w-6xl mx-auto">
                   <h2 className="text-3xl font-bold mb-8 text-center">Event Gallery</h2>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((img) => (
                       <div key={img} className="relative aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
                         <Image
                           src={'/gallery/image-' + img + '.jpg'}
-                          alt={'Gallery Image ' + img}
+                          alt={`Gallery Image ${img}`}
                           fill
                           className="object-cover hover:scale-105 transition-transform duration-300"
                         />
@@ -561,6 +555,8 @@ export default function RainbowVistaBizKids() {
             </div>
           </div>
         </div>
-      </div>
+     
+    </div>
+
     </Layout>
   );

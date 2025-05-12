@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import Layout from '../../../components/layout/Layout';
 
 export default function About() {
@@ -50,7 +51,19 @@ export default function About() {
 
   return (
     <Layout>
-      <div className="min-h-screen pt-4 pb-6">
+      <div className="min-h-screen bg-gray-50">
+        {/* Breadcrumb */}
+        <nav className="bg-white border-b px-4 py-3">
+          <div className="container mx-auto">
+            <div className="flex items-center text-sm">
+              <Link href="/about" className="text-gray-600 hover:text-gray-800">About</Link>
+              <i className="fas fa-chevron-right w-4 h-4 mx-2 text-gray-400"></i>
+              <span className="text-gray-800">Sahiti</span>
+            </div>
+          </div>
+        </nav>
+
+        <div className="py-12">
         {/* Profile Section - Full Width */}
         <div className="w-full bg-white mb-16 py-6">
           <div className="container mx-auto px-4">
@@ -189,6 +202,7 @@ export default function About() {
             </section>
           </div>
         </div>
+      </div>
       </div>
     </Layout>
   );

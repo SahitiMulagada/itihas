@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import Layout from '../../../components/layout/Layout';
 import SectionTitle from '../../../components/common/SectionTitle';
 
@@ -63,16 +64,28 @@ export default function MemberProfile({ params }: { params: { slug: string } }) 
 
   return (
     <Layout>
-      <div className="py-16 bg-gradient-to-b from-blue-50 to-white">
-        <div className="container mx-auto px-4">
-          <SectionTitle title={member.name} />
-          
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-              <div className="md:flex">
-                <div className="md:flex-shrink-0">
-                  <div className="relative h-64 w-full md:w-64">
-                    <Image
+      <div className="min-h-screen bg-gray-50">
+        {/* Breadcrumb */}
+        <nav className="bg-white border-b px-4 py-3">
+          <div className="container mx-auto">
+            <div className="flex items-center text-sm">
+              <Link href="/members" className="text-gray-600 hover:text-gray-800">Members</Link>
+              <i className="fas fa-chevron-right w-4 h-4 mx-2 text-gray-400"></i>
+              <span className="text-gray-800">{member.name}</span>
+            </div>
+          </div>
+        </nav>
+
+        <div className="py-12 bg-gradient-to-b from-blue-50 to-white">
+          <div className="container mx-auto px-4">
+            <SectionTitle title={member.name} />
+            
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+                <div className="md:flex">
+                  <div className="md:flex-shrink-0">
+                    <div className="relative h-64 w-full md:w-64">
+                      <Image
                       src={member.image}
                       alt={member.name}
                       fill
@@ -118,6 +131,7 @@ export default function MemberProfile({ params }: { params: { slug: string } }) 
             </div>
           </div>
         </div>
+      </div>
       </div>
     </Layout>
   );

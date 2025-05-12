@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import Layout from '../components/layout/Layout';
 import Hero from '../components/home/Hero';
 import RecentWorks from '../components/home/RecentWorks';
 import LatestProjects from '../components/home/LatestProjects';
@@ -37,7 +36,7 @@ export default function Home() {
   }, []);
 
   return (
-    <Layout>
+    <>
       <Hero />
       <div className="bg-gradient-to-b from-white " style={{ backgroundColor: '#f5f5f5' }}>
         <RecentWorks />
@@ -52,6 +51,6 @@ export default function Home() {
         <ContactSection />
       </div>
       <ScrollToTop />
-    </Layout>
+    </>
   );
 }

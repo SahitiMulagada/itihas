@@ -51,7 +51,7 @@ export default function Projects() {
     <Layout>
       <div className="min-h-screen bg-blue-50">
         {/* Hero Section */}
-        <div className="bg-blue-100 py-20">
+        <div className="bg-blue-100 py-5">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center text-white">
               <SectionTitle title="Our Projects" subtitle="Discover the initiatives and activities that are making a difference in our community" />

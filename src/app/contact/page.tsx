@@ -1,10 +1,32 @@
-import Layout from '../../components/layout/Layout';
+'use client';
+
 import SectionTitle from '../../components/common/SectionTitle';
+import { useState } from 'react';
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission here
+    console.log('Form submitted:', formData);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
   return (
-    <Layout>
-      <div className="bg-blue-50 min-h-screen relative overflow-hidden">
+    <div className="bg-blue-50 min-h-screen relative overflow-hidden">
         {/* Animated Circles - Now spans entire page */}
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute w-40 h-40 rounded-full bg-blue-200/30 -top-10 -left-10 animate-float-slow"></div>
@@ -17,7 +39,7 @@ export default function Contact() {
         </div>
 
         {/* Header Section */}
-        <div className="bg-blue-100 py-20 relative">
+        <div className="bg-blue-100 py-10 relative">
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
               <SectionTitle title="Get in Touch" subtitle="Have a question or want to collaborate? We'd love to hear from you" />
@@ -31,7 +53,7 @@ export default function Contact() {
           <div className="max-w-3xl mx-auto ">
             
             <div className="bg-white rounded-lg shadow-lg p-8">
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label
@@ -109,8 +131,10 @@ export default function Contact() {
                     id="message"
                     name="message"
                     rows={6}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32 resize-none"
                     required
+                    value={formData.message}
+                    onChange={handleChange}
                   ></textarea>
                 </div>
 
@@ -130,7 +154,6 @@ export default function Contact() {
       </div>     
       </div>
 
-     
-    </Layout>
+
   );
 }

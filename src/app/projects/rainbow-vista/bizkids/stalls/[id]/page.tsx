@@ -1,5 +1,12 @@
+'use client';
+
 import Image from 'next/image';
 import Layout from '../../../../../../components/layout/Layout';
+import Link from 'next/link';
+import { MdOutlineChevronRight } from 'react-icons/md';
+import { useSession } from 'next-auth/react';
+import { useState, use } from 'react';
+import ReviewForm from '../../../../../../components/reviews/ReviewForm';
 
 interface StallDetails {
   id: string;
@@ -73,34 +80,74 @@ const getStallDetails = (id: string): StallDetails => {
   };
 };
 
-export default function StallPage({ params }: { params: { id: string } }) {
-  const stall = getStallDetails(params.id);
+export default function StallPage({ params }: { params: Promise<{ id: string }> }) {
+  const { data: session } = useSession();
+  const resolvedParams = use(params);
+  const [stall, setStall] = useState(() => getStallDetails(resolvedParams.id));
+
+  const handleReviewSubmit = (review: { rating: number; comment: string }) => {
+    const newReview = {
+      author: session?.user?.name || 'Anonymous',
+      rating: review.rating,
+      comment: review.comment,
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    setStall(prev => ({
+      ...prev,
+      reviews: [newReview, ...prev.reviews]
+    }));
+  };
 
   return (
     <Layout>
-      <div className="min-h-screen">
-        {/* Cover Image */}
-        <div className="relative h-[300px] w-full">
-          <Image
-            src={stall.coverImage}
-            alt={`${stall.name} Cover`}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent" />
-        </div>
+        {/* Breadcrumb */}
+        <nav className="bg-white border-b px-4 py-3">
+          <div className="container mx-auto">
+            <div className="flex items-center text-sm">
+              <Link href="/projects" className="text-green-600 hover:text-green-800">Projects</Link>
+              <MdOutlineChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+              <span className="text-gray-600">Rainbow Vista - BizKids \ Stalls</span>
+              <MdOutlineChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+              <span className="text-gray-600">{stall.name}</span>
+            </div>
+          </div>
+        </nav>
 
+      <div className="min-h-screen">
+        {/* Cover Image or Pattern Background */}
+        <div className="relative h-[300px] w-full border-b border-gray-200">
+          {stall.coverImage ? (
+            <>
+              <Image
+                src={stall.coverImage}
+                alt={`${stall.name} Cover`}
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent" />
+            </>
+          ) : (
+            <div className="h-full w-full bg-gray-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
+          )}
+ </div>
         {/* Profile Section */}
         <div className="container mx-auto px-4">
           <div className="relative -mt-24 mb-8 flex items-end">
-            <div className="relative w-48 h-48 rounded-xl overflow-hidden border-4 border-white shadow-lg">
-              <Image
-                src={stall.profileImage}
-                alt={stall.name}
-                fill
-                className="object-cover"
-              />
+            <div className="relative w-48 h-48 rounded-xl overflow-hidden border-4 border-white shadow-lg bg-gray-50">
+              {stall.profileImage ? (
+                <Image
+                  src={stall.profileImage}
+                  alt={stall.name}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center text-gray-400">
+                  <span className="text-6xl font-bold">{stall.name.charAt(0)}</span>
+                </div>
+              )}
             </div>
             <div className="ml-6 mb-4">
               <div className="text-sm text-blue-600 font-medium mb-2">{stall.category}</div>
@@ -154,37 +201,50 @@ export default function StallPage({ params }: { params: { id: string } }) {
                 <p className="text-gray-600 leading-relaxed">{stall.description}</p>
               </section>
 
-              {/* Poster */}
-              <section className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-2xl font-bold mb-6">Our Poster</h2>
-                <div className="relative h-[400px] rounded-lg overflow-hidden">
-                  <Image
-                    src={stall.posterImage}
-                    alt="Stall Poster"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              </section>
+              {/* Poster - Only shown if posterImage exists */}
+              {stall.posterImage && (
+                <section className="bg-white rounded-xl shadow-lg p-6">
+                  <h2 className="text-2xl font-bold mb-6">Our Poster</h2>
+                  <div className="relative h-[400px] rounded-lg overflow-hidden">
+                    <Image
+                      src={stall.posterImage}
+                      alt="Stall Poster"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </section>
+              )}
 
-              {/* Video */}
-              <section className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-2xl font-bold mb-6">Watch Our Pitch</h2>
-                <div className="relative aspect-video rounded-lg overflow-hidden">
-                  <iframe
-                    src={stall.videoUrl}
-                    className="absolute inset-0 w-full h-full"
-                    allowFullScreen
-                  />
-                </div>
-              </section>
+              {/* Video - Only shown if videoUrl exists */}
+              {stall.videoUrl && (
+                <section className="bg-white rounded-xl shadow-lg p-6">
+                  <h2 className="text-2xl font-bold mb-6">Watch Our Pitch</h2>
+                  <div className="relative aspect-video rounded-lg overflow-hidden">
+                    <iframe
+                      src={stall.videoUrl}
+                      className="absolute inset-0 w-full h-full"
+                      allowFullScreen
+                    />
+                  </div>
+                </section>
+              )}
             </div>
 
             {/* Right Column */}
             <div className="space-y-8">
               {/* Reviews */}
               <section className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-2xl font-bold mb-6">Reviews</h2>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">Reviews</h2>
+                  <div className="text-sm text-gray-500">{stall.reviews.length} reviews</div>
+                </div>
+
+                {/* Review Form */}
+                <div className="mb-8">
+                  <ReviewForm onSubmit={handleReviewSubmit} />
+                </div>
+
                 <div className="space-y-6">
                   {stall.reviews.map((review, index) => (
                     <div key={index} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
@@ -215,6 +275,7 @@ export default function StallPage({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
+     
     </Layout>
   );
 }
