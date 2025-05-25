@@ -22,15 +22,20 @@ const SectionHeading = ({ title, className = '' }: SectionHeadingProps) => {
         height={40}
         className="w-10 h-10 object-contain"
       />
-      <h2 className="text-3xl font-bold text-blue-800">
-        {title}
-      </h2>
+      <div className="relative">
+        {/* Paint-like background */}
+        <div className="absolute -inset-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg transform rotate-1 opacity-80" />
+        <div className="absolute -inset-2 bg-gradient-to-l from-blue-50 to-indigo-50 rounded-lg transform -rotate-1 opacity-60" />
+        <h2 className="relative text-3xl font-bold text-blue-800 px-6 py-2">
+          {title}
+        </h2>
+      </div>
       <Image
         src="/backgrounds/icon_09.png"
         alt="Decorative icon"
         width={40}
         height={40}
-        className="w-10 h-10 object-contain"
+        className="w-10 h-10 object-contain transform scale-x-[-1]"
       />
     </motion.div>
   );

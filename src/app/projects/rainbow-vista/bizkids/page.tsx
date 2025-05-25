@@ -507,30 +507,54 @@ const tabs = [
                     )}
                   </section>
 
-                  <section className="max-w-4xl mx-auto py-12">
+                  <section className="max-w-6xl mx-auto py-16">
                     <SectionHeading title="How to Register" />
-                    <div className="bg-white rounded-xl shadow-lg p-6">
-                      <ol className="space-y-4">
-                        <li className="flex items-start">
-                          <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold mr-3">1</span>
-                          <div>
-                            <h3 className="font-semibold mb-1">Fill Registration Form</h3>
-                            <p className="text-gray-600">Complete the online registration form with your details and business idea</p>
+                    <div className="px-4">
+                      <ol className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <li className="group p-6">
+                          <div className="flex items-center gap-4 mb-3">
+                            <span className="text-[45px] font-medium leading-none" style={{
+                              backgroundImage: 'linear-gradient(to right, #09b850, #09b850)',
+                              WebkitBackgroundClip: 'text',
+                              backgroundClip: 'text',
+                              WebkitTextStrokeWidth: '2px',
+                              WebkitTextStrokeColor: 'transparent',
+                              color: '#fff',
+                              letterSpacing: '1px'
+                            }}>01</span>
+                            <h3 className="text-xl font-semibold text-gray-800">Fill Registration Form</h3>
                           </div>
+                          <p className="text-gray-600 leading-relaxed ml-[60px]">Complete the online registration form with your details and business idea</p>
                         </li>
-                        <li className="flex items-start">
-                          <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold mr-3">2</span>
-                          <div>
-                            <h3 className="font-semibold mb-1">Submit Business Plan</h3>
-                            <p className="text-gray-600">Upload a simple business plan describing your stall concept</p>
+                        <li className="group p-6">
+                          <div className="flex items-center gap-4 mb-3">
+                            <span className="text-[45px] font-medium leading-none" style={{
+                              backgroundImage: 'linear-gradient(to right, #09b850, #09b850)',
+                              WebkitBackgroundClip: 'text',
+                              backgroundClip: 'text',
+                              WebkitTextStrokeWidth: '2px',
+                              WebkitTextStrokeColor: 'transparent',
+                              color: '#fff',
+                              letterSpacing: '1px'
+                            }}>02</span>
+                            <h3 className="text-xl font-semibold text-gray-800">Submit Business Plan</h3>
                           </div>
+                          <p className="text-gray-600 leading-relaxed ml-[60px]">Upload a simple business plan describing your stall concept</p>
                         </li>
-                        <li className="flex items-start">
-                          <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold mr-3">3</span>
-                          <div>
-                            <h3 className="font-semibold mb-1">Pay Registration Fee</h3>
-                            <p className="text-gray-600">Complete the payment to secure your spot</p>
+                        <li className="group p-6">
+                          <div className="flex items-center gap-4 mb-3">
+                            <span className="text-[45px] font-medium leading-none" style={{
+                              backgroundImage: 'linear-gradient(to right, #09b850, #09b850)',
+                              WebkitBackgroundClip: 'text',
+                              backgroundClip: 'text',
+                              WebkitTextStrokeWidth: '2px',
+                              WebkitTextStrokeColor: 'transparent',
+                              color: '#fff',
+                              letterSpacing: '1px'
+                            }}>03</span>
+                            <h3 className="text-xl font-semibold text-gray-800">Pay Registration Fee</h3>
                           </div>
+                          <p className="text-gray-600 leading-relaxed ml-[60px]">Complete the payment process to secure your spot</p>
                         </li>
                       </ol>
                     </div>
