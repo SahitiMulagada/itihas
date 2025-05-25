@@ -3,8 +3,8 @@ import Link from 'next/link';
 const Footer = () => {
   const socialLinks = [
     { label: 'GitHub', url: 'https://github.com/', icon: 'github' },
-    { label: 'LinkedIn', url: 'https://linkedin.com/', icon: 'linkedin' },
-    { label: 'Twitter', url: 'https://twitter.com/', icon: 'twitter' },
+    // { label: 'LinkedIn', url: 'https://linkedin.com/', icon: 'linkedin' },
+    // { label: 'Twitter', url: 'https://twitter.com/', icon: 'twitter' },
   ];
 
   return (

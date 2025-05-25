@@ -3,10 +3,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
-import { MdOutlineChevronRight } from 'react-icons/md';
+import { useState, useEffect } from 'react';
+import { MdOutlineChevronRight, MdAccessTime, MdLocationOn, MdCalendarToday, MdClose } from 'react-icons/md';
+import { motion, AnimatePresence } from 'framer-motion';
+import SectionHeading from '../../../../components/common/SectionHeading';
 import RegistrationPanel from '../../../../components/bizkids/RegistrationPanel';
 import Layout from '../../../../components/layout/Layout';
+import { getOrganizationStructure } from '@/services/bizkids/organizationService';
 
 interface Stall {
   id: string;
@@ -96,6 +99,7 @@ const boardMembers = [
 ];
 
 export default function RainbowVistaBizKids() {
+  const [selectedPoster, setSelectedPoster] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
   const [activeTab, setActiveTab] = useState(tabParam || 'about');
@@ -111,12 +115,17 @@ export default function RainbowVistaBizKids() {
     window.history.pushState({}, '', url);
   };
 
-  const tabs = [
+
+
+const organizationStructure = getOrganizationStructure();
+
+const tabs = [
     { id: 'about', label: 'About Event' },
     { id: 'board', label: 'Top Stall Board' },
     { id: 'stalls', label: 'Registered Stalls' },
     { id: 'finance', label: 'Finance' },
     { id: 'gallery', label: 'Gallery' },
+    { id: 'organization', label: 'Organization' },
   ];
 
   return (
@@ -150,22 +159,58 @@ export default function RainbowVistaBizKids() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/30" />
           <div className="absolute inset-0 flex items-center">
             <div className="container mx-auto px-4">
-              <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-                Rainbow Vista - BizKids
-              </h1>
-              <p className="text-xl text-gray-200 max-w-2xl mb-8">
-                Empowering young entrepreneurs to shape the future
-              </p>
-              <button className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl">
-                Register Now
-              </button>
+              <div className="text-left mb-12 relative overflow-hidden">
+                <motion.h1
+                  initial={{ y: -100, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="text-5xl md:text-6xl font-bold text-white mb-4" 
+                >
+                  Rainbow Vista - BizKids
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 0.8 }}
+                  className="text-xl text-gray-200 max-w-2xl mb-8"
+                >
+                  Empowering young entrepreneurs to shape the future
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2, duration: 0.8 }}
+                >
+                  <motion.div
+                    animate={{
+                      boxShadow: [
+                        "0 0 0 0 rgba(37, 99, 235, 0)",
+                        "0 0 0 20px rgba(37, 99, 235, 0)",
+                      ],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      repeatType: "loop",
+                    }}
+                    className="inline-block"
+                  >
+                    <button
+                      onClick={() => setIsRegistrationOpen(true)}
+                      className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
+                    >
+                      Register Now
+                    </button>
+                  </motion.div>
+                </motion.div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
         <div className="bg-white">
-          <div className="container mx-auto px-4 py-8">
+          <div className=" mx-auto px-4 py-8">
             {/* Tabs Navigation */}
             <div className="flex overflow-x-auto mb-8 justify-center">
               <div className="inline-flex rounded-lg border-2 border-blue-800">
@@ -188,59 +233,238 @@ export default function RainbowVistaBizKids() {
             <div className="py-6">
               {/* About Event Tab */}
               {activeTab === 'about' && (
-                <div className="space-y-12">
-                  <section className="max-w-4xl mx-auto">
-                    <h2 className="text-2xl font-bold mb-6">Event Details</h2>
-                    <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4">Date & Time</h3>
-                          <div className="space-y-2 text-gray-600">
-                            <p>Date: August 15, 2025</p>
-                            <p>Time: 9:00 AM - 5:00 PM</p>
-                            <p>Venue: Rainbow Vista Campus</p>
-                          </div>
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4">Registration</h3>
-                          <div className="space-y-2 text-gray-600">
-                            <p>Registration Fee: ₹200</p>
-                            
-                            <p>Deadline: July 31, 2025</p>
-                          </div>
+                <div className="space-y-1">
+                  <section className="w-full py-16 relative overflow-hidden">
+                    {/* Main Background Image with Scale Animation */}
+                    <motion.div 
+                      className="absolute inset-0 w-full h-full origin-center"
+                      animate={{
+                        scale: [1, 1.25, 1],
+                      }}
+                      transition={{
+                        duration: 15,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <Image
+                        src="/backgrounds/intg_back.png"
+                        alt="Background pattern"
+                        fill
+                        className="object-cover opacity-15"
+                        priority
+                      />
+                    </motion.div>
+
+                    {/* Left Top Animated Shape */}
+                    <motion.div
+                      className="absolute -left-16 top-16 w-64 h-64 pointer-events-none"
+                      animate={{
+                        x: [0, 80, 0],
+                        rotate: [0, 10, 0]
+                      }}
+                      transition={{
+                        duration: 12,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <Image
+                        src="/backgrounds/office-location-shape-1.png"
+                        alt="Animated shape"
+                        fill
+                        className="object-contain opacity-15"
+                        priority
+                      />
+                    </motion.div>
+
+                    {/* Right Bottom Animated Shape */}
+                    <motion.div
+                      className="absolute -right-8 -bottom-8 w-80 h-80 pointer-events-none"
+                      animate={{
+                        y: [0, -20, 0],
+                        rotate: [0, -5, 0]
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <Image
+                        src="/backgrounds/shape_08.png"
+                        alt="Bottom shape"
+                        fill
+                        className="object-contain opacity-15"
+                        priority
+                      />
+                    </motion.div>
+
+                    <div className="max-w-6xl mx-auto px-4 relative">
+                      <SectionHeading title="About the Event" />
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                        {/* Left side - Description */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -50 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.8 }}
+                          viewport={{ once: true }}
+                          className="prose max-w-none"
+                        >
+                          <h3 className="text-4xl font-semibold mb-6 text-blue-800"> Rainbow Vista BizKids</h3>
+                          <p className="text-gray-600 leading-relaxed text-lg mb-6">
+                            Rainbow Vista BizKids is an exciting entrepreneurship event designed for young minds aged 7-18. 
+                            This one-day extravaganza brings together creative young entrepreneurs to showcase their business ideas, 
+                            learn from experts, and network with fellow innovators.
+                          </p>
+                          <p className="text-gray-600 leading-relaxed text-lg">
+                            Join us for a day filled with inspiration, learning, and the opportunity to turn your innovative ideas into reality.
+                          </p>
+                        </motion.div>
+
+                        {/* Right side - Cards */}
+                        <div className="space-y-1">
+                          {/* Date & Time Card */}
+                          <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            viewport={{ once: true }}
+                            className="bg-white rounded-xl shadow-lg p-4 relative overflow-hidden group hover:shadow-xl transition-all duration-300 border border-blue-100 hover:border-blue-300"
+                          >
+                            <div className="absolute inset-0 bg-blue-50/0 group-hover:bg-blue-50/100 transition-colors duration-300 rounded-xl"></div>
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-100/50 rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-125"></div>
+                            <div className="relative flex items-start">
+                              <div className="relative group flex-shrink-0">
+                                <div className="absolute inset-0 rounded-full bg-blue-100 transform scale-110 group-hover:scale-125 transition-transform duration-300"></div>
+                                <div className="relative w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 border-2 border-blue-200 group-hover:border-blue-300 transition-colors duration-300">
+                                  <MdCalendarToday className="text-xl text-blue-600" />
+                                </div>
+                              </div>
+                              <div className="ml-4 flex-grow">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-1">Event Date & Time</h3>
+                                <p className="text-gray-600 text-sm">Saturday, June 15, 2024</p>
+                                <div className="flex items-center text-gray-600 text-sm mt-1">
+                                  <MdAccessTime className="mr-1 text-blue-600" />
+                                  <span>10:00 AM - 6:00 PM</span>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+
+                          {/* Location Card */}
+                          <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, delay: 0.4 }}
+                            viewport={{ once: true }}
+                            className="bg-white rounded-xl shadow-lg p-4 relative overflow-hidden group hover:shadow-xl transition-all duration-300 border border-indigo-100 hover:border-indigo-300"
+                          >
+                            <div className="absolute inset-0 bg-indigo-50/0 group-hover:bg-indigo-50/100 transition-colors duration-300 rounded-xl"></div>
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100/50 rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-125"></div>
+                            <div className="relative flex items-start">
+                              <div className="relative group flex-shrink-0">
+                                <div className="absolute inset-0 rounded-full bg-indigo-100 transform scale-110 group-hover:scale-125 transition-transform duration-300"></div>
+                                <div className="relative w-10 h-10 flex items-center justify-center rounded-full bg-indigo-50 border-2 border-indigo-200 group-hover:border-indigo-300 transition-colors duration-300">
+                                  <MdLocationOn className="text-xl text-indigo-600" />
+                                </div>
+                              </div>
+                              <div className="ml-4 flex-grow">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-1">Location</h3>
+                                <p className="text-gray-600 text-sm">Rainbow Vista Rock gardens</p>
+                                <p className="text-gray-600 text-sm">Before K-Block</p>
+                              </div>
+                            </div>
+                          </motion.div>
+
+                          {/* Registration Deadline Card */}
+                          <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, delay: 0.6 }}
+                            viewport={{ once: true }}
+                            className="bg-white rounded-xl shadow-lg p-4 relative overflow-hidden group hover:shadow-xl transition-all duration-300 border border-purple-100 hover:border-purple-300"
+                          >
+                            <div className="absolute inset-0 bg-purple-50/0 group-hover:bg-purple-50/100 transition-colors duration-300 rounded-xl"></div>
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-100/50 rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-125"></div>
+                            <div className="relative flex items-start">
+                              <div className="relative group flex-shrink-0">
+                                <div className="absolute inset-0 rounded-full bg-purple-100 transform scale-110 group-hover:scale-125 transition-transform duration-300"></div>
+                                <div className="relative w-10 h-10 flex items-center justify-center rounded-full bg-purple-50 border-2 border-purple-200 group-hover:border-purple-300 transition-colors duration-300">
+                                  <MdCalendarToday className="text-xl text-purple-600" />
+                                </div>
+                              </div>
+                              <div className="ml-4 flex-grow">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-1">Registration Deadline</h3>
+                                <p className="text-gray-600 text-sm">Last day for registration:</p>
+                                <p className="text-purple-600 font-semibold text-sm mt-1">May 30, 2025</p>
+                              </div>
+                            </div>
+                          </motion.div>
                         </div>
                       </div>
                     </div>
-                    <div className="prose max-w-none mb-12">
-                      <p className="text-gray-600 leading-relaxed">
-                        Rainbow Vista BizKids is an exciting entrepreneurship event designed for young minds aged 7-18. 
-                        This one-day extravaganza brings together creative young entrepreneurs to showcase their business ideas, 
-                        learn from experts, and network with fellow innovators.
-                      </p>
-                    </div>
                   </section>
 
-                  <section className="max-w-4xl mx-auto">
-                    <h2 className="text-2xl font-bold mb-6">Event Posters</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <h2 className="text-3xl font-bold mb-8 text-center">Event Posters</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[1, 2, 3].map((poster) => (
-                  <div key={poster} className="relative h-[400px] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <Image
-                      src={'/posters/poster-' + poster + '.jpg'}
-                      alt={'Event Poster ' + poster}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
+                  <section className="w-full bg-gradient-to-br from-indigo-50 to-blue-50 py-16">
+                    <div className="max-w-4xl mx-auto px-4">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true }}
+                        className="text-3xl font-bold mb-12 text-blue-800 text-center"
+                      >
+                        Event Posters
+                      </motion.h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {[
+                          { id: 1, src: '/projects/bizkids/posters/biztalk_1.jpg' },
+                          { id: 2, src: '/projects/bizkids/posters/biztalk_2.jpg' }
+                        ].map((poster) => (
+                          <div 
+                            key={poster.id} 
+                            className="group relative aspect-[3/4] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-4 border-white"
+                            onClick={() => setSelectedPoster(poster.src)}
+                          >
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 z-10" />
+                            <Image
+                              src={poster.src}
+                              alt={`Event Poster ${poster.id}`}
+                              fill
+                              className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
+
+                    {/* Full Screen Modal */}
+                    {selectedPoster && (
+                      <div 
+                        className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+                        onClick={() => setSelectedPoster(null)}
+                      >
+                        <div className="relative w-full max-w-5xl max-h-[90vh] aspect-[3/4]">
+                          <Image
+                            src={selectedPoster}
+                            alt="Full size poster"
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                        <button 
+                          className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors duration-300"
+                          onClick={() => setSelectedPoster(null)}
+                        >
+                          <MdClose className="text-3xl" />
+                        </button>
+                      </div>
+                    )}
                   </section>
 
-                  <section className="max-w-4xl mx-auto">
-                    <h2 className="text-2xl font-bold mb-6">How to Register</h2>
+                  <section className="max-w-4xl mx-auto py-12">
+                    <SectionHeading title="How to Register" />
                     <div className="bg-white rounded-xl shadow-lg p-6">
                       <ol className="space-y-4">
                         <li className="flex items-start">
@@ -288,7 +512,7 @@ export default function RainbowVistaBizKids() {
               {/* Top Board Tab */}
               {activeTab === 'board' && (
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-3xl font-bold mb-4 text-center">Top Board</h2>
+                  <SectionHeading title="Top Board" />
 
                   {/* Rating Note */}
                   <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-8 rounded-r-xl">
@@ -322,7 +546,7 @@ export default function RainbowVistaBizKids() {
               {/* Registered Stalls Tab */}
               {activeTab === 'stalls' && (
                 <div className="max-w-6xl mx-auto">
-                  <h2 className="text-3xl font-bold mb-8 text-center">Registered Stalls</h2>
+                  <SectionHeading title="Registered Stalls" />
                   
                   {/* Category Chips */}
                   <div className="flex flex-wrap justify-center gap-4 mb-8">
@@ -407,7 +631,7 @@ export default function RainbowVistaBizKids() {
               {/* Finance Tab */}
               {activeTab === 'finance' && (
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-3xl font-bold mb-4 text-center">Financial Overview</h2>
+                  <SectionHeading title="Financial Overview" />
                   
                   {/* Finance Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -535,6 +759,37 @@ export default function RainbowVistaBizKids() {
                 </div>
               )}
               {/* Gallery Tab */}
+              {activeTab === 'organization' && (
+                <div className="max-w-4xl mx-auto">
+                  <SectionHeading title="Organization Structure" />
+                  
+                  <div className="space-y-8">
+                    {Object.values(organizationStructure).map((committee) => (
+                      <div key={committee.title} className="bg-white rounded-lg shadow-md p-6">
+                        <h3 className="text-xl font-semibold mb-4 text-blue-800">{committee.title}</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {committee.members.map((member) => (
+                            <div key={member.name} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-md">
+                              <div className="flex-shrink-0">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                  <span className="text-blue-800 font-semibold">
+                                    {member.name.split(' ').map(n => n[0]).join('')}
+                                  </span>
+                                </div>
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-gray-900">{member.name}</h4>
+                                <p className="text-sm text-gray-600">{member.role}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {activeTab === 'gallery' && (
                 <div className="max-w-6xl mx-auto">
                   <h2 className="text-3xl font-bold mb-8 text-center">Event Gallery</h2>
