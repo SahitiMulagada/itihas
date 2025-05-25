@@ -6,9 +6,9 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { MdOutlineChevronRight, MdAccessTime, MdLocationOn, MdCalendarToday, MdClose } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
+import Layout from '../../../../components/layout/Layout';
 import SectionHeading from '../../../../components/common/SectionHeading';
 import RegistrationPanel from '../../../../components/bizkids/RegistrationPanel';
-import Layout from '../../../../components/layout/Layout';
 import { getOrganizationStructure } from '@/services/bizkids/organizationService';
 
 interface Stall {
@@ -406,17 +406,61 @@ const tabs = [
                     </div>
                   </section>
 
-                  <section className="w-full bg-gradient-to-br from-indigo-50 to-blue-50 py-16">
-                    <div className="max-w-4xl mx-auto px-4">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        viewport={{ once: true }}
-                        className="text-3xl font-bold mb-12 text-blue-800 text-center"
-                      >
-                        Event Posters
-                      </motion.h2>
+                  <section className="w-full py-16 relative overflow-hidden bg-gradient-to-br from-indigo-50/90 to-blue-50/90">
+                    {/* Background Image */}
+                    <div className="absolute inset-0 z-0">
+                      <Image
+                        src="/backgrounds/service_bg_1.jpg"
+                        alt="Background"
+                        fill
+                        className="object-cover opacity-90"
+                        priority
+                      />
+                    </div>
+
+                    {/* Floating Circles */}
+                    <motion.div
+                      className="absolute left-10 top-20 w-32 h-32 rounded-full bg-blue-200/20 blur-xl"
+                      animate={{
+                        y: [0, -50, 0],
+                        scale: [1, 1.2, 1],
+                        opacity: [0.2, 0.3, 0.2]
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <motion.div
+                      className="absolute right-20 bottom-40 w-40 h-40 rounded-full bg-indigo-200/20 blur-xl"
+                      animate={{
+                        y: [0, 40, 0],
+                        scale: [1, 0.8, 1],
+                        opacity: [0.2, 0.1, 0.2]
+                      }}
+                      transition={{
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <motion.div
+                      className="absolute left-1/2 top-1/3 w-24 h-24 rounded-full bg-purple-200/20 blur-xl"
+                      animate={{
+                        x: [-30, 30, -30],
+                        opacity: [0.1, 0.3, 0.1]
+                      }}
+                      transition={{
+                        duration: 12,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+
+                    <div className="max-w-4xl mx-auto px-4 relative z-10">
+
+                      <SectionHeading title="Event Posters" />
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {[
                           { id: 1, src: '/projects/bizkids/posters/biztalk_1.jpg' },
@@ -424,7 +468,7 @@ const tabs = [
                         ].map((poster) => (
                           <div 
                             key={poster.id} 
-                            className="group relative aspect-[3/4] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-4 border-white"
+                            className="group relative aspect-[3/4] rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer border-4 border-white/80 backdrop-blur-sm"
                             onClick={() => setSelectedPoster(poster.src)}
                           >
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 z-10" />
@@ -792,7 +836,7 @@ const tabs = [
 
               {activeTab === 'gallery' && (
                 <div className="max-w-6xl mx-auto">
-                  <h2 className="text-3xl font-bold mb-8 text-center">Event Gallery</h2>
+                  <SectionHeading title="Event Gallery" />
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((img) => (
                       <div key={img} className="relative aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
