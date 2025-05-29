@@ -9,14 +9,8 @@ interface RegistrationPanelProps {
   onClose: () => void;
 }
 
-type GuardianType = 'Father' | 'Mother' | 'Guardian';
 
-interface Guardian {
-  type: GuardianType;
-  name: string;
-  phone: string;
-  email: string;
-}
+
 
 interface ChildInfo {
   id: string;
@@ -25,7 +19,7 @@ interface ChildInfo {
   school: string;
   class: string;
   flatNo: string;
-  guardians: Guardian[];
+  email: string;
   personalNote?: string;
 }
 
@@ -35,10 +29,6 @@ interface FormData {
   school: string;
   class: string;
   flatNo: string;
-  guardianType: GuardianType;
-  guardianName: string;
-  guardianPhone: string;
-  guardianEmail: string;
   email: string;
   personalNote?: string;
   stallName?: string;
@@ -62,9 +52,11 @@ interface PaymentInfo {
 const CLASSES = ['IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
 const calculateMinMaxDates = () => {
-  const today = new Date('2025-05-10'); // Using the provided current date
-  const minDate = new Date(today);
-  const maxDate = new Date(today);
+  // Use a fixed date for consistent server/client rendering
+  const baseDate = '2025-05-29';
+  const today = new Date(baseDate);
+  const minDate = new Date(baseDate);
+  const maxDate = new Date(baseDate);
   
   minDate.setFullYear(today.getFullYear() - 18); // 18 years ago
   maxDate.setFullYear(today.getFullYear() - 8);  // 8 years ago
@@ -78,33 +70,11 @@ const calculateMinMaxDates = () => {
 export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanelProps) {
   const [step, setStep] = useState(1);
   const [children, setChildren] = useState<ChildInfo[]>([]);
-  const [guardians, setGuardians] = useState<Guardian[]>([]);
+  
   const { register, handleSubmit, reset, formState: { errors }, watch, setValue } = useForm<FormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const dateRange = calculateMinMaxDates();
-
-  const handleAddGuardian = () => {
-    const type = watch('guardianType');
-    const name = watch('guardianName');
-    const phone = watch('guardianPhone');
-    const email = watch('guardianEmail');
-
-    if (!type || !name || !phone || !email) return;
-
-    // Check if this type of guardian already exists
-    if (guardians.some(g => g.type === type)) {
-      alert(`${type} already added`);
-      return;
-    }
-
-    setGuardians([...guardians, { type, name, phone, email }]);
-    
-    // Reset guardian form fields
-    setValue('guardianName', '');
-    setValue('guardianPhone', '');
-    setValue('guardianEmail', '');
-  };
 
   const handleNext = () => {
     setStep(prev => Math.min(prev + 1, 3));
@@ -116,28 +86,20 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
 
   const onSubmit = async (data: FormData) => {
     if (step === 1) {
-      if (!data.childName || !data.guardianType || !data.guardianName || !data.guardianPhone || !data.guardianEmail) {
+      if (!data.childName || !data.email) {
         alert('Please fill in all required fields');
         return;
       }
 
-      // Create guardian object from form data
-      const guardian: Guardian = {
-        type: data.guardianType,
-        name: data.guardianName,
-        phone: data.guardianPhone,
-        email: data.guardianEmail
-      };
-
-      // Add new child to the list with the guardian
+      // Add new child to the list
       const newChild: ChildInfo = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: `child-${children.length + 1}`,
         childName: data.childName,
         dateOfBirth: data.dateOfBirth,
         school: data.school,
         class: data.class,
         flatNo: data.flatNo,
-        guardians: [guardian], // Add the guardian from form
+        email: data.email,
         personalNote: data.personalNote
       };
 
@@ -218,7 +180,7 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
               <div className="bg-gray-50 p-6 rounded-lg border space-y-4">
                 <h4 className="text-lg font-medium">Young Entrepreneur</h4>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Child's Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Young Entrepreneur's Name *</label>
                   <input
                     type="text"
                     {...register('childName', { 
@@ -234,45 +196,43 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                     <p className="text-red-500 text-sm mt-1">{errors.childName.message}</p>
                   )}
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
-                    <input
-                      type="date"
-                      {...register('dateOfBirth', { 
-                        required: 'Date of birth is required',
-                        min: {
-                          value: dateRange.min,
-                          message: 'Child must be under 18 years old'
-                        },
-                        max: {
-                          value: dateRange.max,
-                          message: 'Child must be at least 8 years old'
-                        }
-                      })}
-                      min={dateRange.min}
-                      max={dateRange.max}
-                      className={`w-full p-2 border rounded-md ${errors.dateOfBirth ? 'border-red-500' : ''}`}
-                    />
-                    {errors.dateOfBirth && (
-                      <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Class *</label>
-                    <select
-                      {...register('class', { required: 'Class is required' })}
-                      className={`w-full p-2 border rounded-md ${errors.class ? 'border-red-500' : ''}`}
-                    >
-                      <option value="">Select Class</option>
-                      {CLASSES.map((cls) => (
-                        <option key={cls} value={cls}>{cls}</option>
-                      ))}
-                    </select>
-                    {errors.class && (
-                      <p className="text-red-500 text-sm mt-1">{errors.class.message}</p>
-                    )}
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
+                  <input
+                    type="date"
+                    {...register('dateOfBirth', { 
+                      required: 'Date of birth is required',
+                      min: {
+                        value: dateRange.min,
+                        message: 'Child must be under 18 years old'
+                      },
+                      max: {
+                        value: dateRange.max,
+                        message: 'Child must be at least 8 years old'
+                      }
+                    })}
+                    min={dateRange.min}
+                    max={dateRange.max}
+                    className={`w-full p-2 border rounded-md ${errors.dateOfBirth ? 'border-red-500' : ''}`}
+                  />
+                  {errors.dateOfBirth && (
+                    <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Class *</label>
+                  <select
+                    {...register('class', { required: 'Class is required' })}
+                    className={`w-full p-2 border rounded-md ${errors.class ? 'border-red-500' : ''}`}
+                  >
+                    <option value="">Select Class</option>
+                    {CLASSES.map((cls) => (
+                      <option key={cls} value={cls}>{cls}</option>
+                    ))}
+                  </select>
+                  {errors.class && (
+                    <p className="text-red-500 text-sm mt-1">{errors.class.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">School *</label>
@@ -310,138 +270,24 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                   )}
                   <p className="text-sm text-gray-500">Rainbow Vistas @ Rock Garden</p>
                 </div>
-                
-              </div>
-
-              {/* Parent/Guardian Details */}
-              <div className="space-y-4 mt-6">
-                <h4 className="text-lg font-medium">Parent/Guardian Information</h4>
-                
-                {/* Guardian Form */}
-                <div className="space-y-4 bg-gray-50 p-4 rounded-lg border">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
-                    <select
-                      {...register('guardianType', { required: 'Guardian type is required' })}
-                      className={`w-full p-2 border rounded-md ${errors.guardianType ? 'border-red-500' : ''}`}
-                    >
-                      <option value="">Select Type</option>
-                      <option value="Father">Father</option>
-                      <option value="Mother">Mother</option>
-                      <option value="Guardian">Guardian</option>
-                    </select>
-                    {errors.guardianType && (
-                      <p className="text-red-500 text-sm mt-1">{errors.guardianType.message}</p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                      <input
-                        type="text"
-                        {...register('guardianName', { 
-                          required: 'Name is required',
-                          pattern: {
-                            value: /^[A-Za-z\s]{2,50}$/,
-                            message: 'Name should contain only letters and spaces'
-                          }
-                        })}
-                        className={`w-full p-2 border rounded-md ${errors.guardianName ? 'border-red-500' : ''}`}
-                      />
-                      {errors.guardianName && (
-                        <p className="text-red-500 text-sm mt-1">{errors.guardianName.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
-                      <input
-                        type="tel"
-                        {...register('guardianPhone', { 
-                          required: 'Phone number is required',
-                          pattern: {
-                            value: /^[6-9]\d{9}$/,
-                            message: 'Enter valid 10-digit mobile number'
-                          }
-                        })}
-                        placeholder="10-digit mobile number"
-                        className={`w-full p-2 border rounded-md ${errors.guardianPhone ? 'border-red-500' : ''}`}
-                      />
-                      {errors.guardianPhone && (
-                        <p className="text-red-500 text-sm mt-1">{errors.guardianPhone.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                      <input
-                        type="email"
-                        {...register('guardianEmail', { 
-                          required: 'Email is required',
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: 'Invalid email address'
-                          }
-                        })}
-                        className={`w-full p-2 border rounded-md ${errors.guardianEmail ? 'border-red-500' : ''}`}
-                      />
-                      {errors.guardianEmail && (
-                        <p className="text-red-500 text-sm mt-1">{errors.guardianEmail.message}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={handleAddGuardian}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                      disabled={!watch('guardianType') || !watch('guardianName') || !watch('guardianPhone') || !watch('guardianEmail')}
-                    >
-                      Add Guardian
-                    </button>
-                  </div> */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <input
+                    type="email"
+                    {...register('email', { 
+                      required: 'Email is required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Invalid email address'
+                      }
+                    })}
+                    className={`w-full p-2 border rounded-md ${errors.email ? 'border-red-500' : ''}`}
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  )}
                 </div>
-
-                {/* Guardians Table */}
-                {/* {guardians.length > 0 && (
-                  <div className="mt-4">
-                    <h5 className="text-sm font-medium text-gray-700 mb-2">Added Guardians</h5>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {guardians.map((guardian, index) => (
-                            <tr key={index}>
-                              <td className="px-4 py-2">{guardian.type}</td>
-                              <td className="px-4 py-2">{guardian.name}</td>
-                              <td className="px-4 py-2">{guardian.phone}</td>
-                              <td className="px-4 py-2">{guardian.email}</td>
-                              <td className="px-4 py-2">
-                                <button
-                                  type="button"
-                                  onClick={() => setGuardians(guardians.filter((_, i) => i !== index))}
-                                  className="text-red-600 hover:text-red-800"
-                                >
-                                  Remove
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )} */}
+           
               </div>
 
               {/* <div className="flex justify-end mt-4">
@@ -574,11 +420,37 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
               <div className="space-y-4">
                 <div className="bg-blue-50 p-4 rounded-lg mb-4">
                   <h4 className="font-medium text-blue-800 mb-3">Registration Summary</h4>
-                  {children.length > 0 && children[0].guardians.length > 0 && (
-                    <div className="space-y-2 text-sm text-blue-700">
-                      <p><strong>Young Entrepreneur:</strong> {children[0].childName}</p>
-                      <p><strong>{children[0].guardians[0].type}:</strong> {children[0].guardians[0].name}</p>
-                      <p><strong>Contact:</strong> {children[0].guardians[0].phone}</p>
+                  {children.length > 0 && (
+                    <div className="space-y-4">
+                      <div>
+                        <h5 className="text-sm font-medium text-blue-900 mb-2">Young Entrepreneur Details</h5>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <p className="text-gray-600">Name</p>
+                            <p className="font-medium">{children[0].childName}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Date of Birth</p>
+                            <p className="font-medium">{children[0].dateOfBirth}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">School</p>
+                            <p className="font-medium">{children[0].school}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Class</p>
+                            <p className="font-medium">{children[0].class}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Flat No.</p>
+                            <p className="font-medium">{children[0].flatNo}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Email</p>
+                            <p className="font-medium">{children[0].email}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -586,7 +458,7 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                   <p className="text-lg font-medium mb-2">Registration Fee: ₹200</p>
                   <div className="mb-4">
                     <Image
-                      src="/qr-code-placeholder.png"
+                      src="/projects/bizkids/payment-qr.jpg"
                       alt="Payment QR Code"
                       width={200}
                       height={200}

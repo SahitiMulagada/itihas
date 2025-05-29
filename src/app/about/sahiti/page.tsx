@@ -10,7 +10,7 @@ export default function About() {
     },
     {
       category: 'Frameworks & Libraries',
-      items: ['React', 'Next.js', 'Node.js', 'Express', 'TailwindCSS'],
+      items: ['React', 'Next.js', 'Ionic Framework', 'Express', 'TailwindCSS'],
     },
     {
       category: 'Tools & Platforms',

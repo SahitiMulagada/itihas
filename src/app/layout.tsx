@@ -14,6 +14,17 @@ export const metadata: Metadata = {
   title: "Itihas - Personal Portfolio",
   description: "Welcome to Itihas - A showcase of projects, thoughts, and innovations in technology.",
   keywords: ["portfolio", "web development", "projects", "blog", "technology"],
+  icons: {
+    icon: '/favicon.ico',
+  },
+  other: {
+    'link': [
+      {
+        rel: 'stylesheet',
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -23,10 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <head>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-      </head>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning={true}>
         <SessionProvider>
           <div className="min-h-screen flex flex-col">
             <Header />

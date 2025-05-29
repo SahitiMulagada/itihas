@@ -1,123 +1,306 @@
 'use client';
 
 import Image from 'next/image';
-import SectionTitle from '../../../components/common/SectionTitle';
+import { motion } from 'framer-motion';
+import SectionHeading from '@/components/common/SectionHeading';
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6 }
+};
+
+const staggerContainer = {
+  animate: { transition: { staggerChildren: 0.2 } }
+};
 
 export default function UrbanLivingLab() {
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="bg-blue-100 py-5">
-        <div className="container mx-auto px-4">
+      <motion.section 
+        initial="initial"
+        animate="animate"
+        variants={staggerContainer}
+        className="relative w-full bg-gradient-to-br from-blue-900 to-blue-800 text-white py-24 overflow-hidden"
+      >
+        <motion.div 
+          variants={fadeInUp}
+          className="container mx-auto px-4 relative z-10"
+        >
           <div className="max-w-4xl mx-auto text-center">
-            <SectionTitle 
-              title="VPULL - Urban Living Lab" 
-              subtitle="Building a collaborative ecosystem for sustainable urban development in Visakhapatnam" 
-            />
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">VPULL - Urban Living Lab</h1>
+            <p className="text-xl text-blue-100">Building a collaborative ecosystem for sustainable urban development in Visakhapatnam</p>
           </div>
-        </div>
-      </div>
+        </motion.div>
+        <div className="absolute inset-0 bg-blue-500/10 backdrop-blur-sm" />
+      </motion.section>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto space-y-12">
-          {/* Overview Section */}
-          <section className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Project Overview</h2>
-            <p className="text-gray-600 leading-relaxed mb-6">
-              The Visakhapatnam Platform for Urban Living Lab (VPULL) is an innovative initiative that brings together various stakeholders to create sustainable solutions for urban development challenges. Through this platform, we facilitate collaboration between NGOs, TERI (The Energy and Resources Institute), GVMC (Greater Visakhapatnam Municipal Corporation), and local universities.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h3 className="font-semibold text-blue-900 mb-2">Collaboration</h3>
-                <p className="text-sm text-gray-600">Fostering partnerships between government, academia, and civil society organizations</p>
-              </div>
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h3 className="font-semibold text-blue-900 mb-2">Innovation</h3>
-                <p className="text-sm text-gray-600">Creating innovative solutions for urban sustainability challenges</p>
-              </div>
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h3 className="font-semibold text-blue-900 mb-2">Impact</h3>
-                <p className="text-sm text-gray-600">Driving positive change in Greater Visakhapatnam's urban development</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Key Features Section */}
-          <section className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Key Features</h2>
+      {/* Project Overview Section */}
+      <motion.section 
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+        className="w-full bg-gray-50 py-24"
+      >
+        <motion.div 
+          variants={fadeInUp}
+          className="container mx-auto px-4"
+        >
+          <div className="max-w-4xl mx-auto">
+            <SectionHeading title="Project Overview" />
             <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-2">Stakeholder Network</h3>
-                  <p className="text-gray-600">A comprehensive network connecting NGOs, government bodies, educational institutions, and urban development experts</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-2">Project Repository</h3>
-                  <p className="text-gray-600">Centralized database of urban development projects, research, and initiatives</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-2">Event Management</h3>
-                  <p className="text-gray-600">Coordination of workshops, seminars, and collaborative sessions</p>
-                </div>
-              </div>
+              <p className="text-gray-600 leading-relaxed text-lg">
+                The Visakhapatnam Platform for Urban Living Lab (VPULL) is an innovative initiative that brings together various stakeholders to create sustainable solutions for urban development challenges. Through this platform, we facilitate collaboration between NGOs, TERI (The Energy and Resources Institute), GVMC (Greater Visakhapatnam Municipal Corporation), and local universities.
+              </p>
+              <motion.div 
+                variants={staggerContainer}
+                className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              >
+                <motion.div 
+                  variants={fadeInUp}
+                  className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                  <h3 className="font-semibold text-blue-900 text-xl mb-4">Collaboration</h3>
+                  <p className="text-gray-600">Fostering partnerships between government, academia, and civil society organizations</p>
+                </motion.div>
+                <motion.div 
+                  variants={fadeInUp}
+                  className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                  <h3 className="font-semibold text-blue-900 text-xl mb-4">Innovation</h3>
+                  <p className="text-gray-600">Creating innovative solutions for urban sustainability challenges</p>
+                </motion.div>
+                <motion.div 
+                  variants={fadeInUp}
+                  className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                  <h3 className="font-semibold text-blue-900 text-xl mb-4">Impact</h3>
+                  <p className="text-gray-600">Driving positive change in Greater Visakhapatnam's urban development</p>
+                </motion.div>
+              </motion.div>
             </div>
-          </section>
+          </div>
+        </motion.div>
+      </motion.section>
 
-          {/* Partners Section */}
-          <section className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Our Partners</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="text-center p-4">
-                <div className="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-xl font-semibold text-blue-600">GVMC</span>
+      {/* About V-PULL Section */}
+      <motion.section 
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+        className="w-full bg-white py-24"
+      >
+        <motion.div 
+          variants={fadeInUp}
+          className="container mx-auto px-4"
+        >
+          <div className="max-w-4xl mx-auto">
+            <SectionHeading title="About V-PULL" />
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <motion.div 
+                variants={fadeInUp}
+                className="space-y-6"
+              >
+                <p className="text-gray-600 leading-relaxed text-lg">
+                  V-PULL is a pioneering initiative that transforms Visakhapatnam into a living laboratory for sustainable urban development. Our platform brings together diverse stakeholders to co-create innovative solutions for urban challenges.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800">Multi-stakeholder Collaboration</h3>
+                      <p className="text-gray-600">Bringing together government, academia, and civil society</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800">Innovation Hub</h3>
+                      <p className="text-gray-600">Fostering creative solutions for urban challenges</p>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-semibold text-gray-800">Greater Visakhapatnam Municipal Corporation</h3>
-              </div>
-              <div className="text-center p-4">
-                <div className="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-xl font-semibold text-blue-600">TERI</span>
-                </div>
-                <h3 className="font-semibold text-gray-800">The Energy and Resources Institute</h3>
-              </div>
-              <div className="text-center p-4">
-                <div className="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-xl font-semibold text-blue-600">AU</span>
-                </div>
-                <h3 className="font-semibold text-gray-800">Andhra University</h3>
-              </div>
+              </motion.div>
+              <motion.div 
+                variants={fadeInUp}
+                className="relative aspect-square rounded-2xl overflow-hidden shadow-xl"
+              >
+                <Image
+                  src="/images/urban-living-lab/about.jpg"
+                  alt="V-PULL Activities"
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
             </div>
-          </section>
+          </div>
+        </motion.div>
+      </motion.section>
 
-          {/* Get Involved Section */}
-          <section className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-lg p-8 text-white">
-            <h2 className="text-2xl font-bold mb-4">Get Involved</h2>
-            <p className="mb-6">Join us in building a sustainable future for Visakhapatnam. Whether you're an NGO, researcher, or concerned citizen, there's a place for you in our ecosystem.</p>
-            <a href="/contact" className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors duration-200">
-              Contact Us
-            </a>
-          </section>
-        </div>
-      </div>
+      {/* V-PULL Framework Section */}
+      <motion.section 
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+        className="w-full bg-gradient-to-br from-blue-50 to-indigo-50 py-24"
+      >
+        <motion.div 
+          variants={fadeInUp}
+          className="container mx-auto px-4"
+        >
+          <div className="max-w-4xl mx-auto">
+            <SectionHeading title="V-PULL Framework" />
+            <div className="grid md:grid-cols-3 gap-8">
+              <motion.div 
+                variants={fadeInUp}
+                className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                  <span className="text-2xl font-bold text-blue-600">01</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Problem Identification</h3>
+                <p className="text-gray-600">Identifying key urban challenges through stakeholder engagement and data analysis</p>
+              </motion.div>
+              <motion.div 
+                variants={fadeInUp}
+                className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                  <span className="text-2xl font-bold text-blue-600">02</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Co-Creation</h3>
+                <p className="text-gray-600">Developing solutions through collaborative workshops and innovation sessions</p>
+              </motion.div>
+              <motion.div 
+                variants={fadeInUp}
+                className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                  <span className="text-2xl font-bold text-blue-600">03</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Implementation</h3>
+                <p className="text-gray-600">Piloting and scaling solutions with continuous monitoring and evaluation</p>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.section>
+
+      {/* Project Team Section */}
+      <motion.section 
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+        className="w-full bg-white py-24"
+      >
+        <motion.div 
+          variants={fadeInUp}
+          className="container mx-auto px-4"
+        >
+          <div className="max-w-4xl mx-auto">
+            <SectionHeading title="Project Team" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {[
+                {
+                  name: 'Dr. Sarah Johnson',
+                  role: 'Project Lead',
+                  image: '/images/urban-living-lab/team/member1.jpg'
+                },
+                {
+                  name: 'Prof. Raj Kumar',
+                  role: 'Research Head',
+                  image: '/images/urban-living-lab/team/member2.jpg'
+                },
+                {
+                  name: 'Ms. Priya Sharma',
+                  role: 'Community Lead',
+                  image: '/images/urban-living-lab/team/member3.jpg'
+                },
+                {
+                  name: 'Mr. David Chen',
+                  role: 'Technical Lead',
+                  image: '/images/urban-living-lab/team/member4.jpg'
+                }
+              ].map((member, index) => (
+                <motion.div
+                  key={member.name}
+                  variants={fadeInUp}
+                  className="text-center"
+                >
+                  <div className="relative w-40 h-40 mx-auto mb-4 rounded-full overflow-hidden shadow-lg">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">{member.name}</h3>
+                  <p className="text-gray-600">{member.role}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </motion.section>
+
+      {/* Gallery Section */}
+      <motion.section 
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+        className="w-full bg-gradient-to-br from-gray-50 to-blue-50 py-24"
+      >
+        <motion.div 
+          variants={fadeInUp}
+          className="container mx-auto px-4"
+        >
+          <div className="max-w-6xl mx-auto">
+            <SectionHeading title="Gallery" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { src: '/images/urban-living-lab/gallery/1.jpg', title: 'Community Workshop' },
+                { src: '/images/urban-living-lab/gallery/2.jpg', title: 'Urban Planning Session' },
+                { src: '/images/urban-living-lab/gallery/3.jpg', title: 'Stakeholder Meeting' },
+                { src: '/images/urban-living-lab/gallery/4.jpg', title: 'Field Research' },
+                { src: '/images/urban-living-lab/gallery/5.jpg', title: 'Innovation Lab' },
+                { src: '/images/urban-living-lab/gallery/6.jpg', title: 'Project Implementation' }
+              ].map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  variants={fadeInUp}
+                  className="group relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Image
+                    src={item.src}
+                    alt={item.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <h3 className="text-white font-semibold text-lg">{item.title}</h3>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </motion.section>
     </div>
   );
 }
+
