@@ -8,37 +8,30 @@ const projects = [
     id: 1,
     title: 'Rainbow Vista - BizKids',
     description: 'Kids Entrepreneurship event focused on developing business skills',
-    image: '/projects/bizkids/board/placeholders.png',
+    image: '/projects/bizkids/logo.jpg',
     slug: 'rainbow-vista/bizkids',
   },
   {
     id: 2,
     title: 'Training Exercises',
     description: 'Collection of training materials and exercises',
-    image: '/projects/bizkids/board/placeholders.png',
+    image: '/projects/training-exercises/logo.png',
     slug: 'training-exercises',
   },
   {
     id: 3,
     title: 'Visakhapatnam Urban Lab',
     description: 'Urban development and planning initiatives',
-    image: '/projects/bizkids/board/placeholders.png',
-    slug: 'vizag-urban-lab',
+    image: '/projects/v-pull/logo.png',
+    slug: 'urban-living-lab',
   },
   {
     id: 4,
     title: 'Sports Split',
     description: 'Mobile app for sports enthusiasts',
-    image: '/projects/bizkids/board/placeholders.png',
+    image: '/projects/sports-split/logo.png',
     slug: 'sports-split',
-  },
-  {
-    id: 5,
-    title: 'Natural Remedies',
-    description: 'Collection of natural health remedies and practices',
-    image: '/projects/bizkids/board/placeholders.png',
-    slug: 'natural-remedies',
-  },
+  }
 ];
 
 const LatestProjects = () => {

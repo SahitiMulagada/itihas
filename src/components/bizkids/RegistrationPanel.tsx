@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 
@@ -49,7 +49,9 @@ interface PaymentInfo {
   paymentScreenshot?: File;
 }
 
-const CLASSES = ['IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+import { getClasses, getStallCategories, registerBizkid } from '../../services/bizkids/registrationService';
+
+
 
 const calculateMinMaxDates = () => {
   // Use a fixed date for consistent server/client rendering
@@ -70,9 +72,27 @@ const calculateMinMaxDates = () => {
 export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanelProps) {
   const [step, setStep] = useState(1);
   const [children, setChildren] = useState<ChildInfo[]>([]);
-  
+  const [classes, setClasses] = useState<string[]>([]);
+  const [categories, setCategories] = useState<{ctgry_id: number; ctgry_nm: string}[]>([]);
   const { register, handleSubmit, reset, formState: { errors }, watch, setValue } = useForm<FormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [classesData, categoriesData] = await Promise.all([
+          getClasses(),
+          getStallCategories()
+        ]);
+        setClasses(classesData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    
+    fetchData();
+  }, []);
   
   const dateRange = calculateMinMaxDates();
 
@@ -116,16 +136,17 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
         alert('Please upload the payment screenshot');
         return;
       }
-      console.log('Form submitted:', { 
-        entrepreneur: children[0],
-        stallInfo: {
-          name: data.stallName,
-          description: data.stallDescription,
-          category: data.category,
-          otherNotes: data.otherNotes
-        }
-      });
-      // Handle form submission
+      
+      try {
+        setIsSubmitting(true);
+        await registerBizkid(data);
+        alert('Registration successful!');
+        onClose();
+      } catch (error) {
+        alert('Registration failed. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -226,7 +247,7 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                     className={`w-full p-2 border rounded-md ${errors.class ? 'border-red-500' : ''}`}
                   >
                     <option value="">Select Class</option>
-                    {CLASSES.map((cls) => (
+                    {classes.map((cls) => (
                       <option key={cls} value={cls}>{cls}</option>
                     ))}
                   </select>
@@ -387,15 +408,13 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
                   <select
-                    {...register('category', { required: 'Please select a category' })}
+                    {...register('category', { required: 'Category is required' })}
                     className={`w-full p-2 border rounded-md ${errors.category ? 'border-red-500' : ''}`}
                   >
-                    <option value="">Select a category</option>
-                    <option value="Food">Food</option>
-                    <option value="Craft">Craft</option>
-                    <option value="Social cause">Social cause</option>
-                    <option value="Games">Games</option>
-                    <option value="Others">Others</option>
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option key={category.ctgry_id} value={category.ctgry_nm}>{category.ctgry_nm}</option>
+                    ))}
                   </select>
                   {errors.category && (
                     <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
@@ -469,7 +488,7 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Upload Payment Screenshot</label>
+                  <label className="block text-sm font-medium mb-1 blink text-red-600 font-bold">Please make payment and upload a screenshot here</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -488,11 +507,9 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                   {children.length > 0 && (
                     <div className="bg-green-50 p-4 rounded-lg">
                       <h4 className="font-medium text-green-800 mb-2">Registration Summary</h4>
-                      <p className="text-sm text-green-700 mb-2">
-                        Number of children registering: {children.length}
-                      </p>
+
                       <p className="text-sm text-green-700">
-                        Total amount to pay: ₹{children.length * 200}
+                        Total amount to pay: ₹{ 200}
                       </p>
                     </div>
                   )}

@@ -9,7 +9,7 @@ export default function Projects() {
       id: 1,
       title: 'Rainbow Vista - BizKids',
       description: 'Kids Entrepreneurship event focused on developing business skills and fostering creativity in young minds.',
-      image: '/projects/bizkids/board/placeholders.png',
+      image: '/projects/bizkids/logo.jpg',
       slug: 'rainbow-vista/bizkids',
       technologies: ['Workshop Planning', 'Educational Design', 'Interactive Learning'],
     },
@@ -17,7 +17,7 @@ export default function Projects() {
       id: 2,
       title: 'Training Exercises',
       description: 'Comprehensive collection of training materials and exercises designed for skill development.',
-      image: '/projects/bizkids/board/placeholders.png',
+      image: '/projects/training-exercises/logo.png',
       slug: 'training-exercises',
       technologies: ['Education', 'Training', 'Development'],
     },
@@ -25,7 +25,7 @@ export default function Projects() {
       id: 3,
       title: 'Visakhapatnam Urban Lab',
       description: 'Urban development and planning initiatives for sustainable city growth.',
-      image: '/projects/bizkids/board/placeholders.png',
+      image: '/projects/v-pull/logo.png',
       slug: 'vizag-urban-lab',
       technologies: ['Urban Planning', 'Development', 'Sustainability'],
     },
@@ -33,18 +33,10 @@ export default function Projects() {
       id: 4,
       title: 'Sports Split',
       description: 'Mobile application for sports enthusiasts to connect and organize events.',
-      image: '/projects/bizkids/board/placeholders.png',
+      image: '/projects/sports-split/logo.png',
       slug: 'sports-split',
       technologies: ['Mobile Development', 'React Native', 'Node.js'],
-    },
-    {
-      id: 5,
-      title: 'Natural Remedies',
-      description: 'Collection of natural health remedies and practices for holistic wellness.',
-      image: '/projects/bizkids/board/placeholders.png',
-      slug: 'natural-remedies',
-      technologies: ['Health', 'Wellness', 'Research'],
-    },
+    }
   ];
 
   return (

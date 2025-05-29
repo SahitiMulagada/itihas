@@ -149,6 +149,15 @@ const tabs = [
         </nav>
         {/* Hero Section */}
         <div className="relative h-[500px] w-full">
+          <div className="absolute top-4 right-4 z-10 bg-white rounded-lg p-2 shadow-md">
+            <Image
+              src="/projects/bizkids/logo.jpg"
+              alt="BizKids Logo"
+              width={150}
+              height={150}
+              className="rounded-lg"
+            />
+          </div>
           <Image
             src="/projects/bizkids/header.jpg"
             alt="Rainbow Vista BizKids"
@@ -343,10 +352,10 @@ const tabs = [
                               </div>
                               <div className="ml-4 flex-grow">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-1">Event Date & Time</h3>
-                                <p className="text-gray-600 text-sm">Saturday, June 15, 2024</p>
+                                <p className="text-gray-600 text-sm">Saturday, June 7, 2025</p>
                                 <div className="flex items-center text-gray-600 text-sm mt-1">
                                   <MdAccessTime className="mr-1 text-blue-600" />
-                                  <span>10:00 AM - 6:00 PM</span>
+                                  <span>04:00 PM - 09:00 PM</span>
                                 </div>
                               </div>
                             </div>
@@ -372,7 +381,7 @@ const tabs = [
                               <div className="ml-4 flex-grow">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-1">Location</h3>
                                 <p className="text-gray-600 text-sm">Rainbow Vista Rock gardens</p>
-                                <p className="text-gray-600 text-sm">Before K-Block</p>
+                                <p className="text-gray-600 text-sm">Before K,L,M,N-Blocks</p>
                               </div>
                             </div>
                           </motion.div>
@@ -397,7 +406,7 @@ const tabs = [
                               <div className="ml-4 flex-grow">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-1">Registration Deadline</h3>
                                 <p className="text-gray-600 text-sm">Last day for registration:</p>
-                                <p className="text-purple-600 font-semibold text-sm mt-1">May 30, 2025</p>
+                                <p className="text-purple-600 font-semibold text-sm mt-1">June 6, 2025</p>
                               </div>
                             </div>
                           </motion.div>
