@@ -6,10 +6,10 @@ const ContactSection = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-100">
-            Let's Work Together
+            Let&apos;s Work Together
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Have a project in mind? I'd love to hear about it. Let's discuss how we can work together to bring your ideas to life.
+            Have a project in mind? I&apos;d love to hear about it. Let&apos;s discuss how we can work together to bring your ideas to life.
           </p>
           <Link
             href="/contact"

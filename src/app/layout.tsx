@@ -19,10 +19,7 @@ export const metadata: Metadata = {
   },
   other: {
     'link': [
-      {
-        rel: 'stylesheet',
-        href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
-      },
+      'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
     ],
   },
 };

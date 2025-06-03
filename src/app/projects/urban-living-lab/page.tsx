@@ -77,7 +77,7 @@ export default function UrbanLivingLab() {
                   className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
                 >
                   <h3 className="font-semibold text-blue-900 text-xl mb-4">Impact</h3>
-                  <p className="text-gray-600">Driving positive change in Greater Visakhapatnam's urban development</p>
+                  <p className="text-gray-600">Driving positive change in Greater Visakhapatnam&apos;s urban development</p>
                 </motion.div>
               </motion.div>
             </div>
@@ -234,7 +234,7 @@ export default function UrbanLivingLab() {
                   role: 'Technical Lead',
                   image: '/images/urban-living-lab/team/member4.jpg'
                 }
-              ].map((member, index) => (
+              ].map((member) => (
                 <motion.div
                   key={member.name}
                   variants={fadeInUp}
@@ -279,7 +279,7 @@ export default function UrbanLivingLab() {
                 { src: '/images/urban-living-lab/gallery/4.jpg', title: 'Field Research' },
                 { src: '/images/urban-living-lab/gallery/5.jpg', title: 'Innovation Lab' },
                 { src: '/images/urban-living-lab/gallery/6.jpg', title: 'Project Implementation' }
-              ].map((item, index) => (
+              ].map((item) => (
                 <motion.div
                   key={item.title}
                   variants={fadeInUp}

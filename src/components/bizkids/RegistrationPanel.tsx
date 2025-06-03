@@ -9,21 +9,7 @@ interface RegistrationPanelProps {
   onClose: () => void;
 }
 
-
-
-
-interface ChildInfo {
-  id: string;
-  childName: string;
-  dateOfBirth: string;
-  school: string;
-  class: string;
-  flatNo: string;
-  email: string;
-  personalNote?: string;
-}
-
-interface FormData {
+interface RegistrationData {
   childName: string;
   dateOfBirth: string;
   school: string;
@@ -38,31 +24,17 @@ interface FormData {
   paymentScreenshot?: File;
 }
 
-interface StallInfo {
-  name: string;
-  description: string;
-  category: 'Food' | 'Craft' | 'Social cause' | 'Games' | 'Others';
-  otherNotes?: string;
-}
-
-interface PaymentInfo {
-  paymentScreenshot?: File;
-}
-
 import { getClasses, getStallCategories, registerBizkid } from '../../services/bizkids/registrationService';
 
-
-
 const calculateMinMaxDates = () => {
-  // Use a fixed date for consistent server/client rendering
   const baseDate = '2025-05-29';
   const today = new Date(baseDate);
   const minDate = new Date(baseDate);
   const maxDate = new Date(baseDate);
   
-  minDate.setFullYear(today.getFullYear() - 18); // 18 years ago
-  maxDate.setFullYear(today.getFullYear() - 8);  // 8 years ago
-  
+  minDate.setFullYear(today.getFullYear() - 18); 
+  maxDate.setFullYear(today.getFullYear() - 8);  
+
   return {
     min: minDate.toISOString().split('T')[0],
     max: maxDate.toISOString().split('T')[0]
@@ -71,10 +43,19 @@ const calculateMinMaxDates = () => {
 
 export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanelProps) {
   const [step, setStep] = useState(1);
-  const [children, setChildren] = useState<ChildInfo[]>([]);
+  const [children, setChildren] = useState<Array<{
+    id: string;
+    childName: string;
+    dateOfBirth: string;
+    school: string;
+    class: string;
+    flatNo: string;
+    email: string;
+    personalNote?: string;
+  }>>([]);
   const [classes, setClasses] = useState<string[]>([]);
-  const [categories, setCategories] = useState<{ctgry_id: number; ctgry_nm: string}[]>([]);
-  const { register, handleSubmit, reset, formState: { errors }, watch, setValue } = useForm<FormData>();
+  const [categories, setCategories] = useState<Array<{ctgry_id: number; ctgry_nm: string}>>([]);
+  const { register, handleSubmit, formState: { errors } } = useForm<RegistrationData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -97,22 +78,21 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
   const dateRange = calculateMinMaxDates();
 
   const handleNext = () => {
-    setStep(prev => Math.min(prev + 1, 3));
+    setStep((prev: number) => Math.min(prev + 1, 3));
   };
 
   const handleBack = () => {
-    setStep(prev => Math.max(prev - 1, 1));
+    setStep((prev: number) => Math.max(prev - 1, 1));
   };
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: RegistrationData) => {
     if (step === 1) {
       if (!data.childName || !data.email) {
         alert('Please fill in all required fields');
         return;
       }
 
-      // Add new child to the list
-      const newChild: ChildInfo = {
+      const newChild = {
         id: `child-${children.length + 1}`,
         childName: data.childName,
         dateOfBirth: data.dateOfBirth,
@@ -124,11 +104,10 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
       };
 
       setChildren([...children, newChild]);
-      handleNext(); // Automatically move to next step
+      handleNext(); 
     } else if (step === 2) {
-      // Validate stall information
       if (!data.stallName || !data.stallDescription || !data.category) {
-        return; // Form validation will show the error messages
+        return; 
       }
       handleNext();
     } else if (step === 3) {
@@ -142,7 +121,8 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
         await registerBizkid(data);
         alert('Registration successful!');
         onClose();
-      } catch (error) {
+      } catch (error: unknown) {
+        void error; // Explicitly ignore error
         alert('Registration failed. Please try again.');
       } finally {
         setIsSubmitting(false);
@@ -201,7 +181,7 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
               <div className="bg-gray-50 p-6 rounded-lg border space-y-4">
                 <h4 className="text-lg font-medium">Young Entrepreneur</h4>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Young Entrepreneur's Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Young Entrepreneur&apos;s Name *</label>
                   <input
                     type="text"
                     {...register('childName', { 
@@ -247,7 +227,7 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                     className={`w-full p-2 border rounded-md ${errors.class ? 'border-red-500' : ''}`}
                   >
                     <option value="">Select Class</option>
-                    {classes.map((cls) => (
+                    {classes.map((cls: string) => (
                       <option key={cls} value={cls}>{cls}</option>
                     ))}
                   </select>
@@ -412,7 +392,7 @@ export default function RegistrationPanel({ isOpen, onClose }: RegistrationPanel
                     className={`w-full p-2 border rounded-md ${errors.category ? 'border-red-500' : ''}`}
                   >
                     <option value="">Select Category</option>
-                    {categories.map((category) => (
+                    {categories.map((category: {ctgry_id: number; ctgry_nm: string}) => (
                       <option key={category.ctgry_id} value={category.ctgry_nm}>{category.ctgry_nm}</option>
                     ))}
                   </select>

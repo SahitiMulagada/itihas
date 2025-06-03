@@ -67,7 +67,7 @@ export const getClasses = async (): Promise<string[]> => {
   }
 };
 
-export const registerBizkid = async (data: RegistrationData): Promise<any> => {
+export const registerBizkid = async (data: RegistrationData): Promise<ApiResponse<{ message: string }>> => {
   try {
     // Create FormData to handle file upload
     const formData = new FormData();

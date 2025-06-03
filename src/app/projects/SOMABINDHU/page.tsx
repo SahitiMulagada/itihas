@@ -41,7 +41,7 @@ export default function Somabindhu() {
           <div className="max-w-6xl mx-auto">
           <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border-l-4 border-green-500 text-center">
           <h2 className="text-2xl font-bold text-green-800 mb-4  items-center text-center">
-            <FaRegLightbulb className="w-6 h-6 mr-2 " /> Inspired by Our Grandparents' Wisdom
+            <FaRegLightbulb className="w-6 h-6 mr-2 " /> Inspired by Our Grandparents&apos; Wisdom
           </h2>
           <p className="text-gray-700 mb-6">
           This project was inspired by the traditional herbal remedies prepared lovingly by our grandparents. They used to make kashayam from herbs to treat cough, cold, and mild fever.

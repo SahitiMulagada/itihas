@@ -1,3 +1,14 @@
+import { use } from 'react';
+
+export async function generateStaticParams() {
+  // This would typically come from your CMS or database
+  // For now, we'll return some example slugs
+  return [
+    { slug: 'future-of-technology' },
+    { slug: 'sustainable-solutions' },
+    { slug: 'ai-revolution' },
+  ];
+}
 import Image from 'next/image';
 import Layout from '../../../components/layout/Layout';
 
@@ -11,6 +22,7 @@ interface BlogPost {
 }
 
 // This would typically come from a CMS or database
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getBlogPost = (slug: string): BlogPost => {
   // Example post data
   return {
@@ -65,8 +77,9 @@ const getBlogPost = (slug: string): BlogPost => {
   };
 };
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
-  const post = getBlogPost(params.slug);
+export default function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = use(params);
+  const post = getBlogPost(resolvedParams.slug);
 
   return (
     <Layout>

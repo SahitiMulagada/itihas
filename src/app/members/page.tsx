@@ -196,7 +196,7 @@ export default function Members() {
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl font-bold text-blue-800 mb-6">Want to Join Us?</h2>
               <p className="text-gray-700 mb-8">
-                We're always looking for passionate kids who want to make a difference.
+                We&apos;re always looking for passionate kids who want to make a difference.
                 Join our community and be part of something meaningful!
               </p>
               <Link

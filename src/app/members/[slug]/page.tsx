@@ -1,10 +1,22 @@
+import { use } from 'react';
+
+export async function generateStaticParams() {
+  // This would typically come from your database
+  // For now, we'll return some example member slugs
+  return [
+    { slug: 'john-doe' },
+    { slug: 'jane-smith' },
+    { slug: 'alex-kumar' },
+  ];
+}
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '../../../components/layout/Layout';
 import SectionTitle from '../../../components/common/SectionTitle';
 
-export default function MemberProfile({ params }: { params: { slug: string } }) {
+export default function MemberProfile({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = use(params);
   const members = {
     rohan: {
       name: 'Rohan',
@@ -56,7 +68,9 @@ export default function MemberProfile({ params }: { params: { slug: string } }) 
     }
   };
 
-  const member = members[params.slug as keyof typeof members];
+  const getMemberDetails = (slug: string) => members[slug as keyof typeof members];
+
+  const member = getMemberDetails(resolvedParams.slug);
   
   if (!member) {
     notFound();

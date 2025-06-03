@@ -4,7 +4,8 @@ import Layout from '../../../../../../components/layout/Layout';
 import Link from 'next/link';
 import { MdOutlineChevronRight } from 'react-icons/md';
 
-
+import { useSession } from 'next-auth/react';
+import ReviewForm from '../../../../../../components/reviews/ReviewForm';
 
 interface StallDetails {
   id: string;
@@ -37,46 +38,46 @@ const getStallDetails = (id: string): StallDetails => {
   // In a real app, we would fetch this data based on the id
   const stallData: Record<string, StallDetails> = {
     'creative-crafts': {
-      id: 'creative-crafts',
-      name: 'Creative Crafts',
-      category: 'Arts & Crafts',
-      coverImage: '/stalls/creative-crafts-cover.jpg',
-      profileImage: '/stalls/creative-crafts-profile.jpg',
-      entrepreneurs: [
-        {
-          name: 'Sarah Johnson',
-          age: 12,
-          school: 'Rainbow International School',
-          image: '/entrepreneurs/sarah.jpg',
-          blockNo: 'B4',
-          flatNo: '1204',
-        },
-        {
-          name: 'Mike Chen',
-          age: 13,
-          school: 'Delhi Public School',
-          image: '/entrepreneurs/mike.jpg',
-          blockNo: 'A2',
-          flatNo: '803',
-        },
-      ],
-      description: 'Creative Crafts is a unique stall that showcases handmade artwork and crafts created by young artists. Our mission is to promote creativity and entrepreneurship among youth while providing beautiful, handcrafted items to our customers.',
-      posterImage: '/stalls/creative-crafts-poster.jpg',
-      videoUrl: 'https://www.youtube.com/embed/example',
-      reviews: [
-        {
-          author: 'John Smith',
-          rating: 5,
-          comment: 'Amazing creativity and professional presentation!',
-          date: '2025-05-01',
-        },
-        {
-          author: 'Emily Brown',
-          rating: 4,
-          comment: 'Great variety of handmade items.',
-          date: '2025-05-02',
-        },
-      ],
+    id: 'creative-crafts',
+    name: 'Creative Crafts',
+    category: 'Arts & Crafts',
+    coverImage: '/stalls/creative-crafts-cover.jpg',
+    profileImage: '/stalls/creative-crafts-profile.jpg',
+    entrepreneurs: [
+      {
+        name: 'Sarah Johnson',
+        age: 12,
+        school: 'Rainbow International School',
+        image: '/entrepreneurs/sarah.jpg',
+        blockNo: 'B4',
+        flatNo: '1204',
+      },
+      {
+        name: 'Mike Chen',
+        age: 13,
+        school: 'Delhi Public School',
+        image: '/entrepreneurs/mike.jpg',
+        blockNo: 'A2',
+        flatNo: '803',
+      },
+    ],
+    description: 'Creative Crafts is a unique stall that showcases handmade artwork and crafts created by young artists. Our mission is to promote creativity and entrepreneurship among youth while providing beautiful, handcrafted items to our customers.',
+    posterImage: '/stalls/creative-crafts-poster.jpg',
+    videoUrl: 'https://www.youtube.com/embed/example',
+    reviews: [
+      {
+        author: 'John Smith',
+        rating: 5,
+        comment: 'Amazing creativity and professional presentation!',
+        date: '2025-05-01',
+      },
+      {
+        author: 'Emily Brown',
+        rating: 4,
+        comment: 'Great variety of handmade items.',
+        date: '2025-05-02',
+      },
+    ],
     },
     'tech-toys': {
       id: 'tech-toys',
@@ -149,9 +150,23 @@ export async function generateStaticParams() {
   ];
 }
 
-export default function StallPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = React.use(params);
-  const stall = getStallDetails(resolvedParams.id);
+const StallPage: React.FC<{ params: { id: string } }> = ({ params }) => {
+  const { data: session } = useSession();
+  const [stall, setStall] = React.useState(() => getStallDetails(params.id));
+
+  const handleReviewSubmit = (review: { rating: number; comment: string }) => {
+    const newReview = {
+      author: session?.user?.name || 'Anonymous',
+      rating: review.rating,
+      comment: review.comment,
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    setStall(prev => ({
+      ...prev,
+      reviews: [newReview, ...prev.reviews]
+    }));
+  };
 
   return (
     <Layout>
@@ -240,7 +255,10 @@ export default function StallPage({ params }: { params: Promise<{ id: string }> 
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">Customer Reviews</h2>
                 
-
+                {/* Add Review Form */}
+                <div className="mb-8">
+                  <ReviewForm onSubmit={handleReviewSubmit} />
+                </div>
 
                 {/* Reviews List */}
                 <div className="space-y-6">
@@ -302,4 +320,8 @@ export default function StallPage({ params }: { params: Promise<{ id: string }> 
       </div>
     </Layout>
   );
-}
+};
+
+export default StallPage;
+
+

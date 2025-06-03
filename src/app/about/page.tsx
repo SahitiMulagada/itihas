@@ -147,7 +147,7 @@ export default function About() {
                   </Link>
                 </div>
                 <p className="text-blue-100 italic text-sm">
-                  We welcome kids of all ages and talents — whether you're an artist, writer, 
+                  We welcome kids of all ages and talents — whether you&apos;re an artist, writer, 
                   speaker, organizer, or just someone with a big heart.
                 </p>
               </div>
