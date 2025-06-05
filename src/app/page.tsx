@@ -44,9 +44,9 @@ export default function Home() {
       <div className="scroll-animate opacity-0 translate-y-10 transition-all duration-1000 ease-out bg-white">
         <LatestProjects />
       </div>
-      <div className="scroll-animate opacity-0 translate-y-10 transition-all duration-1000 ease-out bg-gray-50">
+      {/* <div className="scroll-animate opacity-0 translate-y-10 transition-all duration-1000 ease-out bg-gray-50">
         <LatestBlogs />
-      </div>
+      </div> */}
       <div className="bg-gradient-to-br from-indigo-900 via-blue-900 to-blue-800">
         <ContactSection />
       </div>
