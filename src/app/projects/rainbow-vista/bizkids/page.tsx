@@ -9,95 +9,9 @@ import { motion } from 'framer-motion';
 import Layout from '../../../../components/layout/Layout';
 import SectionHeading from '../../../../components/common/SectionHeading';
 import RegistrationPanel from '../../../../components/bizkids/RegistrationPanel';
-import { getOrganizationStructure } from '@/services/bizkids/organizationService';
-import OrganizationStructure from '@/components/bizkids/OrganizationStructure';
 
-interface Stall {
-  id: string;
-  name: string;
-  category: string;
-  image: string;
-  entrepreneurs: {
-    name: string;
-    age: number;
-    school: string;
-    image: string;
-    blockNo: string;
-    flatNo: string;
-  }[];
-  description: string;
-}
 
-const stalls: Stall[] = [
-  {
-    id: 'creative-crafts',
-    name: 'Creative Crafts',
-    category: 'Arts & Crafts',
-    image: '/stalls/creative-crafts.jpg',
-    entrepreneurs: [
-      {
-        name: 'Sarah Johnson',
-        age: 12,
-        school: 'Rainbow International School',
-        image: '/entrepreneurs/sarah.jpg',
-        blockNo: 'B4',
-        flatNo: '1204',
-      },
-      {
-        name: 'Mike Chen',
-        age: 13,
-        school: 'Delhi Public School',
-        image: '/entrepreneurs/mike.jpg',
-        blockNo: 'A2',
-        flatNo: '803',
-      },
-    ],
-    description: 'Handmade crafts and artwork by young artists',
-  },
-  {
-    id: 'tech-innovators',
-    name: 'Tech Innovators',
-    category: 'Technology',
-    image: '/stalls/tech-innovators.jpg',
-    entrepreneurs: [
-      {
-        name: 'Alex Kumar',
-        age: 14,
-        school: 'Rainbow International School',
-        image: '/entrepreneurs/alex.jpg',
-        blockNo: 'C1',
-        flatNo: '502',
-      },
-      {
-        name: 'Emily Wong',
-        age: 13,
-        school: 'Delhi Public School',
-        image: '/entrepreneurs/emily.jpg',
-        blockNo: 'D3',
-        flatNo: '901',
-      },
-    ],
-    description: 'Innovative tech solutions by young minds',
-  },
-];
 
-const boardMembers = [
-  {
-    name: 'Sarah Johnson',
-    role: 'President',
-    image: '/projects/bizkids/board/placeholders.png'
-  },
-  {
-    name: 'Michael Chen',
-    role: 'Vice President',
-    image: '/projects/kidsbiz/board/placeholders.png'
-  },
-  {
-    name: 'Emma Davis',
-    role: 'Secretary',
-    image: '/projects/kidsbiz/board/placeholders.png'
-  }
-];
 
 const floatAnimation = `
   @keyframes float {
@@ -123,11 +37,9 @@ function BizKidsContent() {
     document.head.appendChild(styleElement);
     return () => styleElement.remove();
   }, []);
-  const [activeFinanceSection, setActiveFinanceSection] = useState('income');
+
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [selectedPoster, setSelectedPoster] = useState<string | null>(null);
-
-  const organizationStructure = getOrganizationStructure();
 
   // Update URL when tab changes
   const handleTabChange = (tabId: string) => {
