@@ -493,10 +493,99 @@ function BizKidsContent() {
                   <p className="text-blue-800 text-lg mb-4 font-semibold">We want to keep the money collected and expenses transparent.</p>
                   <p className="text-blue-700 font-semibold">This is an event organized by kids for the kids for non profit.</p>
                 </div>
+
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 mb-12">
+                  <div className="bg-green-50 rounded-lg shadow-sm p-6 border-2 border-green-500">
+                    <h4 className="text-sm font-medium text-green-600 mb-1">Amount Collected</h4>
+                    <p className="text-2xl font-bold text-green-700">₹36,600</p>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg shadow-sm p-6 border-2 border-blue-500">
+                    <h4 className="text-sm font-medium text-blue-600 mb-1">Donations Received</h4>
+                    <p className="text-2xl font-bold text-blue-700">₹500</p>
+                  </div>
+                  <div className="bg-amber-50 rounded-lg shadow-sm p-6 border-2 border-amber-500">
+                    <h4 className="text-sm font-medium text-amber-600 mb-1">Total Expenses</h4>
+                    <p className="text-2xl font-bold text-amber-700">₹53,900</p>
+                  </div>
+                </div>
+
+                {/* Amount Collected */}
+                <div className="mb-12">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 px-6">Amount Collected</h3>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white border-2 border-green-500 rounded-lg overflow-hidden divide-y divide-green-200">
+                      <thead className="bg-green-50 border-b border-green-300">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-green-200">S.No</th>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-green-200">Name/ Category</th>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-green-200">Quantity</th>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-green-200">Unit Cost</th>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-green-200">Total Paid</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-green-200">
+                        {[
+                          { sno: 1, name: 'Half Stalls Registered', quantity: 30, unitCost: 750, totalPaid: 22500 },
+                          { sno: 2, name: 'Full Stalls Registered', quantity: 8, unitCost: 1500, totalPaid: 12000 },
+                          { sno: 3, name: 'Late Registration Full Stall', quantity: 1, unitCost: 2100, totalPaid: 2100 }
+                        ].map((item) => (
+                          <tr key={item.sno} className="hover:bg-green-50 transition-all duration-200 ease-in-out hover:shadow-inner border-b border-green-200">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-green-200">{item.sno}</td>
+                            <td className="px-6 py-4 text-sm text-gray-900 border-r border-green-200">{item.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-green-200 text-center">{item.quantity}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-green-200 text-right">{item.unitCost}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-green-200 text-right">{item.totalPaid}</td>
+                          </tr>
+                        ))}
+                        <tr className="bg-green-50 font-semibold">
+                          <td colSpan={4} className="px-6 py-4 text-right text-sm text-gray-900 border-r border-green-200">Total Amount Collected</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-green-200 text-right">36600</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Donations Received */}
+                <div className="mb-12">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 px-6">Donations Received</h3>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white border-2 border-blue-500 rounded-lg overflow-hidden divide-y divide-blue-200">
+                      <thead className="bg-blue-50 border-b border-blue-300">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-blue-200">S.No</th>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-blue-200">Name</th>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-blue-200">Flat</th>
+                          <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-blue-200">Quantity</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-blue-200">
+                        {[
+                          { sno: 1, name: 'Panduranga Rao Kondreddi', flat: 'K 1310', quantity: 500 }
+                        ].map((item) => (
+                          <tr key={item.sno} className="hover:bg-blue-50 transition-all duration-200 ease-in-out hover:shadow-inner border-b border-blue-200">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200">{item.sno}</td>
+                            <td className="px-6 py-4 text-sm text-gray-900 border-r border-blue-200">{item.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200">{item.flat}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200 text-right">{item.quantity}</td>
+                          </tr>
+                        ))}
+                        <tr className="bg-blue-50 font-semibold">
+                          <td colSpan={3} className="px-6 py-4 text-right text-sm text-gray-900 border-r border-blue-200">Total Donations</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200 text-right">500</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Expenses */}
+                <h3 className="text-xl font-bold text-gray-900 mb-4 px-6">Expenses</h3>
                 
                 <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
-                    <thead className="bg-gray-100 border-b border-gray-300">
+                  <table className="min-w-full bg-white border-2 border-amber-500 rounded-lg overflow-hidden divide-y divide-amber-200">
+                    <thead className="bg-amber-50 border-b border-amber-300">
                       <tr>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-gray-200">S.No</th>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-r border-gray-200">Name/ Category</th>
@@ -506,16 +595,16 @@ function BizKidsContent() {
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Unit</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                      <tbody className="divide-y divide-gray-200">
                       {[
-                        { sno: 1, name: 'Stall Rent\nInclude Canopy, 2 tables,1 light\n2 L tables arrangement with table cloth', quantity: 23, unitCost: 2200, totalExpense: 50600, unit: 'Per Stall' },
+                        { sno: 1, name: 'Stall Rent\nInclude Canopy, \n4 tables(2 L tables arrangement with table cloth),1 light,\n 3 plastic chairs', quantity: 24, unitCost: 2100, totalExpense: 50400, unit: 'Per Stall' },
                         { sno: 2, name: 'Certificate', quantity: 60, unitCost: 30, totalExpense: 1800, unit: 'Per Certificate' },
                         { sno: 3, name: 'Trophies', quantity: 1, unitCost: 500, totalExpense: 500, unit: '1st,2nd,3rd Trophies' },
                         { sno: 4, name: 'Posters & flyers & Stall No prints', quantity: 200, unitCost: 0, totalExpense: null, unit: 'Prints taken care by Sahiti' },
                         { sno: 5, name: 'Big Banner', quantity: 1, unitCost: 900, totalExpense: 900, unit: '' },
                         { sno: 6, name: 'Postal charges', quantity: 1, unitCost: 300, totalExpense: 300, unit: '' },
                         { sno: 7, name: 'QR Codes prints', quantity: 40, unitCost: 0, totalExpense: 0, unit: 'Taken care by Sahiti' },
-                        { sno: 8, name: 'Additional Chairs', quantity: null, unitCost: 0, totalExpense: 0, unit: 'Taken care by Rainbow Vistal Team' },
+                        { sno: 8, name: 'Additional Chairs', quantity: 1, unitCost: 0, totalExpense: 0, unit: 'Taken care by Rainbow Vistal Team' },
                         { sno: 9, name: 'Electracity', quantity: null, unitCost: 0, totalExpense: 0, unit: 'Taken care by Rainbow Vistal Team' },
                         { sno: 10, name: 'Cleaning', quantity: null, unitCost: 0, totalExpense: 0, unit: 'Taken care by Rainbow Vistal Team' },
                         { sno: 11, name: 'Mike and speaker', quantity: null, unitCost: null, totalExpense: null, unit: '' },
@@ -524,15 +613,15 @@ function BizKidsContent() {
                         <tr key={item.sno} className="hover:bg-blue-50 transition-all duration-200 ease-in-out hover:shadow-inner border-b border-gray-200">
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{item.sno}</td>
                           <td className="px-6 py-4 text-sm text-gray-900 whitespace-pre-line border-r border-gray-200">{item.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{item.quantity || ''}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{item.unitCost || ''}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{item.totalExpense || ''}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 text-center">{item.quantity || ''}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 text-right">{item.unitCost || ''}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 text-right">{item.totalExpense || ''}</td>
                           <td className="px-6 py-4 text-sm text-gray-900">{item.unit}</td>
                         </tr>
                       ))}
                       <tr className="bg-gray-100 font-semibold border-t-2 border-gray-300">
                         <td colSpan={4} className="px-6 py-4 text-right text-sm text-gray-900 border-r border-gray-200">Total</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">54100</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">53900</td>
                         <td className="px-6 py-4"></td>
                       </tr>
                     </tbody>
