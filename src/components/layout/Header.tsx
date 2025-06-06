@@ -13,9 +13,21 @@ const Header = () => {
     { label: 'Members', path: '/members' },
     { label: 'Projects', path: '/projects' },
     { label: 'Blog', path: '/blog' },
-    { label: 'Contact Us', path: '/contact' },
+    { label: 'Contact Us.', path: '/contact' },
   ];
 
+ function getUsernameFromGglUsrDtls() {
+  const userDataString = localStorage.getItem('gglUsrDtls');
+  if (!userDataString) return null;
+  try {
+    const decodedString = atob(userDataString); 
+    const userData = JSON.parse(decodedString);
+    return userData.user_name || null;
+  } catch {
+    return null;
+  }
+}
+const username = getUsernameFromGglUsrDtls();
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm shadow-sm">
       <nav className="container mx-auto px-4 py-4">
@@ -46,6 +58,39 @@ const Header = () => {
                 </li>
               ))}
             </ul>
+
+            {username && (
+  <div
+    className="flex items-center justify-between gap-2 ml-4 w-[200px] truncate px-3 py-1 rounded-md bg-gray-100 border border-gray-300"
+    title={username}
+  >
+    <span className="truncate font-medium text-gray-700">{username}</span>
+    <button
+      onClick={() => {
+        localStorage.clear();
+        window.location.href = '/';
+      }}
+      title="Logout"
+      className="text-gray-500 hover:text-red-600 transition-colors"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="w-5 h-5"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m-6-3h12m0 0l-3-3m3 3l-3 3"
+        />
+      </svg>
+    </button>
+  </div>
+)}
+
           </div>
 
           {/* Mobile Menu Button */}
@@ -91,6 +136,38 @@ const Header = () => {
                 </li>
               ))}
             </ul>
+           {username && (
+  <div
+    className="flex items-center justify-between gap-2 ml-4 w-[200px] truncate px-3 py-1 rounded-md bg-gray-100 border border-gray-300"
+    title={username}
+  >
+    <span className="truncate font-medium text-gray-700">{username}</span>
+    <button
+      onClick={() => {
+        localStorage.clear();
+        window.location.href = '/';
+      }}
+      title="Logout"
+      className="text-gray-500 hover:text-red-600 transition-colors"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="w-5 h-5"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m-6-3h12m0 0l-3-3m3 3l-3 3"
+        />
+      </svg>
+    </button>
+  </div>
+)}
+
           </div>
         </div>
       </nav>

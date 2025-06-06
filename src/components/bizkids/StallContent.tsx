@@ -127,17 +127,19 @@ export default function StallContent({ stallId }: StallContentProps) {
     toast.error('Google login failed')
   }
 
-  const userDataString = localStorage.getItem('userData');
-
 let userId = null;
-if (userDataString) {
+function getUserIdFromToken() {
+  const token = localStorage.getItem('x-access-token');
+  if (!token) return null;
   try {
-    const userData = JSON.parse(userDataString);
-    userId = userData.usr_id;
-  } catch (error) {
-    console.error('Error parsing userData from localStorage:', error);
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.usr_id;
+  } catch {
+    return null;
   }
 }
+
+userId = getUserIdFromToken();
    const handleReviewSubmit = async () => {
       setSubmitLoading(true);
       setSubmitError('');
@@ -147,7 +149,7 @@ if (userDataString) {
         userId: userId,
         stallId: stallId,
       };
-      service.post('/api/reviews', reviewData)
+      service.post('auth2/ss/ithihas/submitReview', reviewData)
         .then((response) => {
           if (response.status === 200 || response.status === 201) {
             setNewReview({ rating: 5, comment: '' });
@@ -219,222 +221,217 @@ if (userDataString) {
       </div>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Cheers to Young Entrepreneurs!
-            </h1>
-            <p className="text-xl opacity-90">
-              Discover the next generation of business leaders at Stall {stall.stl_nu}
-            </p>
-          </div>
-        </div>
-      </div>
+      <div className="relative py-16 bg-cover bg-center text-white"
+     style={{
+       backgroundImage: `url('/images/stallcntnt.avif')`,
+     }}>
+  {/* Animated overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-blue-800/80 via-indigo-700/70 to-purple-700/60 animate-background-blur z-0"></div>
+
+  <div className="relative z-10 container mx-auto px-4">
+    <div className="max-w-4xl mx-auto text-center">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+        Cheers to Young Entrepreneurs!
+      </h1>
+      <p className="text-lg sm:text-xl opacity-90">
+        Discover the next generation of business leaders at Stall {stall.stl_nu}
+      </p>
+    </div>
+  </div>
+</div>
+
 
       {/* Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           {/* Stall Info */}
-          <div className="bg-white rounded-xl shadow-sm p-8 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-900">
-                  {stall.stl_nm || `Stall ${stall.stl_nu}`}
-                </h2>
-                <div className="flex items-center mt-2">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        className={`w-5 h-5 ${i < Math.round(averageRating)
-                          ? 'text-yellow-400'
-                          : 'text-gray-300'
-                          }`}
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                    <span className="ml-2 text-gray-600">
-                      ({averageRating.toFixed(1)} / 5)
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="text-right">
+         <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 md:p-8 mb-8">
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div className="flex-1">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+        {stall.stl_nm || `Stall ${stall.stl_nu}`}
+      </h2>
 
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {stall.categories.map((cat, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-                    >
-                      {cat.cat_nm}
-                    </span>
-                  ))}
-                </div>
+      <div className="flex items-center mt-2 flex-wrap">
+        <div className="flex items-center">
+          {[...Array(5)].map((_, i) => (
+            <svg
+              key={i}
+              className={`w-5 h-5 ${i < Math.round(averageRating)
+                ? 'text-yellow-400'
+                : 'text-gray-300'
+                }`}
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          ))}
+          <span className="ml-2 text-gray-600 text-sm">
+            ({averageRating.toFixed(1)} / 5)
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div className="text-left md:text-right flex flex-wrap gap-2">
+      {stall.categories.map((cat, index) => (
+        <span
+          key={index}
+          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+        >
+          {cat.cat_nm}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  {/* Entrepreneurs */}
+  <div className="mt-6 md:mt-8">
+    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
+      Meet Our Young Entrepreneurs
+    </h3>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+      {stall.entrepreneurs.map((entrepreneur, index) => (
+        <div
+          key={index}
+          className="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-100"
+        >
+          <div className="flex items-center space-x-4">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold">
+                {entrepreneur.mbr_nm[0]}
               </div>
             </div>
-
-            {/* Entrepreneurs */}
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Meet Our Young Entrepreneurs
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {stall.entrepreneurs.map((entrepreneur, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-50 rounded-lg p-6 border border-gray-100"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold">
-                          {entrepreneur.mbr_nm[0]}
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-gray-900">
-                          {entrepreneur.mbr_nm}
-                        </h4>
-                        <p className="text-gray-600">{entrepreneur.schl_nm}</p>
-                        <p className="text-sm text-gray-500">
-                          Block: {entrepreneur.blk_nu}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div>
+              <h4 className="text-base sm:text-lg font-semibold text-gray-900">
+                {entrepreneur.mbr_nm}
+              </h4>
+              <p className="text-sm text-gray-600">{entrepreneur.schl_nm}</p>
+              <p className="text-xs text-gray-500">Block: {entrepreneur.blk_nu}</p>
             </div>
           </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
           {/* Reviews Section */}
-          <div className="bg-white rounded-xl shadow-sm p-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Reviews</h3>
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 md:p-8">
+  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Reviews</h3>
 
-            {/* Review Form */}
-            <div className="-mb-0 p-5 bg-gray-50 rounded-lg">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Write a Review</h4>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Rating
-                </label>
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setNewReview({ ...newReview, rating: i + 1 })}
-                      className={`w-8 h-8 ${i < newReview.rating ? 'text-yellow-400' : 'text-gray-300'
-                        } hover:text-yellow-400 focus:outline-none`}
-                    >
-                      <svg fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Comment
-                </label>
-                <textarea
-                  value={newReview.comment}
-                  onChange={(e) =>
-                    setNewReview({ ...newReview, comment: e.target.value })
-                  }
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Share your thoughts about this stall..."
+  {/* Review Form */}
+  <div className="mb-6 p-4 sm:p-5 bg-gray-50 rounded-lg">
+    <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Write a Review</h4>
+
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+      <div className="flex items-center space-x-1">
+        {[...Array(5)].map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => setNewReview({ ...newReview, rating: i + 1 })}
+            className={`w-7 h-7 sm:w-8 sm:h-8 ${i < newReview.rating ? 'text-yellow-400' : 'text-gray-300'
+              } hover:text-yellow-400 focus:outline-none`}
+          >
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-2">Comment</label>
+      <textarea
+        value={newReview.comment}
+        onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+        rows={4}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+        placeholder="Share your thoughts about this stall..."
+      />
+    </div>
+
+    <div>
+      <button
+        type="button"
+        className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 text-sm"
+        disabled={!isLoggedIn || submitLoading}
+        onClick={handleReviewSubmit}
+      >
+        Submit Review
+      </button>
+
+      {!isLoggedIn && (
+        <div className="mt-4 text-sm text-blue-600">
+          To submit a review, please Sign In with Google
+          <GoogleOAuthProvider clientId={client_id}>
+            <div className="mt-3 flex justify-center">
+              <div className="relative w-full sm:w-[300px] border border-gray-300 rounded shadow bg-white overflow-hidden hover:shadow-md transition">
+                <div
+                  className="absolute top-0 left-0 w-full h-1"
+                  style={{
+                    background: 'linear-gradient(90deg, #db4437, #f4b400, #0f9d58, #4285f4)',
+                    backgroundSize: '400% 400%',
+                    animation: 'gradientShift 4s linear infinite',
+                  }}
                 />
-              </div>
-              <div>
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400"
-                   disabled={!isLoggedIn || submitLoading} onClick={handleReviewSubmit}
-                >
-                  Submit Review
-                </button>
-                
-                {!isLoggedIn && (
-                  <p className="mt-2 text-sm text-red-600">
-                    To submit a review, please{" "}
-                    Sign In here with Google
-
-                    <GoogleOAuthProvider clientId={client_id}>
-                      <div className="flex justify-center">
-                        <div
-                          className="relative w-[300px] border border-gray-300 rounded shadow bg-white group overflow-hidden transform transition-transform duration-300 hover:scale-105"
-                        >
-                          <div
-                            className="absolute top-0 left-0 w-full h-1 z-1"
-                            style={{
-                              background:
-                                'linear-gradient(90deg, #db4437, #f4b400, #0f9d58, #4285f4)',
-                              backgroundSize: '400% 400%',
-                              animation: 'gradientShift 4s linear infinite',
-                            }}
-                          ></div>
-
-                          <div className="flex items-center justify-center">
-                            <GoogleLogin
-                              onSuccess={handleGoogleSuccess}
-                              onError={handleGoogleFailure}
-                              width="300"
-                              theme="outline"
-                              text="signin_with"
-                              shape="rectangular"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </GoogleOAuthProvider>
-                  </p>
-                )}
+                <div className="flex items-center justify-center py-3">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={handleGoogleFailure}
+                    width="280"
+                    theme="outline"
+                    text="signin_with"
+                    shape="rectangular"
+                  />
+                </div>
               </div>
             </div>
+          </GoogleOAuthProvider>
+        </div>
+      )}
+    </div>
+  </div>
 
-            {/* Reviews List */}
-            <div className="space-y-6">
-              {mockReviews.map((review) => (
-                <div key={review.id} className="border-b border-gray-200 pb-6 last:border-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            className={`w-5 h-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'
-                              }`}
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                      </div>
-                      <span className="ml-3 text-sm font-medium text-gray-900">
-                        {review.author}
-                      </span>
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      {new Date(review.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-gray-600">{review.comment}</p>
-                </div>
+  {/* Reviews List */}
+  <div className="space-y-5">
+    {mockReviews.map((review) => (
+      <div key={review.id} className="border-b border-gray-200 pb-5 last:border-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+          <div className="flex items-center space-x-2">
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <svg
+                  key={i}
+                  className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
               ))}
             </div>
+            <span className="text-sm font-medium text-gray-900">{review.author}</span>
           </div>
+          <span className="text-xs text-gray-500 mt-1 sm:mt-0">
+            {new Date(review.date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            })}
+          </span>
+        </div>
+        <p className="text-gray-700 text-sm">{review.comment}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
         </div>
       </div>
 
