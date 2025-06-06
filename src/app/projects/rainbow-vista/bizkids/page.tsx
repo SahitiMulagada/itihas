@@ -60,6 +60,13 @@ function BizKidsContent() {
   const [selectedPoster, setSelectedPoster] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+const pastelBgClasses = [
+  'bg-yellow-50',
+  'bg-blue-50',
+  'bg-pink-50',
+  'bg-green-50',
+  'bg-purple-50',
+];
 
 
   // Update URL when tab changes
@@ -363,20 +370,26 @@ function BizKidsContent() {
               <div>
                 <SectionHeading title="Registered Stalls" />
                 <div className="mb-6">
-                  <div className="relative max-w-md mx-auto">
-                    <input
-                      type="text"
-                      placeholder="Search by name, school, block, or category..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                    </div>
-                  </div>
+                  <div className="relative max-w-md w-full mx-auto px-1 sm:px-0">
+  <input
+    type="text"
+    placeholder="Search by name, school, block, or category..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="w-full pl-4 pr-10 py-2 text-sm sm:text-base border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+  />
+  <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
+    </svg>
+  </div>
+</div>
+
                 </div>
                 {/* Desktop View */}
                 <div className="hidden md:block mt-8 overflow-x-auto">
@@ -441,48 +454,67 @@ function BizKidsContent() {
                       category.cat_nm.toLowerCase().includes(searchLower)
                     );
                   }).map((stall, index) => (
-                    <div 
-                      key={index} 
-                      className="bg-white rounded-lg shadow-md p-6 border border-gray-200 cursor-pointer hover:shadow-lg transition-shadow"
-                      onClick={() => router.push(`/projects/rainbow-vista/bizkids/stall/${stall.stl_id}`)}
-                    >
-                      <div className="flex justify-between items-center mb-4 bg-gray-50 -mx-6 -mt-6 p-4 border-b">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-2xl font-bold text-blue-600">#{index + 1}</span>
-                          <span className="text-sm font-medium text-gray-500">({stall.stl_nu || '-'})</span>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {stall.categories.map((category, cIndex) => (
-                            <span key={cIndex} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {category.cat_nm}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-4">
-                        {stall.entrepreneurs.map((entrepreneur, eIndex) => (
-                          <div key={eIndex} className="bg-gray-50 rounded-lg p-3">
-                            <h3 className="font-medium text-gray-900 mb-2 text-lg">{entrepreneur.mbr_nm}</h3>
-                            <div className="space-y-1">
-                              <p className="text-sm text-gray-600 flex items-center">
-                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                                {entrepreneur.schl_nm}
-                              </p>
-                              <p className="text-sm text-gray-600 flex items-center">
-                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                Block {entrepreneur.blk_nu}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                  <div 
+  key={index} 
+  className={`rounded-2xl shadow-lg border border-transparent hover:border-blue-400 hover:shadow-xl transition-all duration-300 p-5 relative overflow-hidden ${pastelBgClasses[index % pastelBgClasses.length]}`}
+  onClick={() => router.push(`/projects/rainbow-vista/bizkids/stall/${stall.stl_id}`)}
+>
+
+  {/* Header */}
+  <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
+    <div className="flex items-center space-x-3">
+      <span className="text-lg font-bold text-blue-600 group-hover:scale-110 transition-transform">#{index + 1}</span>
+      <span className="text-sm text-gray-500 font-medium">(Stall {stall.stl_nu || '-'})</span>
+    </div>
+    <div className="flex flex-wrap gap-1">
+      {stall.categories.map((category, cIndex) => (
+        <span 
+          key={cIndex}
+          className="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full border border-blue-100"
+        >
+          {category.cat_nm}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  {/* Entrepreneurs */}
+  <div className="space-y-4">
+    {stall.entrepreneurs.map((entrepreneur, eIndex) => (
+      <div
+        key={eIndex}
+        className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-gray-300 transition group"
+      >
+        <h3 className="font-semibold text-gray-900 text-base mb-1 flex items-center gap-2">
+          <span className="bg-blue-600 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-bold">
+            {entrepreneur.mbr_nm[0]}
+          </span>
+          {entrepreneur.mbr_nm}
+        </h3>
+        <div className="text-sm text-gray-600 space-y-1 mt-2">
+          <div className="flex items-start gap-2">
+            <div className="p-1 bg-blue-100 text-blue-600 rounded-full">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+            <p className="leading-snug">{entrepreneur.schl_nm}</p>
+          </div>
+          <div className="flex items-start gap-2">
+            <div className="p-1 bg-green-100 text-green-600 rounded-full">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <p className="leading-snug">Block {entrepreneur.blk_nu}</p>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
                   ))}
                 </div>
               </div>
