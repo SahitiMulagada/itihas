@@ -154,7 +154,7 @@ function BizKidsContent() {
                       </div>
                       <div className="flex items-center text-white">
                         <MdLocationOn className="w-5 h-5 mr-2" />
-                        <span>Before K,L,M,N Blocks</span>
+                        <span>Before K,L Blocks</span>
                       </div>
                     </div>
                     <div className="flex flex-col space-y-2">
@@ -243,13 +243,16 @@ function BizKidsContent() {
                         <MdAccessTime className="mr-2 text-blue-600" /> 04:00 PM - 09:00 PM
                       </p>
                       <p className="flex items-center">
-                        <MdLocationOn className="mr-2 text-blue-600" /> Before K,L,M,N Blocks (Rainbow Vista Rock gardens)
+                        <MdLocationOn className="mr-2 text-blue-600" /> Before K,L Blocks 
+                      </p>
+                      <p className="flex items-center">
+                        <p className="text-blue-600 font-semibold">(Rainbow Vista Rock gardens)</p>
                       </p>
                     </div>
                   </div>
                   <div className="text-lg text-gray-700 mb-6 p-4 rounded-2xl shadow-lg border-gray-200 border">
                     
-                    BizKids is an exciting entrepreneurship event designed to inspire and empower young minds to explore the world of business. Through this unique platform, children below 18 years can experience firsthand what it means to be an entrepreneur.
+                  <p className="p-5" style={{textIndent: '50px', textAlign: 'justify'}}>BizKids is an exciting entrepreneurship event designed to inspire and empower young minds to explore the world of business. Through this unique platform, children below 18 years can experience firsthand what it means to be an entrepreneur.</p>
                     <div className="text-blue-700 font-semibold border-b pt-2">This is an event organized by kids for the kids for non profit.</div>
                     <div className="text-blue-700 font-semibold border-b">We are doing our best to make this event a success and accomodate every intrested young entrepreneur.</div>
                     <div className="text-blue-700 font-semibold border-b">Please bear with us if we are making any first timer mistakes and we are learning as we go.</div>
