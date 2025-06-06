@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import UserMenu from '../auth/UserMenu';
 
 const Header = () => {
   const pathname = usePathname();
@@ -45,7 +44,6 @@ const Header = () => {
             ))}
           </ul>
           <div className="flex items-center gap-4">
-            <UserMenu />
             <button className="md:hidden p-2">
               <svg
                 className="w-6 h-6"

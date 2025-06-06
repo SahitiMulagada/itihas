@@ -1,6 +1,7 @@
 "use client";
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
@@ -9,170 +10,7 @@ import { motion } from 'framer-motion';
 import Layout from '../../../../components/layout/Layout';
 import SectionHeading from '../../../../components/common/SectionHeading';
 
-
-interface Stall {
-  id: string;
-  name: string;
-  categories: string[];
-  image: string;
-  entrepreneurs: {
-    name: string;
-    age: number;
-    school: string;
-    image: string;
-    blockNo: string;
-    flatNo: string;
-  }[];
-  description: string;
-}
-
-const registeredStalls = [
-  {
-    stallNo: 'S1',
-    entrepreneurs: [{ name: 'Thridha & Aadhya', school: 'P Obulreddy', blockNo: 'L' }],
-    categories: ['Arts & Crafts', 'Handmade Items']
-  },
-  {
-    stallNo: 'S2',
-    entrepreneurs: [{ name: 'Kartheeka', school: 'Allen', blockNo: 'L' }],
-    categories: ['Food', 'Beverages']
-  },
-  {
-    stallNo: 'S3',
-    entrepreneurs: [{ name: 'V Advik Gupta', school: 'Glendale International School', blockNo: 'I' }],
-    categories: ['Technology', 'Games']
-  },
-  {
-    stallNo: 'S4',
-    entrepreneurs: [{ name: 'Siddharth', school: 'Silveroaks international school', blockNo: 'F' }],
-    categories: ['Arts & Crafts', 'Stationery']
-  },
-  {
-    stallNo: 'S5',
-    entrepreneurs: [{ name: 'Geetali Movva', school: 'FKS', blockNo: 'K' }],
-    categories: ['Food', 'Snacks']
-  },
-  {
-    stallNo: 'S6',
-    entrepreneurs: [{ name: 'Swetcha Kommu', school: 'PM Shri Kendriya Vidyalaya, AFS B', blockNo: 'H' }],
-    categories: ['Games', 'Entertainment']
-  },
-  {
-    stallNo: 'S7',
-    entrepreneurs: [{ name: 'B.Pragnika', school: 'Chirec International School', blockNo: 'K' }],
-    categories: ['Arts & Crafts']
-  },
-  {
-    stallNo: 'S8',
-    entrepreneurs: [{ name: 'KRISHNA BHARGAV', school: 'PHOENIX GREENS', blockNo: 'I' }],
-    categories: ['Technology', 'Education']
-  },
-  {
-    stallNo: 'S9',
-    entrepreneurs: [{ name: 'Saanvi CH and Nandan Sriram CH', school: 'Vyasa School', blockNo: 'P' }],
-    categories: ['Food', 'Healthy Snacks']
-  },
-  {
-    stallNo: 'S10',
-    entrepreneurs: [{ name: 'srishti,vismaya', school: 'Akshara International school', blockNo: 'M' }],
-    categories: ['Arts & Crafts', 'Jewelry']
-  },
-  {
-    stallNo: 'S11',
-    entrepreneurs: [{ name: 'Meghana ,Deeksha', school: 'Bharatiya Vidya Bhavan\'s Atmakuri', blockNo: 'H' }],
-    categories: ['Games', 'Entertainment']
-  },
-  {
-    stallNo: 'S12',
-    entrepreneurs: [{ name: 'AANVY', school: 'Meridian school', blockNo: 'K' }],
-    categories: ['Food', 'Desserts']
-  },
-  {
-    stallNo: 'S13',
-    entrepreneurs: [{ name: 'Myra Josyula', school: 'Gitanjali', blockNo: 'I' }],
-    categories: ['Arts & Crafts', 'Painting']
-  },
-  {
-    stallNo: 'S14',
-    entrepreneurs: [{ name: 'Siddharth Mulagada', school: 'Ganges Valley School', blockNo: 'K' }],
-    categories: ['Technology', 'Robotics']
-  },
-  {
-    stallNo: 'S15',
-    entrepreneurs: [{ name: 'Aarohi and Sarayu', school: 'Meridian School Madhapur', blockNo: 'Q Block, G Block' }],
-    categories: ['Food', 'Beverages']
-  },
-  {
-    stallNo: 'S16',
-    entrepreneurs: [{ name: 'Yug Rathi', school: 'Euro School', blockNo: 'J' }],
-    categories: ['Games', 'Technology']
-  },
-  {
-    stallNo: 'S17',
-    entrepreneurs: [{ name: 'Shriya Deshpande', school: 'Oakridge International school Bachi', blockNo: 'L' }],
-    categories: ['Arts & Crafts']
-  },
-  {
-    stallNo: 'S18',
-    entrepreneurs: [{ name: 'Vrinda', school: 'Jubilee Hills Public School', blockNo: 'N' }],
-    categories: ['Food', 'Healthy Snacks']
-  },
-  {
-    stallNo: 'S19',
-    entrepreneurs: [{ name: 'Srinika Manneri', school: 'Chirec international school', blockNo: 'I' }],
-    categories: ['Arts & Crafts', 'Jewelry']
-  },
-  {
-    stallNo: 'S20',
-    entrepreneurs: [{ name: 'Bhavya J', school: 'Ganges Valley School', blockNo: 'Q' }],
-    categories: ['Technology', 'Games']
-  },
-  {
-    stallNo: 'S21',
-    entrepreneurs: [{ name: 'Avishi Mahanyu', school: 'Silver Oaks International School', blockNo: 'I' }],
-    categories: ['Food', 'Beverages']
-  },
-  {
-    stallNo: 'S22',
-    entrepreneurs: [{ name: 'Khyathi Ganapathiraju', school: 'Ganges Valley School', blockNo: 'G' }],
-    categories: ['Arts & Crafts', 'Handmade Items']
-  },
-  {
-    stallNo: 'S23',
-    entrepreneurs: [{ name: 'Saanvi B', school: 'Phoenix Greens', blockNo: 'J' }],
-    categories: ['Technology', 'Education']
-  },
-  {
-    stallNo: 'S24',
-    entrepreneurs: [{ name: 'Riya', school: 'Gaudium', blockNo: 'I' }],
-    categories: ['Games', 'Entertainment']
-  },
-  {
-    stallNo: 'S25',
-    entrepreneurs: [{ name: 'Amairra sood', school: 'Hps begumpet', blockNo: 'N' }],
-    categories: ['Food', 'Snacks']
-  },
-  {
-    stallNo: 'S26',
-    entrepreneurs: [{ name: 'Aayush Jain', school: 'Bhavans atmakuri', blockNo: 'M' }],
-    categories: ['Technology', 'Games']
-  },
-  {
-    stallNo: 'S27',
-    entrepreneurs: [{ name: 'Hetanshi Sai Kartika M', school: 'Hyderabad Public School', blockNo: 'K' }],
-    categories: ['Arts & Crafts', 'Painting']
-  },
-  {
-    stallNo: 'S28',
-    entrepreneurs: [{ name: 'Shanmukh Srikar G, Moksha Sarvani K', school: 'DPS and Allen', blockNo: '' }],
-    categories: ['Food', 'Beverages']
-  },
-  {
-    stallNo: 'S29',
-    entrepreneurs: [{ name: 'Swayam, Yashvi, Bhumika, Aryaman', school: '', blockNo: '' }],
-    categories: ['Games', 'Technology']
-  }
-];
+import { registeredStalls, type Stall } from '../../../../data/registeredStalls';
 
 const boardMembers = [
   {
@@ -205,6 +43,7 @@ const floatAnimation = `
 `;
 
 function BizKidsContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
   const [activeTab, setActiveTab] = useState(tabParam || 'about');
@@ -233,7 +72,7 @@ function BizKidsContent() {
 
   const tabs = [
     { id: 'about', label: 'About Event' },
-    { id: 'board', label: 'Top Stall Board' },
+    { id: 'board', label: 'Stall Board' },
     { id: 'stalls', label: 'Registered Stalls' },
     { id: 'finance', label: 'Finance' },
     { id: 'gallery', label: 'Gallery' },
@@ -354,21 +193,37 @@ function BizKidsContent() {
         {/* Main Content */}
         <div className="container mx-auto px-4 py-8">
           {/* Tabs */}
-          <div className="flex justify-center mb-8 overflow-x-auto">
-            <div className="inline-flex flex-wrap md:flex-nowrap bg-gray-100 p-1 rounded-xl shadow-sm">
+          <div className="mb-8">
+            {/* Mobile Tabs - 2x3 Grid */}
+            <div className="md:hidden grid grid-cols-2 gap-2 px-4">
               {tabs.map((tab, index) => (
                 <button
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
-                  className={`px-3 md:px-6 py-2.5 rounded-lg font-medium transition-all duration-200 text-sm md:text-base whitespace-nowrap ${index > 0 ? 'ml-1' : ''} ${
-                    activeTab === tab.id
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`p-3 rounded-lg font-medium transition-all duration-200 text-sm flex items-center justify-center ${activeTab === tab.id
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                 >
                   {tab.label}
                 </button>
               ))}
+            </div>
+
+            {/* Desktop Tabs - Horizontal List */}
+            <div className="hidden md:flex justify-center overflow-x-auto">
+              <div className="inline-flex flex-nowrap bg-gray-100 p-1 rounded-xl shadow-sm">
+                {tabs.map((tab, index) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabChange(tab.id)}
+                    className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200 text-base whitespace-nowrap ${index > 0 ? 'ml-1' : ''} ${activeTab === tab.id
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'}`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -392,9 +247,13 @@ function BizKidsContent() {
                       </p>
                     </div>
                   </div>
-                  <p className="text-lg text-gray-700 mb-6">
+                  <div className="text-lg text-gray-700 mb-6 p-4 rounded-2xl shadow-lg border-gray-200 border">
+                    
                     BizKids is an exciting entrepreneurship event designed to inspire and empower young minds to explore the world of business. Through this unique platform, children below 18 years can experience firsthand what it means to be an entrepreneur.
-                  </p>
+                    <div className="text-blue-700 font-semibold border-b pt-2">This is an event organized by kids for the kids for non profit.</div>
+                    <div className="text-blue-700 font-semibold border-b">We are doing our best to make this event a success and accomodate every intrested young entrepreneur.</div>
+                    <div className="text-blue-700 font-semibold border-b">Please bear with us if we are making any first timer mistakes and we are learning as we go.</div>
+                  </div>
                   <div className="mt-12 bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
                       <div className="flex-1">
@@ -426,7 +285,7 @@ function BizKidsContent() {
                           </li>
                         </ul>
                       </div>
-                      <div className="relative w-96 h-96 flex-shrink-0 flex items-center justify-center">
+                      <div className="relative w-96 h-96 flex-shrink-0 hidden md:flex items-center justify-center">
                         <Image
                           src="/projects/bizkids/logo.jpg"
                           alt="BizKids Logo"
@@ -437,7 +296,7 @@ function BizKidsContent() {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-blue-50 rounded-lg p-6 mb-6">
+                  <div className="bg-blue-50 rounded-lg p-6 mb-6 mt-12">
                     <h3 className="text-xl font-semibold text-blue-800 mb-4">Registration Details</h3>
                     <ul className="space-y-3 text-blue-700">
                       <li className="flex items-center">
@@ -471,7 +330,7 @@ function BizKidsContent() {
 
             {activeTab === 'board' && (
               <div>
-                <SectionHeading title="Top Stall Board Members" />
+                <SectionHeading title="Stall Board" />
 
                 <div className="p-6 mb-8">
                   <p className="text-blue-800 text-lg mb-4 font-semibold">We will update the top rated stalls here after the event.</p>
@@ -531,23 +390,23 @@ function BizKidsContent() {
                       {registeredStalls.filter(stall => {
                         const searchLower = searchTerm.toLowerCase();
                         return stall.entrepreneurs.some(entrepreneur => 
-                          entrepreneur.name.toLowerCase().includes(searchLower) ||
-                          entrepreneur.school.toLowerCase().includes(searchLower) ||
-                          entrepreneur.blockNo.toLowerCase().includes(searchLower)
+                          entrepreneur.mbr_nm.toLowerCase().includes(searchLower) ||
+                          entrepreneur.schl_nm.toLowerCase().includes(searchLower) ||
+                          entrepreneur.blk_nu.toLowerCase().includes(searchLower)
                         ) || stall.categories.some(category =>
-                          category.toLowerCase().includes(searchLower)
+                          category.cat_nm.toLowerCase().includes(searchLower)
                         );
                       }).map((stall, index) => (
                         <tr key={index} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.stallNo || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.stl_nu || '-'}</td>
                           <td className="px-6 py-4 text-sm text-gray-500">
                             <div className="space-y-2">
                               {stall.entrepreneurs.map((entrepreneur, eIndex) => (
                                 <div key={eIndex} className="flex flex-col">
-                                  <span className="font-medium">{entrepreneur.name}</span>
-                                  <span className="text-xs text-gray-400">{entrepreneur.school}</span>
-                                  <span className="text-xs text-gray-400">Block: {entrepreneur.blockNo}</span>
+                                  <span className="font-medium">{entrepreneur.mbr_nm}</span>
+                                  <span className="text-xs text-gray-400">{entrepreneur.schl_nm}</span>
+                                  <span className="text-xs text-gray-400">Block: {entrepreneur.blk_nu}</span>
                                 </div>
                               ))}
                             </div>
@@ -556,7 +415,7 @@ function BizKidsContent() {
                             <div className="flex flex-wrap gap-2">
                               {stall.categories.map((category, cIndex) => (
                                 <span key={cIndex} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                  {category}
+                                  {category.cat_nm}
                                 </span>
                               ))}
                             </div>
@@ -572,23 +431,27 @@ function BizKidsContent() {
                   {registeredStalls.filter(stall => {
                     const searchLower = searchTerm.toLowerCase();
                     return stall.entrepreneurs.some(entrepreneur => 
-                      entrepreneur.name.toLowerCase().includes(searchLower) ||
-                      entrepreneur.school.toLowerCase().includes(searchLower) ||
-                      entrepreneur.blockNo.toLowerCase().includes(searchLower)
+                      entrepreneur.mbr_nm.toLowerCase().includes(searchLower) ||
+                      entrepreneur.schl_nm.toLowerCase().includes(searchLower) ||
+                      entrepreneur.blk_nu.toLowerCase().includes(searchLower)
                     ) || stall.categories.some(category =>
-                      category.toLowerCase().includes(searchLower)
+                      category.cat_nm.toLowerCase().includes(searchLower)
                     );
                   }).map((stall, index) => (
-                    <div key={index} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <div 
+                      key={index} 
+                      className="bg-white rounded-lg shadow-md p-6 border border-gray-200 cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => router.push(`/projects/rainbow-vista/bizkids/stall/${stall.stl_id}`)}
+                    >
                       <div className="flex justify-between items-center mb-4 bg-gray-50 -mx-6 -mt-6 p-4 border-b">
                         <div className="flex items-center space-x-2">
                           <span className="text-2xl font-bold text-blue-600">#{index + 1}</span>
-                          <span className="text-sm font-medium text-gray-500">({stall.stallNo || '-'})</span>
+                          <span className="text-sm font-medium text-gray-500">({stall.stl_nu || '-'})</span>
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {stall.categories.map((category, cIndex) => (
                             <span key={cIndex} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {category}
+                              {category.cat_nm}
                             </span>
                           ))}
                         </div>
@@ -597,20 +460,20 @@ function BizKidsContent() {
                       <div className="space-y-4">
                         {stall.entrepreneurs.map((entrepreneur, eIndex) => (
                           <div key={eIndex} className="bg-gray-50 rounded-lg p-3">
-                            <h3 className="font-medium text-gray-900 mb-2 text-lg">{entrepreneur.name}</h3>
+                            <h3 className="font-medium text-gray-900 mb-2 text-lg">{entrepreneur.mbr_nm}</h3>
                             <div className="space-y-1">
                               <p className="text-sm text-gray-600 flex items-center">
                                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
-                                {entrepreneur.school}
+                                {entrepreneur.schl_nm}
                               </p>
                               <p className="text-sm text-gray-600 flex items-center">
                                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                Block {entrepreneur.blockNo}
+                                Block {entrepreneur.blk_nu}
                               </p>
                             </div>
                           </div>
@@ -625,7 +488,7 @@ function BizKidsContent() {
 
             {activeTab === 'finance' && (
               <div>
-                <SectionHeading title="Financial Overview" />
+                <SectionHeading title="Finance" />
                 <div className="p-6 mb-8">
                   <p className="text-blue-800 text-lg mb-4 font-semibold">We want to keep the money collected and expenses transparent.</p>
                   <p className="text-blue-700 font-semibold">This is an event organized by kids for the kids for non profit.</p>
@@ -680,7 +543,7 @@ function BizKidsContent() {
 
             {activeTab === 'gallery' && (
               <div>
-                <SectionHeading title="Event Gallery" />
+                <SectionHeading title="Gallery" />
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
                   {/* Add gallery content here */}
                 </div>
@@ -699,10 +562,10 @@ function BizKidsContent() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-8">
                   {[
                     { name: 'Sahiti Mulagada', role: 'Team Member & Event Initiator', block: 'K', school: 'Ganges Valley School', image: '/images/sahiti/sahiti.jpg' },
-                    { name: 'Adwitha Udumala', role: 'Team Member', block: 'K', school: 'Ganges Valley School' },
+                    { name: 'Adwitha Udumala', role: 'Team Member', block: 'K', school: 'Delhi Public School' },
                     { name: 'Akshika Sangal', role: 'Team Member', block: 'H', school: 'Ganges Valley School' , image: '/projects/bizkids/profiles/akshika.jpg'},
                     { name: 'Savar Kokatnur', role: 'Team Member', block: 'M', school: 'Delhi Public School' , image: '/projects/bizkids/profiles/savar.jpg'},
-                    { name: 'Vidya Chinni', role: 'Team Member', block: 'L', school: 'Ganges Valley School' },
+                    { name: 'Vidya Chinni', role: 'Team Member', block: 'L', school: 'Allen' },
                     { name: 'Nishika Choppa', role: 'Team Member', block: 'O', school: 'Ganges Valley School' , image: '/projects/bizkids/profiles/nishika.jpg' }
                   ].map((member) => (
                     <div key={member.name} className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
