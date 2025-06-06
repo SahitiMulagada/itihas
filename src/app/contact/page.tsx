@@ -38,6 +38,7 @@ export default function Contact() {
   };
 
 
+const client_id = '374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleusercontent.com';
 
 
   const handleGoogleSuccess = (credentialResponse: any) => {
@@ -51,6 +52,8 @@ export default function Contact() {
         picture: decoded.picture,
         ggl_usr_id: decoded.sub,
         // ggl_res: decoded,
+        lgn_clnt_id: {client_id},
+        lgn_clnt_nm: 'Ithihas',
         app: 'web'
       }
 
@@ -61,7 +64,7 @@ export default function Contact() {
 
       setIsLoading(true)
 
-      const rte = `auth2/ss/ithihas/google/login`;
+      const rte = `auth2/ss/google/login`;
 
       service.post(rte, userData)
         .then((response) => {
@@ -133,7 +136,7 @@ export default function Contact() {
   <p className="text-gray-600 text-md font-semibold mb-2">Sign in using your Google account</p>
 
   {/* Google OAuth */}
-  <GoogleOAuthProvider clientId="374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleusercontent.com">
+  <GoogleOAuthProvider clientId={client_id}>
     <div className="flex justify-center">
       <div
         className="relative w-[300px] border border-gray-300 rounded shadow bg-white group overflow-hidden transform transition-transform duration-300 hover:scale-105"
