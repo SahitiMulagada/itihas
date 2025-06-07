@@ -33,7 +33,7 @@ function Register() {
   );
 }
 
-export default function StallContent({ stallId, initialStall }: StallContentProps) {
+export default function StallContent({ stallId }: StallContentProps) {
   // State declarations first
   const [stall, setStall] = useState<Stall | null>(null);
   const [stallLoading, setStallLoading] = useState(true);
@@ -60,16 +60,18 @@ export default function StallContent({ stallId, initialStall }: StallContentProp
       setStallLoading(true);
       setStallError(null);
       try {
-        const [stallData, reviewsData] = await Promise.all([
-          stallsService.getStallById(stallId),
-          stallsService.getStallReviews(stallId)
-        ]);
-        
-        if (!stallData) {
+        // Get stall data first
+        const stallData = await stallsService.getStallById(stallId);
+        console.log('Stall data:', stallData);
+        if (!stallData || !Array.isArray(stallData) || stallData.length === 0) {
           throw new Error('Stall not found');
         }
-        
-        setStall(stallData);
+        const stall = stallData[0]; // Get the first stall from the array
+        setStall(stall);
+
+        // Then get reviews
+        setReviewsLoading(true);
+        const reviewsData = await stallsService.getStallReviews(stall.stl_id || stallId);
         setReviews(reviewsData);
 
         // Check if user has already reviewed
@@ -84,6 +86,7 @@ export default function StallContent({ stallId, initialStall }: StallContentProp
         setStallError('Failed to load stall details');
       } finally {
         setStallLoading(false);
+        setReviewsLoading(false);
       }
     };
 
