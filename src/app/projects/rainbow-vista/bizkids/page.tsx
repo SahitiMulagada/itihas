@@ -55,6 +55,8 @@ function BizKidsContent() {
   const [activeTab, setActiveTab] = useState(tabParam || 'about');
   const [registeredStalls, setRegisteredStalls] = useState<Stall[]>([]);
   const [registeredStallsLoading, setRegisteredStallsLoading] = useState(true);
+  const [topStalls, setTopStalls] = useState<import('@/components/bizkids/stallsService').TopStall[]>([]);
+  const [topStallsLoading, setTopStallsLoading] = useState(true);
 
   // Add animation styles
   useEffect(() => {
@@ -106,15 +108,29 @@ function BizKidsContent() {
     }
   }, []);
 
+  const fetchTopStalls = useCallback(async () => {
+    setTopStallsLoading(true);
+    try {
+      const topStallsData = await stallsService.getTopReviewBoard();
+      setTopStalls(topStallsData);
+    } catch (error) {
+      console.error('Error fetching top stalls:', error);
+      toast.error('Failed to load top stalls');
+    } finally {
+      setTopStallsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab') || 'about';
     setActiveTab(tabFromUrl);
 
-    // Fetch reviews if we're on the reviews tab
     if (tabFromUrl === 'reviews') {
       fetchReviews();
+    } else if (tabFromUrl === 'board') {
+      fetchTopStalls();
     }
-  }, [fetchReviews, searchParams]);
+  }, [fetchReviews, fetchTopStalls, searchParams]);
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
@@ -454,29 +470,35 @@ function BizKidsContent() {
 
             {activeTab === 'board' && (
               <div>
-                <SectionHeading title="Stall Board" />
-
-                <div className="p-6 mb-8">
-                  <p className="text-blue-800 text-lg mb-4 font-semibold">We will update the top rated stalls here after the event.</p>
-
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                  {/* {boardMembers.map((member) => (
-                    <div key={member.name} className="text-center">
-                      <div className="relative w-48 h-48 mx-auto mb-4">
-                        <Image
-                          src={member.image}
-                          alt={member.name}
-                          fill
-                          className="object-cover rounded-full"
-                        />
-                      </div>
-                      <h3 className="text-xl font-semibold text-gray-800">{member.name}</h3>
-                      <p className="text-blue-600">{member.role}</p>
-                    </div>
-                  ))} */}
-                </div>
+                <SectionHeading title="Top Rated Stalls" />
+                {topStallsLoading ? (
+                  <div className="flex justify-center items-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stall Name</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Young Entrepreneurs</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stars received</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {topStalls.map((stall, index) => (
+                          <tr key={stall.stl_id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} onClick={() => router.push(`/projects/rainbow-vista/bizkids/stall/${stall.stl_id}`)}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.stl_nm}</td>
+                            <td className="px-6 py-4 text-sm text-gray-500">{stall.mbr_lst.split(',').join(', ')}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.str_ct.toFixed(1)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
 
