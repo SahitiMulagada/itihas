@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import Layout from '../../../../components/layout/Layout';
 import SectionHeading from '../../../../components/common/SectionHeading';
 
-import { registeredStalls, type Stall } from '../../../../data/registeredStalls';
+import { type Stall } from '../../../../data/registeredStalls';
 import { galleryService } from '../../../../components/bizkids/galleryService';
 import { stallsService, type EventReview } from '../../../../components/bizkids/stallsService';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -53,6 +53,8 @@ function BizKidsContent() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
   const [activeTab, setActiveTab] = useState(tabParam || 'about');
+  const [registeredStalls, setRegisteredStalls] = useState<Stall[]>([]);
+  const [registeredStallsLoading, setRegisteredStallsLoading] = useState(true);
 
   // Add animation styles
   useEffect(() => {

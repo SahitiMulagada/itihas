@@ -1,6 +1,6 @@
 import Layout from '../../../../../../components/layout/Layout'
 import StallContent from '../../../../../../components/bizkids/StallContent'
-import { registeredStalls } from '../../../../../../data/registeredStalls'
+import { stallsService } from '../../../../../../components/bizkids/stallsService'
 
 interface PageProps {
   params: {
@@ -9,7 +9,8 @@ interface PageProps {
 }
 
 export function generateStaticParams() {
-  return registeredStalls.map((stall) => ({
+  const stalls = await stallsService.getStalls();
+  return stalls.map((stall) => ({
     id: stall.stl_id?.toString() || '0'
   }))
 }

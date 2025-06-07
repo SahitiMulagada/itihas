@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { registeredStalls, type Stall } from '../../data/registeredStalls';
+import { type Stall } from '../../data/registeredStalls';
+
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin, googleLogout } from '@react-oauth/google'
 import { jwtDecode } from "jwt-decode"
@@ -32,7 +33,30 @@ function Register() {
 }
 
 export default function StallContent({ stallId }: StallContentProps) {
-  const stall = registeredStalls.find(s => s.stl_id === stallId);
+  const [stall, setStall] = useState<Stall | null>(null);
+  const [stallLoading, setStallLoading] = useState(true);
+  const [stallError, setStallError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStall = async () => {
+      setStallLoading(true);
+      setStallError(null);
+      try {
+        const data = await stallsService.getStallById(stallId);
+        if (!data) {
+          setStallError('Stall not found');
+          return;
+        }
+        setStall(data);
+      } catch (error) {
+        console.error('Error fetching stall:', error);
+        setStallError('Failed to load stall details');
+      } finally {
+        setStallLoading(false);
+      }
+    };
+    fetchStall();
+  }, [stallId]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [hasUserReviewed, setHasUserReviewed] = useState(false);
@@ -195,10 +219,42 @@ userId = getUserIdFromToken();
     fetchReviews();
   }, [stallId]);
 
+  if (stallLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (stallError) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <div className="text-red-600 text-lg">{stallError}</div>
+        <Link href="/projects/rainbow-vista/bizkids" className="text-blue-600 hover:underline mt-4 inline-block">
+          ← Back to Stalls
+        </Link>
+      </div>
+    );
+  }
+
+  if (!stall) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <div className="text-gray-600 text-lg">Stall not found</div>
+        <Link href="/projects/rainbow-vista/bizkids" className="text-blue-600 hover:underline mt-4 inline-block">
+          ← Back to Stalls
+        </Link>
+      </div>
+    );
+  }
+
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Back Link */}
-      <div className="bg-white border-b">
+      <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-3">
           <Link
             href="/projects/rainbow-vista/bizkids?tab=stalls"

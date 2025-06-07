@@ -45,7 +45,25 @@ export interface Stall {
   entrepreneurs: Entrepreneur[];
 }
 
+export interface TopStall {
+  stl_id: number;
+  str_ct: number;
+  stl_nu: string | null;
+  stl_nm: string;
+  mbr_lst: string;
+}
+
 class StallsService {
+  async getTopReviewBoard(): Promise<TopStall[]> {
+    try {
+      const response = await service.get('itihas/stall-reviews/top-review-board');
+      return response.data || [];
+    } catch (error) {
+      console.error('Error fetching top review board:', error);
+      throw error;
+    }
+  }
+
   async getStalls(): Promise<Stall[]> {
     try {
       const response = await service.get('itihas/stalls');

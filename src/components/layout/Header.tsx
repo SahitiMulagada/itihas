@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Header = () => {
   const pathname = usePathname();
@@ -16,18 +16,22 @@ const Header = () => {
     { label: 'Contact Us.', path: '/contact' },
   ];
 
- function getUsernameFromGglUsrDtls() {
-  const userDataString = localStorage.getItem('gglUsrDtls');
-  if (!userDataString) return null;
-  try {
-    const decodedString = atob(userDataString); 
-    const userData = JSON.parse(decodedString);
-    return userData.user_name || null;
-  } catch {
-    return null;
+const [username, setUsername] = useState<string | null>(null);
+
+useEffect(() => {
+  function getUsernameFromGglUsrDtls() {
+    try {
+      const userDataString = localStorage.getItem('gglUsrDtls');
+      if (!userDataString) return null;
+      const decodedString = atob(userDataString); 
+      const userData = JSON.parse(decodedString);
+      return userData.user_name || null;
+    } catch {
+      return null;
+    }
   }
-}
-const username = getUsernameFromGglUsrDtls();
+  setUsername(getUsernameFromGglUsrDtls());
+}, []);
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm shadow-sm">
       <nav className="container mx-auto px-4 py-4">
