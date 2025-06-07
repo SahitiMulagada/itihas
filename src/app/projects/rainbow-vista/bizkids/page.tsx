@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { MdAccessTime, MdLocationOn, MdCalendarToday, MdClose } from 'react-icons/md';
 import { motion } from 'framer-motion';
 import Layout from '../../../../components/layout/Layout';
@@ -12,6 +12,11 @@ import SectionHeading from '../../../../components/common/SectionHeading';
 
 import { registeredStalls, type Stall } from '../../../../data/registeredStalls';
 import { galleryService } from '../../../../components/bizkids/galleryService';
+import { stallsService, type EventReview } from '../../../../components/bizkids/stallsService';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleLogin, googleLogout } from '@react-oauth/google'
+import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-hot-toast';
 
 const boardMembers = [
   {
@@ -59,33 +64,139 @@ function BizKidsContent() {
 
   const [selectedPoster, setSelectedPoster] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [reviews, setReviews] = useState<EventReview[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const client_id = '374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleusercontent.com';
+  const pastelBgClasses = [
+    'bg-yellow-50',
+    'bg-blue-50',
+    'bg-pink-50',
+    'bg-green-50',
+    'bg-purple-50'
+  ];
 
-const pastelBgClasses = [
-  'bg-yellow-50',
-  'bg-blue-50',
-  'bg-pink-50',
-  'bg-green-50',
-  'bg-purple-50',
-];
+  const tabs = [
+    { id: 'about', label: 'About Event' },
+    { id: 'stalls', label: 'Registered Stalls' },
+    { id: 'board', label: 'Stall Board' },
+    { id: 'gallery', label: 'Gallery' },
+    { id: 'reviews', label: 'Reviews' },
+    { id: 'organization', label: 'Organization' }
+  ];
 
+  const fetchReviews = useCallback(async () => {
+    setReviewsLoading(true);
+    setError(null);
+    try {
+      const reviewsData = await stallsService.getEventReviews('bizkids-2025');
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error('Error fetching event reviews:', error);
+      setError('Failed to load reviews. Please try again later.');
+      toast.error('Failed to load reviews');
+    } finally {
+      setReviewsLoading(false);
+    }
+  }, []);
 
-  // Update URL when tab changes
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab') || 'about';
+    setActiveTab(tabFromUrl);
+
+    // Fetch reviews if we're on the reviews tab
+    if (tabFromUrl === 'reviews') {
+      fetchReviews();
+    }
+  }, [fetchReviews, searchParams]);
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const decoded: any = jwtDecode(credentialResponse.credential);
+      const token = credentialResponse.credential;
+      localStorage.setItem('x-access-token', token);
+      setIsLoggedIn(true);
+      toast.success('Successfully logged in!');
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Login failed');
+    }
+  };
+
+  const handleGoogleFailure = () => {
+    toast.error('Google login failed');
+  };
+
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem('x-access-token');
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.email;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      toast.error('Please sign in to submit a review');
+      return;
+    }
+
+    if (!reviewText.trim()) {
+      toast.error('Please write a review before submitting');
+      return;
+    }
+
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      toast.error('Please sign in again');
+      return;
+    }
+
+    setSubmittingReview(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('x-access-token');
+      const decoded: any = jwtDecode(token!);
+      
+      await stallsService.submitEventReview('bizkids-2025', {
+        evnt_id: 'bizkids-2025',
+        usr_id: decoded.email,
+        usr_nm: decoded.name,
+        usr_imge_url_tx: decoded.picture,
+        rvw_ct: reviewRating,
+        rvw_tx: reviewText.trim()
+      });
+      await fetchReviews();
+      setReviewText('');
+      setReviewRating(5);
+      toast.success('Review submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      setError('Failed to submit review. Please try again.');
+      toast.error('Failed to submit review');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
     const url = new URL(window.location.href);
     url.searchParams.set('tab', tabId);
     window.history.pushState({}, '', url);
-  };
 
-  const tabs = [
-    { id: 'about', label: 'About Event' },
-    { id: 'board', label: 'Stall Board' },
-    { id: 'stalls', label: 'Registered Stalls' },
-    { id: 'finance', label: 'Finance' },
-    { id: 'gallery', label: 'Gallery' },
-    { id: 'organization', label: 'Organized by' },
-    { id: 'reviews', label: 'Reviews' },
-  ];
+    if (tabId === 'reviews') {
+      fetchReviews();
+    }
+  };
 
   return (
     <Layout>
@@ -253,9 +364,9 @@ const pastelBgClasses = [
                       <p className="flex items-center">
                         <MdLocationOn className="mr-2 text-blue-600" /> Before K,L Blocks 
                       </p>
-                      <p className="flex items-center">
-                        <p className="text-blue-600 font-semibold">(Rainbow Vista Rock gardens)</p>
-                      </p>
+                      <div className="flex items-center">
+                        <span className="text-blue-600 font-semibold">(Rainbow Vista Rock gardens)</span>
+                      </div>
                     </div>
                   </div>
                   <div className="text-lg text-gray-700 mb-6 p-4 rounded-2xl shadow-lg border-gray-200 border">
@@ -690,63 +801,148 @@ const pastelBgClasses = [
                   </div>
 
                   {/* Reviews List */}
-                  <div className="space-y-6">
-                    {[
-                      {
-                        id: 1,
-                        name: 'Priya R.',
-                        rating: 5,
-                        date: '2025-06-07',
-                        comment: 'Amazing experience! My kids learned so much about entrepreneurship and had fun doing it.',
-                        stall: 'Food Stall'
-                      },
-                      {
-                        id: 2,
-                        name: 'Rahul M.',
-                        rating: 4,
-                        date: '2025-06-07',
-                        comment: 'Well organized event. Great to see young minds exploring business concepts.',
-                        stall: 'Craft Corner'
-                      },
-                      {
-                        id: 3,
-                        name: 'Sneha K.',
-                        rating: 5,
-                        date: '2025-06-07',
-                        comment: 'The creativity and enthusiasm of these young entrepreneurs was inspiring!',
-                        stall: 'Tech Zone'
-                      }
-                    ].map((review) => (
-                      <div key={review.id} className="bg-white rounded-xl shadow-sm p-6 transition-shadow hover:shadow-md">
-                        <div className="flex items-center justify-between mb-4">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900">{review.name}</h3>
-                            <p className="text-sm text-gray-500">{review.stall}</p>
+                  {/* Review Form */}
+                  <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    {error && (
+                      <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+                        {error}
+                      </div>
+                    )}
+                    <h3 className="text-xl font-semibold mb-4">Write a Review</h3>
+                    {!isLoggedIn ? (
+                      <GoogleOAuthProvider clientId={client_id}>
+                        <div className="flex flex-col items-center justify-center space-y-4">
+                          <p className="text-gray-600 text-sm">Sign in with Google to write a review</p>
+                          <div className="relative w-full max-w-md">
+                            <div className="h-0.5 w-full bg-gray-100 absolute -z-10">
+                              <div
+                                className="h-full w-1/4"
+                                style={{
+                                  background: 'linear-gradient(90deg, #db4437, #f4b400, #0f9d58, #4285f4)',
+                                  backgroundSize: '400% 400%',
+                                  animation: 'gradientShift 4s linear infinite',
+                                }}
+                              />
+                            </div>
+                            <div className="flex items-center justify-center py-3">
+                              <GoogleLogin
+                                onSuccess={handleGoogleSuccess}
+                                onError={handleGoogleFailure}
+                                width="280"
+                                theme="outline"
+                                text="signin_with"
+                                shape="rectangular"
+                              />
+                            </div>
                           </div>
-                          <span className="text-sm text-gray-500">
-                            {new Date(review.date).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </span>
                         </div>
-                        <div className="flex items-center mb-4">
+                      </GoogleOAuthProvider>
+                    ) : (
+                      <form onSubmit={handleReviewSubmit} className="space-y-4">
+                        <div className="flex items-center space-x-2">
+                          <div className="flex-shrink-0">
+                            {session.user?.image && (
+                              <img
+                                src={session.user.image}
+                                alt={session.user.name || ''}
+                                className="w-10 h-10 rounded-full"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium">{session.user?.name}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-1">
                           {[...Array(5)].map((_, i) => (
-                            <svg
+                            <button
                               key={i}
-                              className={`w-5 h-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
+                              type="button"
+                              onClick={() => setReviewRating(i + 1)}
+                              className="focus:outline-none"
                             >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
+                              <svg
+                                className={`w-6 h-6 ${i < reviewRating ? 'text-yellow-400' : 'text-gray-300'}`}
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            </button>
                           ))}
                         </div>
-                        <p className="text-gray-700">{review.comment}</p>
-                      </div>
-                    ))}
+                        <textarea
+                          value={reviewText}
+                          onChange={(e) => setReviewText(e.target.value)}
+                          placeholder="Share your experience at BizKids..."
+                          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          rows={4}
+                          required
+                        />
+                        <button
+                          type="submit"
+                          disabled={submittingReview || !reviewText.trim()}
+                          className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-300"
+                        >
+                          {submittingReview ? 'Submitting...' : 'Submit Review'}
+                        </button>
+                      </form>
+                    )}
                   </div>
+
+                  {/* Reviews List */}
+                  {reviewsLoading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Loading reviews...</p>
+                    </div>
+                  ) : reviews.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-600">No reviews yet. Be the first to review!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {reviews.map((review) => (
+                        <div key={review.rvw_id} className="bg-white rounded-xl shadow-sm p-6 transition-shadow hover:shadow-md">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center space-x-3">
+                              {review.usr_imge_url_tx && (
+                                <img
+                                  src={review.usr_imge_url_tx}
+                                  alt={review.usr_nm}
+                                  className="w-8 h-8 rounded-full"
+                                />
+                              )}
+                              <div>
+                                <h3 className="text-lg font-semibold text-gray-900">{review.usr_nm}</h3>
+                                <p className="text-sm text-gray-500">
+                                  {new Date(review.rvw_ts).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center mb-4">
+                            {[...Array(5)].map((_, i) => (
+                              <svg
+                                key={i}
+                                className={`w-4 h-4 ${i < review.rvw_ct ? 'text-yellow-400' : 'text-gray-300'}`}
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <p className="text-gray-700">{review.rvw_tx}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                 </div>
               </div>
             )}

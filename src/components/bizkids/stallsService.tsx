@@ -96,6 +96,16 @@ class StallsService {
       throw error;
     }
   }
+
+  async submitEventReview(eventId: string, review: Omit<EventReview, 'rvw_id' | 'rvw_ts'>): Promise<EventReview> {
+    try {
+      const response = await service.post(`itihas/event/${eventId}/reviews`, review);
+      return response.data;
+    } catch (error) {
+      console.error('Error submitting event review:', error);
+      throw error;
+    }
+  }
 }
 
 export const stallsService = new StallsService();
