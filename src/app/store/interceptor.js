@@ -5,20 +5,21 @@ const axiosInstance = axios.create({
   withCredentials: true
 });
 
+// Check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined';
+
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Modify the request config here (e.g., add headers, authentication tokens)
-    const accessToken = localStorage.getItem("x-access-token");
-
-    // ** If token is present add it to request's Authorization Header
-    if (accessToken) {
-      if (config.headers) config.headers['x-access-token'] = accessToken;
+    // Only access localStorage in browser environment
+    if (isBrowser) {
+      const accessToken = localStorage.getItem("x-access-token");
+      if (accessToken && config.headers) {
+        config.headers['x-access-token'] = accessToken;
+      }
     }
     return config;
   },
   (error) => {
-    // Handle request errors here
-
     return Promise.reject(error);
   }
 );
@@ -26,8 +27,8 @@ axiosInstance.interceptors.request.use(
 // Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
-    // Modify the response data here (e.g., parse, transform)
-    if (response.headers['x-access-token']) {
+    // Only access localStorage in browser environment
+    if (isBrowser && response.headers['x-access-token']) {
       localStorage.setItem('x-access-token', response.headers['x-access-token']);
       
       // Send token to chatbot for authentication

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { type Stall } from '../../data/registeredStalls';
+import { type Stall, stallsService , type Review } from './stallsService';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin, googleLogout } from '@react-oauth/google'
@@ -11,10 +11,11 @@ import service from '@/app/store/baseapiservice';
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 
-import { stallsService, type Review } from './stallsService';
+
 
 interface StallContentProps {
   stallId: number;
+  initialStall?: Stall;
 }
 
 
@@ -32,31 +33,11 @@ function Register() {
   );
 }
 
-export default function StallContent({ stallId }: StallContentProps) {
+export default function StallContent({ stallId, initialStall }: StallContentProps) {
+  // State declarations first
   const [stall, setStall] = useState<Stall | null>(null);
   const [stallLoading, setStallLoading] = useState(true);
   const [stallError, setStallError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchStall = async () => {
-      setStallLoading(true);
-      setStallError(null);
-      try {
-        const data = await stallsService.getStallById(stallId);
-        if (!data) {
-          setStallError('Stall not found');
-          return;
-        }
-        setStall(data);
-      } catch (error) {
-        console.error('Error fetching stall:', error);
-        setStallError('Failed to load stall details');
-      } finally {
-        setStallLoading(false);
-      }
-    };
-    fetchStall();
-  }, [stallId]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [hasUserReviewed, setHasUserReviewed] = useState(false);
@@ -67,9 +48,52 @@ export default function StallContent({ stallId }: StallContentProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  // Router hook
+  const router = useRouter();
+
+  // All useEffects together
+  useEffect(() => {
+    const fetchData = async () => {
+      setStallLoading(true);
+      setStallError(null);
+      try {
+        const [stallData, reviewsData] = await Promise.all([
+          stallsService.getStallById(stallId),
+          stallsService.getStallReviews(stallId)
+        ]);
+        
+        if (!stallData) {
+          throw new Error('Stall not found');
+        }
+        
+        setStall(stallData);
+        setReviews(reviewsData);
+
+        // Check if user has already reviewed
+        if (isBrowser) {
+          const userId = getUserIdFromToken();
+          if (userId) {
+            setHasUserReviewed(reviewsData.some(review => review.usr_id === userId));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setStallError('Failed to load stall details');
+      } finally {
+        setStallLoading(false);
+      }
+    };
+
+    // Check login status and fetch data
+    if (isBrowser) {
+      const token = localStorage.getItem('googleToken');
+      setIsLoggedIn(!!token);
+    }
+    fetchData();
+  }, [stallId]);
 
   const client_id = '374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleusercontent.com';
 
@@ -89,10 +113,10 @@ export default function StallContent({ stallId }: StallContentProps) {
         app: 'web'
       }
 
-      localStorage.setItem('gglUsrDtls', btoa(JSON.stringify(userData)));
+      if (isBrowser) {
+        localStorage.setItem('gglUsrDtls', btoa(JSON.stringify(userData)));
+      }
       console.log(userData, "gglUsrDtls");
-
-
 
       setIsLoading(true)
 
@@ -103,10 +127,11 @@ export default function StallContent({ stallId }: StallContentProps) {
           console.log(response, "responsemmmmmmmmmmm")
 
           if (response.status === 200 && response.data) {
-            localStorage.setItem('userData', JSON.stringify(response.data))
+            if (isBrowser) {
+              localStorage.setItem('userData', JSON.stringify(response.data));
+            }
             toast.success('Google login successful');
             setIsLoggedIn(true);
-            // router.push('/projects')
           } else {
             toast.error(response.data.message || 'Something went wrong')
           }
@@ -132,14 +157,21 @@ export default function StallContent({ stallId }: StallContentProps) {
     toast.error('Google login failed')
   }
 
+// Check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined';
+
 let userId = null;
 function getUserIdFromToken() {
+  if (!isBrowser) return null;
+  
   const token = localStorage.getItem('x-access-token');
   if (!token) return null;
+  
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.usr_id;
-  } catch {
+  } catch (error) {
+    console.error('Error parsing token:', error);
     return null;
   }
 }
@@ -191,33 +223,9 @@ userId = getUserIdFromToken();
     );
   }
 
+  // Calculate ratings
   const totalStars = reviews.reduce((acc, review) => acc + review.rvw_ct + (review.rvw_tx ? 1 : 0), 0);
   const averageRating = reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rvw_ct, 0) / reviews.length : 0;
-
-  useEffect(() => {
-    const token = localStorage.getItem('googleToken');
-    setIsLoggedIn(!!token);
-
-    const fetchReviews = async () => {
-      setReviewsLoading(true);
-      try {
-        const reviewsData = await stallsService.getStallReviews(stallId.toString());
-        setReviews(reviewsData);
-        // Check if user has already reviewed
-        const userId = getUserIdFromToken();
-        if (userId) {
-          setHasUserReviewed(reviewsData.some(review => review.usr_id === userId));
-        }
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-        toast.error('Failed to load reviews');
-      } finally {
-        setReviewsLoading(false);
-      }
-    };
-
-    fetchReviews();
-  }, [stallId]);
 
   if (stallLoading) {
     return (
@@ -293,7 +301,7 @@ userId = getUserIdFromToken();
         Cheers to Young Entrepreneurs!
       </h1>
       <p className="text-lg sm:text-xl opacity-90">
-        Discover the next generation of business leaders at Stall {stall.stl_nu}
+        Discover the next generation of business leaders at Stall {stall?.stl_nu || 'N/A'}
       </p>
     </div>
   </div>
@@ -323,7 +331,7 @@ userId = getUserIdFromToken();
   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
     <div className="flex-1">
       <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-        {stall.stl_nm || `Stall ${stall.stl_nu}`}
+        {stall?.stl_nm || `Stall ${stall?.stl_nu || 'N/A'}`}
       </h2>
 
       <div className="flex items-center mt-2 flex-wrap">
@@ -349,7 +357,7 @@ userId = getUserIdFromToken();
     </div>
 
     <div className="text-left md:text-right flex flex-wrap gap-2">
-      {stall.categories.map((cat, index) => (
+      {stall?.categories?.map((cat, index) => (
         <span
           key={index}
           className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
@@ -366,7 +374,7 @@ userId = getUserIdFromToken();
       Meet Our Young Entrepreneurs
     </h3>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-      {stall.entrepreneurs.map((entrepreneur, index) => (
+      {stall?.entrepreneurs?.map((entrepreneur, index) => (
         <div
           key={index}
           className="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-100"
@@ -374,15 +382,15 @@ userId = getUserIdFromToken();
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold">
-                {entrepreneur.mbr_nm[0]}
+                {entrepreneur?.mbr_nm?.[0] || '?'}
               </div>
             </div>
             <div>
               <h4 className="text-base sm:text-lg font-semibold text-gray-900">
-                {entrepreneur.mbr_nm}
+                {entrepreneur?.mbr_nm || 'Unknown'}
               </h4>
-              <p className="text-sm text-gray-600">{entrepreneur.schl_nm}</p>
-              <p className="text-xs text-gray-500">Block: {entrepreneur.blk_nu}</p>
+              <p className="text-sm text-gray-600">{entrepreneur?.schl_nm || 'N/A'}</p>
+              <p className="text-xs text-gray-500">Block: {entrepreneur?.blk_nu || 'N/A'}</p>
             </div>
           </div>
         </div>

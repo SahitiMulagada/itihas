@@ -2,9 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   distDir: 'build',  // Change build output directory from .next to build
-  output: 'export',  // Generate static HTML/CSS/JS output
   images: {
-    unoptimized: true,  // Required for static export
+    unoptimized: false,  // Enable image optimization since we're not doing static export
   },
 };
 

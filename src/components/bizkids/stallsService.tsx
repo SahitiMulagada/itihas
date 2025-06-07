@@ -8,8 +8,8 @@ export interface Entrepreneur {
 }
 
 export interface Category {
-  ctgry_id: number;
-  ctgry_nm: string;
+  cat_id?: number;
+  cat_nm: string;
 }
 
 export interface Review {
@@ -37,7 +37,7 @@ export interface EventReview {
 
   
 export interface Stall {
-  stl_id: number;
+  stl_id?: number;
   stl_nu: string | null;
   stl_nm: string;
   lgo_url_tx: string | null;
@@ -85,7 +85,7 @@ class StallsService {
     }
   }
 
-  async getStallById(id: number): Promise<Stall | null> {
+  async getStallById(id: number | string): Promise<Stall | null> {
     try {
       const response = await service.get(`itihas/stall/${id}`);
       return response.data || null;
@@ -95,7 +95,7 @@ class StallsService {
     }
   }
 
-  async getStallReviews(stallId: string): Promise<Review[]> {
+  async getStallReviews(stallId: number | string): Promise<Review[]> {
     try {
       const response = await service.get(`itihas/stall/${stallId}/reviews`);
       return response.data || [];
