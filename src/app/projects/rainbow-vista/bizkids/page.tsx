@@ -121,6 +121,19 @@ function BizKidsContent() {
     }
   }, []);
 
+  const fetchRegisteredStalls = useCallback(async () => {
+    setRegisteredStallsLoading(true);
+    try {
+      const data = await stallsService.getStalls();
+      setRegisteredStalls(data);
+    } catch (error) {
+      console.error('Error fetching stalls:', error);
+      toast.error('Failed to load stalls');
+    } finally {
+      setRegisteredStallsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab') || 'about';
     setActiveTab(tabFromUrl);
@@ -129,8 +142,10 @@ function BizKidsContent() {
       fetchReviews();
     } else if (tabFromUrl === 'board') {
       fetchTopStalls();
+    } else if (tabFromUrl === 'stalls') {
+      fetchRegisteredStalls();
     }
-  }, [fetchReviews, fetchTopStalls, searchParams]);
+  }, [fetchReviews, fetchTopStalls, fetchRegisteredStalls, searchParams]);
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
@@ -534,6 +549,7 @@ function BizKidsContent() {
                       <tr>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">S.No</th>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">Stall No</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">Stall Name</th>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">Young Entrepreneurs</th>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">Categories</th>
                       </tr>
@@ -552,6 +568,7 @@ function BizKidsContent() {
                         <tr key={index} className="hover:bg-gray-50" onClick={() => router.push(`/projects/rainbow-vista/bizkids/stall/${stall.stl_id}`)}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.stl_nu || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.stl_nm || '-'}</td>
                           <td className="px-6 py-4 text-sm text-gray-500">
                             <div className="space-y-2">
                               {stall.entrepreneurs.map((entrepreneur, eIndex) => (
@@ -600,7 +617,7 @@ function BizKidsContent() {
   <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
     <div className="flex items-center space-x-3">
       <span className="text-lg font-bold text-blue-600 group-hover:scale-110 transition-transform">#{index + 1}</span>
-      <span className="text-sm text-gray-500 font-medium">(Stall {stall.stl_nu || '-'})</span>
+      <span className="text-sm text-gray-500 font-medium">(Stall {stall.stl_nu || '-'}) <b className="text-blue-600">{stall.stl_nm}</b></span>
     </div>
     <div className="flex flex-wrap gap-1">
       {stall.categories.map((category, cIndex) => (
