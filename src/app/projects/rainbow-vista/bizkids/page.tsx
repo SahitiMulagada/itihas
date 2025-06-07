@@ -781,13 +781,16 @@ function BizKidsContent() {
 
             {activeTab === 'reviews' && (
               <div>
-                <SectionHeading title="Reviews & Feedback" />
+         
+                  <SectionHeading title="Event Reviews" />
+
                 <div className="max-w-4xl mx-auto">
                   {/* Reviews Stats */}
                   <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-blue-600">4.8/42 Reviews</div>
+                        <div className="text-3xl font-bold text-blue-600">{reviews.length > 0
+                        ? (reviews.reduce((acc, review) => acc + review.rvw_ct, 0) / reviews.length).toFixed(1)
+                        : '0.0'}</div>
                         <div className="flex justify-center mt-2">
                           {[...Array(5)].map((_, i) => (
                             <svg key={i} className={`w-5 h-5 ${i < 5 ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
@@ -797,9 +800,6 @@ function BizKidsContent() {
                         </div>
                         <div className="text-sm text-gray-600 mt-1">Average Rating</div>
                       </div>
-
-
-                    </div>
                   </div>
 
                   {/* Reviews List */}
