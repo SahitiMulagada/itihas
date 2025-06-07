@@ -10,31 +10,7 @@ import service from '@/app/store/baseapiservice';
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 
-interface Review {
-  id: number;
-  rating: number;
-  comment: string;
-  author: string;
-  date: string;
-}
-
-// Mock reviews data
-const mockReviews: Review[] = [
-  {
-    id: 1,
-    rating: 5,
-    comment: "Amazing innovation! The young entrepreneurs are truly inspiring.",
-    author: "John D.",
-    date: "2025-06-05"
-  },
-  {
-    id: 2,
-    rating: 4,
-    comment: "Great presentation and wonderful business idea!",
-    author: "Sarah M.",
-    date: "2025-06-04"
-  }
-];
+import { stallsService, type Review } from './stallsService';
 
 interface StallContentProps {
   stallId: number;
@@ -57,16 +33,21 @@ function Register() {
 
 export default function StallContent({ stallId }: StallContentProps) {
   const stall = registeredStalls.find(s => s.stl_id === stallId);
-  const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [hasUserReviewed, setHasUserReviewed] = useState(false);
+  const [newReview, setNewReview] = useState({
+    rvw_ct: 5,
+    rvw_tx: ""
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-    const [submitLoading, setSubmitLoading] = useState(false);
-    const [submitError, setSubmitError] = useState('');
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const client_id = '374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleusercontent.com';
-
 
   const handleGoogleSuccess = (credentialResponse: any) => {
     if (credentialResponse?.credential) {
@@ -141,35 +122,37 @@ function getUserIdFromToken() {
 
 userId = getUserIdFromToken();
    const handleReviewSubmit = async () => {
-      setSubmitLoading(true);
-      setSubmitError('');
-      const reviewData = {
-        rating: newReview.rating,
-        comment: newReview.comment,
-        userId: userId,
-        stallId: stallId,
-      };
-      service.post('auth2/ss/ithihas/submitReview', reviewData)
-        .then((response) => {
-          if (response.status === 200 || response.status === 201) {
-            setNewReview({ rating: 5, comment: '' });
-            toast.success('Review submitted successfully');
-          } else {
-            toast.error(response.data?.message || 'Something went wrong');
-          }
-        })
-        .catch((error) => {
-          console.error('Review Submission Error:', error);
-          const errorMessage = error.message || 'Something went wrong';
-          toast.error(errorMessage);
-          setSubmitError('Failed to submit review');
-        })
-        .finally(() => {
-          setSubmitLoading(false);
-        });
-    };
-  
+    if (!isLoggedIn) {
+      toast.error('Please sign in to submit a review');
+      return;
+    }
 
+    if (hasUserReviewed) {
+      toast.error('You can only submit one review per stall');
+      return;
+    }
+
+    setSubmitLoading(true);
+    try {
+      const reviewData = {
+        stl_id: stallId.toString(),
+        evnt_id: '1', // You might want to make this dynamic
+        usr_id: userId,
+        rvw_ct: newReview.rvw_ct,
+        rvw_tx: newReview.rvw_tx
+      };
+
+      const submittedReview = await stallsService.submitReview(stallId.toString(), reviewData);
+      setReviews([...reviews, submittedReview]);
+      setNewReview({ rvw_ct: 5, rvw_tx: "" });
+      toast.success('Review submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      toast.error('Failed to submit review');
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   if (!stall) {
     return (
@@ -184,13 +167,33 @@ userId = getUserIdFromToken();
     );
   }
 
-  const averageRating = mockReviews.reduce((acc, review) => acc + review.rating, 0) / mockReviews.length;
+  const totalStars = reviews.reduce((acc, review) => acc + review.rvw_ct + (review.rvw_tx ? 1 : 0), 0);
+  const averageRating = reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rvw_ct, 0) / reviews.length : 0;
 
   useEffect(() => {
-    const token = localStorage.getItem("x-access-token");
+    const token = localStorage.getItem('googleToken');
     setIsLoggedIn(!!token);
-  }, []);
 
+    const fetchReviews = async () => {
+      setReviewsLoading(true);
+      try {
+        const reviewsData = await stallsService.getStallReviews(stallId.toString());
+        setReviews(reviewsData);
+        // Check if user has already reviewed
+        const userId = getUserIdFromToken();
+        if (userId) {
+          setHasUserReviewed(reviewsData.some(review => review.usr_id === userId));
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+        toast.error('Failed to load reviews');
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [stallId]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -244,6 +247,21 @@ userId = getUserIdFromToken();
       {/* Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
+          {/* Total Stars Section */}
+          <div className="bg-gradient-to-r from-yellow-100 to-amber-100 rounded-xl shadow-sm p-6 mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-yellow-800 mb-2">Total Stars Earned</h2>
+                <p className="text-amber-700 text-sm">Each review gets a bonus star for written feedback!</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-4xl font-bold text-yellow-600">{totalStars}</span>
+                <svg className="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </div>
+            </div>
+          </div>
           {/* Stall Info */}
          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 md:p-8 mb-8">
   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -333,8 +351,8 @@ userId = getUserIdFromToken();
           <button
             key={i}
             type="button"
-            onClick={() => setNewReview({ ...newReview, rating: i + 1 })}
-            className={`w-7 h-7 sm:w-8 sm:h-8 ${i < newReview.rating ? 'text-yellow-400' : 'text-gray-300'
+            onClick={() => setNewReview({ ...newReview, rvw_ct: i + 1 })}
+            className={`w-7 h-7 sm:w-8 sm:h-8 ${i < newReview.rvw_ct ? 'text-yellow-400' : 'text-gray-300'
               } hover:text-yellow-400 focus:outline-none`}
           >
             <svg fill="currentColor" viewBox="0 0 20 20">
@@ -348,8 +366,8 @@ userId = getUserIdFromToken();
     <div className="mb-4">
       <label className="block text-sm font-medium text-gray-700 mb-2">Comment</label>
       <textarea
-        value={newReview.comment}
-        onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+        value={newReview.rvw_tx}
+        onChange={(e) => setNewReview({ ...newReview, rvw_tx: e.target.value })}
         rows={4}
         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
         placeholder="Share your thoughts about this stall..."
@@ -357,18 +375,24 @@ userId = getUserIdFromToken();
     </div>
 
     <div>
-      <button
-        type="button"
-        className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 text-sm"
-        disabled={!isLoggedIn || submitLoading}
-        onClick={handleReviewSubmit}
-      >
-        Submit Review
-      </button>
+      {hasUserReviewed ? (
+        <div className="text-red-600 text-sm mb-2">
+          You have already submitted a review for this stall.
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 text-sm"
+          disabled={!isLoggedIn || submitLoading}
+          onClick={handleReviewSubmit}
+        >
+          Submit Review
+        </button>
+      )}
 
       {!isLoggedIn && (
-        <div className="mt-4 text-sm text-blue-600">
-          To submit a review, please Sign In with Google
+        <div className="mt-4 text-sm text-red-600">
+          <span className="animate-pulse">To submit a review, please Sign In with Google</span>
           <GoogleOAuthProvider clientId={client_id}>
             <div className="mt-3 flex justify-center">
               <div className="relative w-full sm:w-[300px] border border-gray-300 rounded shadow bg-white overflow-hidden hover:shadow-md transition">
@@ -399,34 +423,58 @@ userId = getUserIdFromToken();
   </div>
 
   {/* Reviews List */}
-  <div className="space-y-5">
-    {mockReviews.map((review) => (
-      <div key={review.id} className="border-b border-gray-200 pb-5 last:border-0">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-          <div className="flex items-center space-x-2">
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
+  <div className="mt-8 space-y-6">
+    {reviewsLoading ? (
+      <div className="text-center py-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-2 text-gray-600">Loading reviews...</p>
+      </div>
+    ) : reviews.length === 0 ? (
+      <div className="text-center py-4 text-gray-600">
+        No reviews yet. Be the first to review!
+      </div>
+    ) : reviews.map((review) => (
+      <div key={review.rvw_id} className="bg-white p-4 rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-3">
+            {review.usr_imge_url_tx && (
+              <img 
+                src={review.usr_imge_url_tx} 
+                alt={review.usr_nm} 
+                className="w-8 h-8 rounded-full"
+              />
+            )}
+            <div>
+              <span className="font-medium text-gray-900">{review.usr_nm}</span>
+              <div className="text-gray-500 text-sm">
+                {new Date(review.rvw_ts).toLocaleDateString()}
+              </div>
             </div>
-            <span className="text-sm font-medium text-gray-900">{review.author}</span>
           </div>
-          <span className="text-xs text-gray-500 mt-1 sm:mt-0">
-            {new Date(review.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            })}
-          </span>
+          <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <svg
+                key={i}
+                className={`w-4 h-4 ${i < review.rvw_ct ? 'text-yellow-400' : 'text-gray-300'}`}
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            ))}
+          </div>
         </div>
-        <p className="text-gray-700 text-sm">{review.comment}</p>
+        <p className="text-gray-700 text-sm">{review.rvw_tx}</p>
+        {review.rvw_tx && (
+          <div className="mt-2 text-xs text-yellow-600">
+            <span className="inline-flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              Bonus star earned for providing written feedback!
+            </span>
+          </div>
+        )}
       </div>
     ))}
   </div>

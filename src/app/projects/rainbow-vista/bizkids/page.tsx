@@ -413,7 +413,7 @@ const pastelBgClasses = [
                           category.cat_nm.toLowerCase().includes(searchLower)
                         );
                       }).map((stall, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
+                        <tr key={index} className="hover:bg-gray-50" onClick={() => router.push(`/projects/rainbow-vista/bizkids/stall/${stall.stl_id}`)}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.stl_nu || '-'}</td>
                           <td className="px-6 py-4 text-sm text-gray-500">
@@ -673,7 +673,7 @@ const pastelBgClasses = [
                   <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-blue-600">4.8</div>
+                        <div className="text-3xl font-bold text-blue-600">4.8/42 Reviews</div>
                         <div className="flex justify-center mt-2">
                           {[...Array(5)].map((_, i) => (
                             <svg key={i} className={`w-5 h-5 ${i < 5 ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
@@ -683,14 +683,8 @@ const pastelBgClasses = [
                         </div>
                         <div className="text-sm text-gray-600 mt-1">Average Rating</div>
                       </div>
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-blue-600">42</div>
-                        <div className="text-sm text-gray-600 mt-1">Total Reviews</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-blue-600">95%</div>
-                        <div className="text-sm text-gray-600 mt-1">Would Recommend</div>
-                      </div>
+
+
                     </div>
                   </div>
 
