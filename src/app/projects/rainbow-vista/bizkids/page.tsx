@@ -11,6 +11,7 @@ import Layout from '../../../../components/layout/Layout';
 import SectionHeading from '../../../../components/common/SectionHeading';
 
 import { registeredStalls, type Stall } from '../../../../data/registeredStalls';
+import { galleryService } from '../../../../components/bizkids/galleryService';
 
 const boardMembers = [
   {
@@ -754,7 +755,20 @@ const pastelBgClasses = [
               <div>
                 <SectionHeading title="Gallery" />
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
-                  {/* Add gallery content here */}
+                  {galleryService.getAllImages().map((image) => (
+                    <div key={image.id} className="relative group aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                      <img
+                        src={image.url}
+                        alt={image.caption || 'BizKids Event'}
+                        className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+                      />
+                      {image.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm">
+                          {image.caption}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
