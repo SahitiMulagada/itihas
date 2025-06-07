@@ -1022,10 +1022,10 @@ function BizKidsContent() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-8">
                   {[
                     { name: 'Sahiti Mulagada', role: 'Team Member & Event Initiator', block: 'K', school: 'Ganges Valley School', image: '/images/sahiti/sahiti.jpg' },
-                    { name: 'Adwitha Udumala', role: 'Team Member', block: 'K', school: 'Delhi Public School' },
+                    { name: 'Adwitha Udumala', role: 'Team Member', block: 'K', school: 'Delhi Public School' , image: '/projects/bizkids/profiles/adwitha.jpg'},
                     { name: 'Akshika Sangal', role: 'Team Member', block: 'H', school: 'Ganges Valley School' , image: '/projects/bizkids/profiles/akshika.jpg'},
                     { name: 'Savar Kokatnur', role: 'Team Member', block: 'M', school: 'Delhi Public School' , image: '/projects/bizkids/profiles/savar.jpg'},
-                    { name: 'Vidya Chinni', role: 'Team Member', block: 'L', school: 'Allen' },
+                    { name: 'Vidya Chinni', role: 'Team Member', block: 'L', school: 'Allen' , image: '/projects/bizkids/profiles/vidya.jpg'},
                     { name: 'Nishika Choppa', role: 'Team Member', block: 'O', school: 'Ganges Valley School' , image: '/projects/bizkids/profiles/nishika.jpg' }
                   ].map((member) => (
                     <div key={member.name} className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
