@@ -222,6 +222,9 @@ userId = getUserIdFromToken();
       setReviews([...reviews, submittedReview]);
       setNewReview({ rvw_ct: 5, rvw_tx: "" });
       toast.success('Review submitted successfully!');
+      stallsService.getStallReviews((stall?.stl_id ?? stallId) ?? '').then((reviewsData) => {
+        setReviews(reviewsData);
+      });
     } catch (error) {
       console.error('Error submitting review:', error);
       toast.error('Failed to submit review');
@@ -474,8 +477,8 @@ userId = getUserIdFromToken();
         </button>
       )}
 
-      {!isLoggedIn && (
-        <div className="mt-4 text-sm text-red-600">
+      {!isLoggedIn && !hasUserReviewed && (
+        <div className="mt-4 text-sm text-grey-600">
           <span className="animate-pulse">To submit a review, please Sign In with Google</span>
           <GoogleOAuthProvider clientId={client_id}>
             <div className="mt-3 flex justify-center">
