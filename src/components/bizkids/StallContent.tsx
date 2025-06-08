@@ -160,6 +160,18 @@ export default function StallContent({ stallId }: StallContentProps) {
     toast.error('Google login failed')
   }
 
+  
+const userDataString = localStorage.getItem('gglUsrDtls');
+let userName = '';
+let userImageUrl = '';
+if (userDataString) {
+  try {
+    const userData = JSON.parse(userDataString);
+    userName = userData.username || userData.name || '';
+    userImageUrl = userData.userImageUrl || userData.picture || '';
+  } catch {}
+}
+
 // Check if we're in a browser environment
 const isBrowser = typeof window !== 'undefined';
 
@@ -193,10 +205,13 @@ userId = getUserIdFromToken();
 
     setSubmitLoading(true);
     try {
+
       const reviewData = {
         stl_id: stallId.toString(),
         evnt_id: '1', // You might want to make this dynamic
         usr_id: userId,
+        usr_nm: userName || '',
+        usr_imge_url_tx: userImageUrl || '',
         rvw_ct: newReview.rvw_ct,
         rvw_tx: newReview.rvw_tx
       };
@@ -353,7 +368,7 @@ userId = getUserIdFromToken();
             </svg>
           ))}
           <span className="ml-2 text-gray-600 text-sm">
-            ({averageRating.toFixed(1)} / 5)
+            ({isNaN(averageRating) ? '0.0' : averageRating.toFixed(1)} / 5)
           </span>
         </div>
       </div>
@@ -362,7 +377,7 @@ userId = getUserIdFromToken();
     <div className="text-left md:text-right flex flex-wrap gap-2">
       {stall?.categories?.map((cat, index) => (
         <span
-          key={index}
+          key={cat.cat_id || index}
           className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
         >
           {cat.cat_nm}
@@ -379,8 +394,8 @@ userId = getUserIdFromToken();
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
       {stall?.entrepreneurs?.map((entrepreneur, index) => (
         <div
-          key={index}
-          className="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-100"
+          key={entrepreneur.mbr_id || index}
+          className="bg-gray-50 rounded-lg p-6 border border-gray-100"
         >
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
