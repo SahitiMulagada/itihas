@@ -39,6 +39,10 @@ export default function PostInput({
   const [activeControl, setActiveControl] = useState<number | null>(null);
   const [isRichEditor, setIsRichEditor] = useState(false);
   const [currentTag, setCurrentTag] = useState('');
+  const [pollQuestion, setPollQuestion] = useState('');
+  const [pollOptions, setPollOptions] = useState<string[]>([]);
+  const [currentOption, setCurrentOption] = useState('');
+
   const [formData, setFormData] = useState<Partial<PostData>>({
     pst_grp_id,
     allowComments: false
@@ -81,24 +85,62 @@ export default function PostInput({
     }
   }, [tmllts]);
 
+  const handleAddPollOption = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if ((e.key === 'Enter' || e.key === ',') && currentOption.trim()) {
+      e.preventDefault();
+      // Split by commas and clean each option
+      const newOptions = currentOption
+        .split(',')
+        .map(opt => opt.trim())
+        .filter(opt => opt.length > 0 && !pollOptions.includes(opt));
+      
+      if (newOptions.length > 0) {
+        setPollOptions([...pollOptions, ...newOptions]);
+        setCurrentOption('');
+      }
+    }
+  };
+
+  const handleRemovePollOption = (index: number) => {
+    setPollOptions(pollOptions.filter((_, i) => i !== index));
+  };
+
+  const handlePollOptionChange = (index: number, value: string) => {
+    const newOptions = [...pollOptions];
+    newOptions[index] = value;
+    setPollOptions(newOptions);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTemplate) return;
 
     // Check if the post has any content
-    const hasDescription = formData.description?.trim().length > 0;
-    const hasHtmlContent = formData.htmlContent?.trim().length > 0;
+    const hasDescription = formData?.description?.trim()?.length ?? 0 > 0;
+    const hasHtmlContent = formData?.htmlContent?.trim()?.length ?? 0 > 0;
     const hasMedia = [
-      formData.images?.length > 0,
-      formData.videos?.length > 0,
-      formData.documents?.length > 0
+      formData?.images?.length ?? 0 > 0,
+      formData?.videos?.length ?? 0 > 0,
+      formData?.documents?.length ?? 0 > 0
     ].some(Boolean);
-    const hasLocation = formData.location?.trim().length > 0;
-    const hasDates = formData.dates?.start !== undefined;
-    const hasPoll = formData.poll !== undefined;
-    const hasReview = formData.review !== undefined;
+    const hasLocation = formData?.location?.trim().length ?? 0 > 0;
+    const hasDates = formData?.dates?.start !== undefined;
+    const hasPoll = formData?.poll !== undefined;
+    const hasReview = formData?.review !== undefined;
 
-    if (!hasDescription && !hasHtmlContent && !hasMedia && !hasLocation && !hasDates && !hasPoll && !hasReview) {
+    // If poll is being created, validate it
+    if (pollQuestion.trim() && pollOptions.length < 2) {
+      alert('Please provide at least 2 options for your poll.');
+      return;
+    }
+
+    // Create poll object if question exists
+    const poll = pollQuestion.trim() ? {
+      question: pollQuestion.trim(),
+      options: pollOptions.filter(opt => opt.trim())
+    } : undefined;
+
+    if (!hasDescription && !hasHtmlContent && !hasMedia && !hasLocation && !hasDates && !poll && !hasReview) {
       alert('Please add some content to your post before submitting.');
       return;
     }
@@ -117,11 +159,15 @@ export default function PostInput({
       allowComments: formData.allowComments || false,
       user: mockUser,
       createdAt: new Date(),
-      commentsCount: 0
+      commentsCount: 0,
+      poll
     } as PostData);
 
     // Reset form
     setFormData({ pst_grp_id, allowComments: false });
+    setPollQuestion('');
+    setPollOptions([]);
+    setCurrentOption('');
   };
 
   // Only enable rich editor when embedded content is enabled
@@ -260,8 +306,8 @@ export default function PostInput({
               </div>
             ) : (
               <textarea
-                value={formData.content || ''}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                value={formData.htmlContent || ''}
+                onChange={(e) => setFormData({ ...formData, htmlContent: e.target.value })}
                 placeholder={`What's on your mind?${selectedTemplate?.dscn_tx ? `\n\n${selectedTemplate.dscn_tx}` : ''}`}
                 rows={isExpanded ? 4 : 2}
                 className="w-full resize-none border-0 focus:ring-0 p-0 text-gray-900 placeholder:text-gray-500"
@@ -397,39 +443,7 @@ export default function PostInput({
                 </div>
               )}
 
-              {/* Poll */}
-              {activeControl === 9 && (
-                <div className="p-4 bg-gray-50 rounded-lg space-y-3">
-                  <div className="flex items-center gap-2">
-                    <HiOutlineClipboardList className="w-5 h-5 text-gray-500" />
-                    <input
-                      type="text"
-                      value={formData.poll?.question || ''}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        poll: { ...formData.poll, question: e.target.value, options: formData.poll?.options || [] }
-                      })}
-                      className="flex-1 bg-white px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Ask a question..."
-                      autoFocus
-                    />
-                  </div>
-                  <textarea
-                    value={formData.poll?.options?.join('\n') || ''}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      poll: {
-                        ...formData.poll,
-                        question: formData.poll?.question || '',
-                        options: e.target.value.split('\n').filter(opt => opt.trim())
-                      }
-                    })}
-                    rows={4}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Add options (one per line)"
-                  />
-                </div>
-              )}
+
 
               {/* HTML Content */}
               {isControlEnabled(selectedTemplate?.cntrl_tx || '', 10) && (
@@ -444,6 +458,77 @@ export default function PostInput({
                     className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
                     placeholder="Enter HTML content"
                   />
+                </div>
+              )}
+
+              {/* Poll Section */}
+              {isControlEnabled(selectedTemplate?.cntrl_tx || '', 9) && (
+                <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                  <h3 className="font-medium text-gray-900">Create a Poll</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="poll-question" className="block text-sm font-medium text-gray-700 mb-1">
+                        Poll Question
+                      </label>
+                      <textarea
+                        id="poll-question"
+                        placeholder="Ask a question..."
+                        className="w-full p-3 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        rows={2}
+                        value={pollQuestion}
+                        onChange={(e) => setPollQuestion(e.target.value)}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Options
+                      </label>
+                      
+                      <div className="space-y-3">
+                        {/* Option input */}
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Type options separated by commas, e.g. Option 1, Option 2, Option 3"
+                            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            value={currentOption}
+                            onChange={(e) => setCurrentOption(e.target.value)}
+                            onKeyDown={handleAddPollOption}
+                          />
+                        </div>
+
+                        {/* Poll options display */}
+                        <div className="flex flex-wrap gap-2">
+                          {pollOptions.map((option, index) => (
+                            <span 
+                              key={index} 
+                              className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                            >
+                              {option}
+                              <button
+                                type="button"
+                                onClick={() => handleRemovePollOption(index)}
+                                className="ml-1 text-gray-500 hover:text-red-500 transition-colors"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Helper text */}
+                        <p className="text-sm text-gray-500">
+                          {pollOptions.length === 0 
+                            ? 'Add at least 2 options for your poll'
+                            : pollOptions.length === 1
+                            ? '1 option added. Add at least 1 more'
+                            : `${pollOptions.length} options added`
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 

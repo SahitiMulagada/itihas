@@ -169,6 +169,24 @@ const Post: React.FC<PostProps> = ({ post }) => {
           </p>
         )}
 
+        {/* Poll */}
+        {post.poll && (
+          <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+            <h3 className="font-medium text-gray-900">{post.poll.question}</h3>
+            <div className="space-y-2">
+              {post.poll.options.map((option, index) => (
+                <button
+                  key={index}
+                  className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-white hover:border-indigo-500 transition-colors"
+                  onClick={() => setShowFullPost(true)}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Media */}
         {renderMedia()}
 
