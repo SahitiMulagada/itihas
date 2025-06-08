@@ -50,6 +50,8 @@ export default function StallContent({ stallId }: StallContentProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userImageUrl, setUserImageUrl] = useState('');
 
   // Router hook
   const router = useRouter();
@@ -161,16 +163,16 @@ export default function StallContent({ stallId }: StallContentProps) {
   }
 
   
-const userDataString = localStorage.getItem('gglUsrDtls');
-let userName = '';
-let userImageUrl = '';
-if (userDataString) {
-  try {
-    const userData = JSON.parse(userDataString);
-    userName = userData.username || userData.name || '';
-    userImageUrl = userData.userImageUrl || userData.picture || '';
-  } catch {}
-}
+useEffect(() => {
+  const userDataString = localStorage.getItem('gglUsrDtls');
+  if (userDataString) {
+    try {
+      const userData = JSON.parse(userDataString);
+      setUserName(userData.username || userData.name || '');
+      setUserImageUrl(userData.userImageUrl || userData.picture || '');
+    } catch {}
+  }
+}, []);
 
 // Check if we're in a browser environment
 const isBrowser = typeof window !== 'undefined';
