@@ -55,7 +55,7 @@ const galleryFolders: GalleryFolder[] = [
         img_url_tx: '/projects/bizkids/gallery/event/stall7.JPG',
         type_tx: 'image'
       },{
-        img_id: '6',
+        img_id: '1111',
         img_url_tx: '/projects/bizkids/gallery/event/stall2.JPG',
         type_tx: 'image'
       },{
