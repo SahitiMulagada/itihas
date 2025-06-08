@@ -16,9 +16,17 @@ export interface PostInputProps {
   onSubmit: (data: PostData) => void;
 }
 
+export interface UserInfo {
+  id: string;
+  name: string;
+  avatar?: string;
+}
+
 export interface PostData {
   pst_grp_id: string;
   tmplt_id: string;
+  user: UserInfo;
+  createdAt: Date;
   location?: string;
   dates?: {
     start: Date;
@@ -40,6 +48,7 @@ export interface PostData {
     text: string;
   };
   allowComments: boolean;
+  commentsCount?: number;
 }
 
 export interface PostProps {

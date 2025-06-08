@@ -3,10 +3,25 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { HiShare, HiOutlineChat, HiX } from 'react-icons/hi';
+import PostFull from './PostFull';
 import { type PostProps } from './types';
 
-const Post: React.FC<PostProps> = ({ post, isExpanded = false }) => {
-  const [expanded, setExpanded] = useState(isExpanded);
+const Post: React.FC<PostProps> = ({ post }) => {
+  const [showFullPost, setShowFullPost] = useState(false);
+
+  const formatTimestamp = (date: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) return `${days}d`;
+    if (hours > 0) return `${hours}h`;
+    if (minutes > 0) return `${minutes}m`;
+    return 'Just now';
+  };
 
   const renderMedia = () => {
     const imageCount = post.images?.length || 0;
@@ -18,7 +33,7 @@ const Post: React.FC<PostProps> = ({ post, isExpanded = false }) => {
         {/* Images */}
         {post.images && post.images.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {post.images.slice(0, expanded ? undefined : 3).map((image, index) => (
+            {post.images.slice(0, 6).map((image, index) => (
               <div key={index} className="relative aspect-video">
                 <Image
                   src={URL.createObjectURL(image)}
@@ -28,9 +43,9 @@ const Post: React.FC<PostProps> = ({ post, isExpanded = false }) => {
                 />
               </div>
             ))}
-            {!expanded && imageCount > 3 && (
+            {imageCount > 6 && (
               <div className="relative aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                <span className="text-gray-600">+{imageCount - 3} more</span>
+                <span className="text-gray-600">+{imageCount - 6} more</span>
               </div>
             )}
           </div>
@@ -39,7 +54,7 @@ const Post: React.FC<PostProps> = ({ post, isExpanded = false }) => {
         {/* Videos */}
         {post.videos && post.videos.length > 0 && (
           <div className="space-y-2">
-            {post.videos.slice(0, expanded ? undefined : 1).map((video, index) => (
+            {post.videos.slice(0, 1).map((video, index) => (
               <video
                 key={index}
                 controls
@@ -47,7 +62,7 @@ const Post: React.FC<PostProps> = ({ post, isExpanded = false }) => {
                 src={URL.createObjectURL(video)}
               />
             ))}
-            {!expanded && videoCount > 1 && (
+            {videoCount > 1 && (
               <div className="text-gray-600">+{videoCount - 1} more videos</div>
             )}
           </div>
@@ -56,7 +71,7 @@ const Post: React.FC<PostProps> = ({ post, isExpanded = false }) => {
         {/* Documents */}
         {post.documents && post.documents.length > 0 && (
           <div className="space-y-2">
-            {post.documents.slice(0, expanded ? undefined : 2).map((doc, index) => (
+            {post.documents.slice(0, 2).map((doc, index) => (
               <a
                 key={index}
                 href={URL.createObjectURL(doc)}
@@ -70,7 +85,7 @@ const Post: React.FC<PostProps> = ({ post, isExpanded = false }) => {
                 <span className="ml-2 text-gray-700">{doc.name}</span>
               </a>
             ))}
-            {!expanded && documentCount > 2 && (
+            {documentCount > 2 && (
               <div className="text-gray-600">+{documentCount - 2} more documents</div>
             )}
           </div>
@@ -80,116 +95,115 @@ const Post: React.FC<PostProps> = ({ post, isExpanded = false }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      {/* Dates */}
-      {post.dates && (
-        <div className="text-sm text-gray-500 mb-4">
-          {post.dates.start.toLocaleDateString()} 
-          {post.dates.end && ` - ${post.dates.end.toLocaleDateString()}`}
-        </div>
-      )}
-
-      {/* Location */}
-      {post.location && (
-        <div className="flex items-center text-gray-600 mb-4">
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          {post.location}
-        </div>
-      )}
-
-      {/* Description */}
-      {post.description && (
-        <div className={`text-gray-700 ${!expanded && 'line-clamp-3'}`}>
-          {post.description}
-        </div>
-      )}
-
-      {/* Media */}
-      {renderMedia()}
-
-      {/* Embedded Content */}
-      {post.embeddedContent && (
-        <div className="mt-4" dangerouslySetInnerHTML={{ __html: post.embeddedContent }} />
-      )}
-
-      {/* Tags */}
-      {post.tags && post.tags.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {post.tags.map((tag, index) => (
-            <span
-              key={index}
-              className="px-2 py-1 text-sm bg-gray-100 text-gray-600 rounded-full"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Poll */}
-      {post.poll && (
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <h3 className="font-medium text-gray-900 mb-3">{post.poll.question}</h3>
-          <div className="space-y-2">
-            {post.poll.options.map((option, index) => (
-              <button
-                key={index}
-                className="w-full p-2 text-left border border-gray-200 rounded hover:bg-gray-100"
-              >
-                {option}
-              </button>
-            ))}
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      {/* Post Header */}
+      <div className="p-4 flex items-start justify-between border-b border-gray-100">
+        <div className="flex items-center space-x-3">
+          <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+            {post.user.avatar ? (
+              <Image
+                src={post.user.avatar}
+                alt={post.user.name}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-500 text-lg font-medium">
+                {post.user.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div>
+            <h3 className="font-medium text-gray-900">{post.user.name}</h3>
+            <p className="text-xs text-gray-500">{formatTimestamp(post.createdAt)}</p>
           </div>
         </div>
-      )}
-
-      {/* Review */}
-      {post.review && (
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center mb-2">
-            {[...Array(5)].map((_, index) => (
-              <svg
-                key={index}
-                className={`w-5 h-5 ${
-                  index < post.review!.rating ? 'text-yellow-400' : 'text-gray-300'
-                }`}
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
-          </div>
-          <p className="text-gray-700">{post.review.text}</p>
-        </div>
-      )}
-
-      {/* HTML Content */}
-      {post.htmlContent && (
-        <div 
-          className={`mt-4 prose max-w-none ${!expanded && 'max-h-40 overflow-hidden'}`}
-          dangerouslySetInnerHTML={{ __html: post.htmlContent }}
-        />
-      )}
-
-      {/* Expand/Collapse Button */}
-      <div className="mt-4 flex justify-end">
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="text-sm text-indigo-600 hover:text-indigo-700"
+        <button 
+          className="p-2 rounded-full hover:bg-gray-100 transition-colors flex items-center gap-1 text-gray-600 text-sm"
+          onClick={() => navigator.share?.({ url: window.location.href })}
         >
-          {expanded ? 'Show less' : 'Show more'}
+          <HiShare className="w-5 h-5" />
+          <span>Share</span>
         </button>
       </div>
 
-      {/* Comments Section */}
-      {post.allowComments && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <h3 className="text-sm font-medium text-gray-900">Comments</h3>
-          {/* Add comments implementation here */}
+      {/* Post Content */}
+      <div className="px-4 py-6 space-y-6">
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {post.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-colors"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Dates */}
+        {post.dates && (
+          <div className="text-sm text-gray-500">
+            {post.dates.start.toLocaleDateString()} 
+            {post.dates.end && ` - ${post.dates.end.toLocaleDateString()}`}
+          </div>
+        )}
+
+        {/* Location */}
+        {post.location && (
+          <div className="flex items-center text-gray-600">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            {post.location}
+          </div>
+        )}
+
+        {/* Description */}
+        {post.description && (
+          <p className="text-gray-700">
+            {post.description.length > 280 ? `${post.description.slice(0, 280)}...` : post.description}
+          </p>
+        )}
+
+        {/* Media */}
+        {renderMedia()}
+
+        {/* HTML Content */}
+        {post.htmlContent && (
+          <div 
+            className="prose max-w-none max-h-40 overflow-hidden"
+            dangerouslySetInnerHTML={{ __html: post.htmlContent }}
+          />
+        )}
+
+        {/* Footer */}
+        <div className="pt-4 border-t border-gray-100 flex items-center justify-end text-sm">
+          <button 
+            className="flex items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors"
+            onClick={() => setShowFullPost(true)}
+          >
+            <HiOutlineChat className="w-5 h-5" />
+            <span>{post.commentsCount || 0} comments</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Full Post Popup */}
+      {showFullPost && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
+            <button
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              onClick={() => setShowFullPost(false)}
+            >
+              <HiX className="w-6 h-6 text-gray-500" />
+            </button>
+            <PostFull post={post} />
+          </div>
         </div>
       )}
     </div>

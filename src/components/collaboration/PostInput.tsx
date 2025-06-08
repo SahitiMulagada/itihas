@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { HiStar } from 'react-icons/hi';
 import { type Template, type PostData, isControlEnabled } from './types';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -84,11 +85,39 @@ export default function PostInput({
     e.preventDefault();
     if (!selectedTemplate) return;
 
+    // Check if the post has any content
+    const hasDescription = formData.description?.trim().length > 0;
+    const hasHtmlContent = formData.htmlContent?.trim().length > 0;
+    const hasMedia = [
+      formData.images?.length > 0,
+      formData.videos?.length > 0,
+      formData.documents?.length > 0
+    ].some(Boolean);
+    const hasLocation = formData.location?.trim().length > 0;
+    const hasDates = formData.dates?.start !== undefined;
+    const hasPoll = formData.poll !== undefined;
+    const hasReview = formData.review !== undefined;
+
+    if (!hasDescription && !hasHtmlContent && !hasMedia && !hasLocation && !hasDates && !hasPoll && !hasReview) {
+      alert('Please add some content to your post before submitting.');
+      return;
+    }
+
+    // TODO: Replace with actual user info from authentication
+    const mockUser = {
+      id: '1',
+      name: 'John Doe',
+      avatar: 'https://i.pravatar.cc/300'
+    };
+
     onSubmit({
       ...formData,
       pst_grp_id,
       tmplt_id: selectedTemplate.tmplt_id,
-      allowComments: formData.allowComments || false
+      allowComments: formData.allowComments || false,
+      user: mockUser,
+      createdAt: new Date(),
+      commentsCount: 0
     } as PostData);
 
     // Reset form
@@ -137,10 +166,14 @@ export default function PostInput({
       <button
         type="button"
         onClick={handleClick}
-        className={`p-2 hover:bg-gray-100 rounded-full transition-colors ${activeControl === control ? 'text-indigo-600 bg-gray-100' : 'text-gray-600'}`}
+        className={`p-2 rounded-full transition-all duration-200 group relative
+          ${activeControl === control ? 'text-white bg-gray-800' : 'text-gray-600 hover:bg-gray-800 hover:text-white'}`}
         title={getControlTitle(control)}
       >
         <Icon className="w-5 h-5" />
+        <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+          {getControlTitle(control)}
+        </span>
       </button>
     );
   };
@@ -421,18 +454,25 @@ export default function PostInput({
                     Review
                   </label>
                   <div className="space-y-3">
-                    <input
-                      type="number"
-                      min="1"
-                      max="5"
-                      value={formData.review?.rating || ''}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        review: { ...formData.review, rating: Number(e.target.value) }
-                      })}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Rating (1-5)"
-                    />
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setFormData({
+                            ...formData,
+                            review: { ...formData.review, rating: star }
+                          })}
+                          className={`p-1 rounded-full transition-all duration-200 hover:bg-gray-100 group relative
+                            ${formData.review?.rating && formData.review.rating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                        >
+                          <HiStar className="w-8 h-8" />
+                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            {star} star{star !== 1 ? 's' : ''}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                     <textarea
                       value={formData.review?.text || ''}
                       onChange={(e) => setFormData({
