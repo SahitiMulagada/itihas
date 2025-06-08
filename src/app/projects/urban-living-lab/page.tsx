@@ -3,6 +3,9 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import SectionHeading from '@/components/common/SectionHeading';
+import Gallery from '@/components/projects/Gallery';
+import { GalleryService } from '@/components/projects/types';
+import vpullGalleryService from '@/components/v-pull/galleryService';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -35,6 +38,8 @@ export default function UrbanLivingLab() {
         </motion.div>
         <div className="absolute inset-0 bg-blue-500/10 backdrop-blur-sm" />
       </motion.section>
+
+
 
       {/* Project Overview Section */}
       <motion.section 
@@ -215,9 +220,9 @@ export default function UrbanLivingLab() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
                 {
-                  name: 'Dr. Sarah Johnson',
-                  role: 'Project Lead',
-                  image: '/images/urban-living-lab/team/member1.jpg'
+                  name: 'Sahiti Mulagada',
+                  role: 'Volunteer',
+                  image: '/images/sahiti/sahiti.jpg'
                 },
                 {
                   name: 'Prof. Raj Kumar',
@@ -258,46 +263,18 @@ export default function UrbanLivingLab() {
       </motion.section>
 
       {/* Gallery Section */}
-      <motion.section 
+      <motion.section
         initial="initial"
         whileInView="animate"
         viewport={{ once: true }}
         variants={staggerContainer}
-        className="w-full bg-gradient-to-br from-gray-50 to-blue-50 py-24"
+        className="w-full bg-white py-24"
       >
-        <motion.div 
+        <motion.div
           variants={fadeInUp}
           className="container mx-auto px-4"
         >
-          <div className="max-w-6xl mx-auto">
-            <SectionHeading title="Gallery" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { src: '/images/urban-living-lab/gallery/1.jpg', title: 'Community Workshop' },
-                { src: '/images/urban-living-lab/gallery/2.jpg', title: 'Urban Planning Session' },
-                { src: '/images/urban-living-lab/gallery/3.jpg', title: 'Stakeholder Meeting' },
-                { src: '/images/urban-living-lab/gallery/4.jpg', title: 'Field Research' },
-                { src: '/images/urban-living-lab/gallery/5.jpg', title: 'Innovation Lab' },
-                { src: '/images/urban-living-lab/gallery/6.jpg', title: 'Project Implementation' }
-              ].map((item) => (
-                <motion.div
-                  key={item.title}
-                  variants={fadeInUp}
-                  className="group relative aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <Image
-                    src={item.src}
-                    alt={item.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <h3 className="text-white font-semibold text-lg">{item.title}</h3>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          <Gallery title="Event Gallery" galleryService={vpullGalleryService as GalleryService} />
         </motion.div>
       </motion.section>
     </div>

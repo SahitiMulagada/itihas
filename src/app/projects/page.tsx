@@ -33,7 +33,7 @@ export default function Projects() {
       id: 4,
       title: 'Sports Split',
       description: 'Mobile application for sports enthusiasts to connect and organize events.',
-      image: '/projects/sports-split/logo.png',
+      image: '/projects/sports-split/logo.jpg',
       slug: 'sports-split',
       technologies: ['Mobile Development', 'React Native', 'Node.js'],
     }

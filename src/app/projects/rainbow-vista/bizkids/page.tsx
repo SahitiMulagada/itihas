@@ -9,9 +9,11 @@ import { MdAccessTime, MdLocationOn, MdCalendarToday, MdClose } from 'react-icon
 import { motion } from 'framer-motion';
 import Layout from '../../../../components/layout/Layout';
 import SectionHeading from '../../../../components/common/SectionHeading';
+import Gallery from '@/components/projects/Gallery';
+import { GalleryService } from '@/components/projects/types';
+import galleryService from '@/components/bizkids/galleryService';
 
 import { type Stall } from '../../../../data/registeredStalls';
-import { galleryService } from '../../../../components/bizkids/galleryService';
 import { stallsService, type EventReview } from '../../../../components/bizkids/stallsService';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin, googleLogout } from '@react-oauth/google'
@@ -820,9 +822,7 @@ function BizKidsContent() {
 
             {activeTab === 'reviews' && (
               <div>
-         
-                  <SectionHeading title="Event Reviews" />
-
+                <SectionHeading title="Event Reviews" />
                 <div className="max-w-4xl mx-auto">
                   {/* Reviews Stats */}
                   <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
@@ -989,23 +989,9 @@ function BizKidsContent() {
             )}
 
             {activeTab === 'gallery' && (
-              <div>
-                <SectionHeading title="Gallery" />
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
-                  {galleryService.getAllImages().map((image) => (
-                    <div key={image.id} className="relative group aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                      <img
-                        src={image.url}
-                        alt={image.caption || 'BizKids Event'}
-                        className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
-                      />
-                      {image.caption && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm">
-                          {image.caption}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+              <div className="container mx-auto px-4">
+                <div className="mt-8">
+                  <Gallery galleryService={galleryService as GalleryService} />
                 </div>
               </div>
             )}

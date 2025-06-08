@@ -29,7 +29,7 @@ const projects = [
     id: 4,
     title: 'Sports Split',
     description: 'Mobile app for sports enthusiasts',
-    image: '/projects/sports-split/logo.png',
+    image: '/projects/sports-split/logo.jpg',
     slug: 'sports-split',
   }
 ];

@@ -29,62 +29,7 @@ const members: Member[] = [
     bio: 'A passionate leader who believes in empowering youth to make a difference.',
     interests: ['Social Impact', 'Education', 'Technology', 'Arts'],
     contributions: ['Founded Itihas', 'Led multiple community projects', 'Mentored young members']
-  },
-  {
-    id: 'ITH002',
-    name: 'Rohan Kumar',
-    organization: 'Delhi Public School',
-    education: 'Grade 9',
-    role: 'Core Member',
-    image: '/members/placeholder.jpg',
-    bio: '',
-    interests: [],
-    contributions: []
-  },
-  {
-    id: 'ITH003',
-    name: 'Priya Sharma',
-    organization: 'Ryan International School',
-    education: 'Grade 8',
-    role: 'Core Member',
-    image: '/members/placeholder.jpg',
-    bio: '',
-    interests: [],
-    contributions: []
-  },
-  {
-    id: 'ITH004',
-    name: 'Aditya Patel',
-    organization: 'Kendriya Vidyalaya',
-    education: 'Grade 10',
-    role: 'Core Member',
-    image: '/members/placeholder.jpg',
-    bio: '',
-    interests: [],
-    contributions: []
-  },
-  {
-    id: 'ITH005',
-    name: 'Zara Ahmed',
-    organization: 'Cambridge International School',
-    education: 'Grade 9',
-    role: 'Core Member',
-    image: '/members/placeholder.jpg',
-    bio: '',
-    interests: [],
-    contributions: []
-  },
-  {
-    id: 'ITH006',
-    name: 'Dev Mehta',
-    organization: 'Modern School',
-    education: 'Grade 8',
-    role: 'Core Member',
-    image: '/members/placeholder.jpg',
-    bio: '',
-    interests: [],
-    contributions: []
-  },
+  }
 ];
 
 export default function Members() {
@@ -175,12 +120,12 @@ export default function Members() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.organization}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.education}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <Link
+                        {/* <Link
                           href={`/members/${member.name.toLowerCase().replace(' ', '-')}`}
                           className="text-blue-600 hover:text-blue-900"
                         >
                           View Profile
-                        </Link>
+                        </Link> */}
                       </td>
                     </tr>
                   ))}

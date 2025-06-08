@@ -9,26 +9,6 @@ export default function About() {
       name: 'Sahiti Mulagada',
       role: 'Founder of itihaS & Volunteer',
       image: '/images/sahiti/sahiti.jpg'
-    },
-    {
-      name: 'Rohan',
-      role: 'Volunteer & creative poster designer',
-      image: '/members/placeholder.jpg'
-    },
-    {
-      name: 'Sarah',
-      role: 'Event organizer, "Kindness Drive"',
-      image: '/members/placeholder.jpg'
-    },
-    {
-      name: 'Arjun',
-      role: 'Tech & website wizard',
-      image: '/members/placeholder.jpg'
-    },
-    {
-      name: 'Priya',
-      role: 'Fundraising & social media outreach',
-      image: '/members/placeholder.jpg'
     }
   ];
 
