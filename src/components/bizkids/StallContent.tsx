@@ -58,6 +58,16 @@ export default function StallContent({ stallId }: StallContentProps) {
   const router = useRouter();
 
   // All useEffects together
+
+   useEffect(() => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('x-access-token');
+    const gglUsrDtls = localStorage.getItem('gglUsrDtls');
+    setIsLoggedIn(!!token && !!gglUsrDtls);
+  }
+}, []);
+
+
   useEffect(() => {
     const fetchData = async () => {
       setStallLoading(true);
@@ -93,11 +103,7 @@ export default function StallContent({ stallId }: StallContentProps) {
       }
     };
 
-    // Check login status and fetch data
-    if (isBrowser) {
-      const token = localStorage.getItem('googleToken');
-      setIsLoggedIn(!!token);
-    }
+  
     fetchData();
   }, [stallId]);
 
@@ -375,10 +381,10 @@ userId = getUserIdFromToken();
         <div className="flex flex-wrap gap-2 mt-3">
           {stall.categories.map((category) => (
             <span
-              key={category.ctgry_id}
+              key={category.cat_id}
               className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
             >
-              {category.ctgry_nm}
+              {category.cat_nm}
             </span>
           ))}
         </div>
@@ -602,6 +608,17 @@ userId = getUserIdFromToken();
           </div>
         </div>
       )}
+
+       <style jsx>{`
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+`}</style>
     </div>
   );
 }

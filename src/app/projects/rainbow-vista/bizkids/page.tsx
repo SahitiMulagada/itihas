@@ -19,6 +19,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin, googleLogout } from '@react-oauth/google'
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-hot-toast';
+import service from '@/app/store/baseapiservice';
 
 
 
@@ -37,7 +38,7 @@ const floatAnimation = `
 function BizKidsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const tabParam = searchParams.get('tab');
+  const tabParam = searchParams ? searchParams.get('tab') : null;
   const [activeTab, setActiveTab] = useState(tabParam || 'about');
   const [registeredStalls, setRegisteredStalls] = useState<Stall[]>([]);
   const [registeredStallsLoading, setRegisteredStallsLoading] = useState(true);
@@ -61,7 +62,10 @@ function BizKidsContent() {
   const [submittingReview, setSubmittingReview] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const client_id = '374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleusercontent.com';
+  const [isLoading, setIsLoading] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userImageUrl, setUserImageUrl] = useState('');
+
   const pastelBgClasses = [
     'bg-yellow-50',
     'bg-blue-50',
@@ -82,8 +86,9 @@ function BizKidsContent() {
   const fetchReviews = useCallback(async () => {
     setReviewsLoading(true);
     setError(null);
+    console.log('fetchReviews called');
     try {
-      const reviewsData = await stallsService.getEventReviews('bizkids-2025');
+      const reviewsData = await stallsService.getEventReviews(1);
       setReviews(reviewsData);
     } catch (error) {
       console.error('Error fetching event reviews:', error);
@@ -91,6 +96,7 @@ function BizKidsContent() {
       toast.error('Failed to load reviews');
     } finally {
       setReviewsLoading(false);
+      console.log('fetchReviews finished');
     }
   }, []);
 
@@ -121,10 +127,10 @@ function BizKidsContent() {
   }, []);
 
   useEffect(() => {
-    const tabFromUrl = searchParams.get('tab') || 'about';
+    const tabFromUrl = searchParams ? searchParams.get('tab') || 'about' : 'about';
     setActiveTab(tabFromUrl);
 
-    if (tabFromUrl === 'reviews') {
+    if (tabFromUrl === 'feedback') {
       fetchReviews();
     } else if (tabFromUrl === 'board') {
       fetchTopStalls();
@@ -133,33 +139,115 @@ function BizKidsContent() {
     }
   }, [fetchReviews, fetchTopStalls, fetchRegisteredStalls, searchParams]);
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      const decoded: any = jwtDecode(credentialResponse.credential);
-      const token = credentialResponse.credential;
-      localStorage.setItem('x-access-token', token);
-      setIsLoggedIn(true);
-      toast.success('Successfully logged in!');
-    } catch (error) {
-      console.error('Login error:', error);
-      toast.error('Login failed');
-    }
-  };
+ 
 
-  const handleGoogleFailure = () => {
-    toast.error('Google login failed');
-  };
-
-  const getUserIdFromToken = () => {
+    useEffect(() => {
+  if (typeof window !== 'undefined') {
     const token = localStorage.getItem('x-access-token');
-    if (!token) return null;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.email;
-    } catch {
-      return null;
+    const gglUsrDtls = localStorage.getItem('gglUsrDtls');
+    setIsLoggedIn(!!token && !!gglUsrDtls);
+  }
+}, []);
+  
+    const client_id = '374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleusercontent.com';
+  
+    const handleGoogleSuccess = (credentialResponse: any) => {
+      if (credentialResponse?.credential) {
+        const decoded: any = jwtDecode(credentialResponse.credential)
+        console.log('Google Response Decoded:', decoded)
+  
+        const userData = {
+          user_name: decoded.name,
+          email: decoded.email,
+          picture: decoded.picture,
+          ggl_usr_id: decoded.sub,
+          // ggl_res: decoded,
+          lgn_clnt_id:  client_id ,
+          lgn_clnt_nm: 'Ithihas',
+          app: 'web'
+        }
+  
+        if (isBrowser) {
+          localStorage.setItem('gglUsrDtls', btoa(JSON.stringify(userData)));
+        }
+        console.log(userData, "gglUsrDtls");
+  
+        setIsLoading(true)
+  
+        const rte = `auth2/ss/google/login`;
+  
+        service.post(rte, userData)
+          .then((response) => {
+            console.log(response, "responsemmmmmmmmmmm")
+  
+            if (response.status === 200 && response.data) {
+              if (isBrowser) {
+                localStorage.setItem('userData', JSON.stringify(response.data));
+              }
+              toast.success('Google login successful');
+              setIsLoggedIn(true);
+            } else {
+              toast.error(response.data.message || 'Something went wrong')
+            }
+          })
+          .catch((error) => {
+            console.error('Goole Authentication Error:', error)
+            const errorMessage = error.message || 'Something went wrong'
+            toast.error(errorMessage)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+  
+  
+  
+  
+  
+      }
     }
-  };
+  
+  
+    const handleGoogleFailure = () => {
+      toast.error('Google login failed')
+    }
+  
+    
+  useEffect(() => {
+  const userDataString = localStorage.getItem('gglUsrDtls');
+  if (userDataString) {
+    try {
+      const decodedString = atob(userDataString);
+      const userData = JSON.parse(decodedString);
+      setUserName(userData.user_name || userData.name || '');
+      setUserImageUrl(userData.userImageUrl || userData.picture || '');
+    } catch {}
+  }
+}, []);
+
+
+
+  
+  // Check if we're in a browser environment
+  const isBrowser = typeof window !== 'undefined';
+
+
+  let userId = null;
+function getUserIdFromToken() {
+  if (!isBrowser) return null;
+  
+  const token = localStorage.getItem('x-access-token');
+  if (!token) return null;
+  
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.usr_id;
+  } catch (error) {
+    console.error('Error parsing token:', error);
+    return null;
+  }
+}
+
+userId = getUserIdFromToken();
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,9 +273,10 @@ function BizKidsContent() {
       const token = localStorage.getItem('x-access-token');
       const decoded: any = jwtDecode(token!);
       
-      await stallsService.submitEventReview('bizkids-2025', {
-        evnt_id: 'bizkids-2025',
-        usr_id: decoded.email,
+      await stallsService.submitEventReview(1, {
+        evnt_id: 1,
+        evnt_hndlr: 'bizkids-2025',
+        usr_id: userId,
         usr_nm: decoded.name,
         usr_imge_url_tx: decoded.picture,
         rvw_ct: reviewRating,
@@ -574,7 +663,7 @@ function BizKidsContent() {
                             <div className="flex flex-wrap gap-2">
                               {stall.categories.map((category, cIndex) => (
                                 <span key={cIndex} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                  {category.ctgry_nm}
+                                  {category.cat_nm}
                                 </span>
                               ))}
                             </div>
@@ -868,20 +957,21 @@ function BizKidsContent() {
                       </GoogleOAuthProvider>
                     ) : (
                       <form onSubmit={handleReviewSubmit} className="space-y-4">
+                       {isLoggedIn && (
                         <div className="flex items-center space-x-2">
                           <div className="flex-shrink-0">
-                            {session.user?.image && (
                               <img
-                                src={session.user.image}
-                                alt={session.user.name || ''}
+                                src={userImageUrl}
+                                alt={userImageUrl || ''}
                                 className="w-10 h-10 rounded-full"
                               />
-                            )}
                           </div>
                           <div>
-                            <p className="font-medium">{session.user?.name}</p>
+                            <p className="font-medium">{userName}</p>
                           </div>
                         </div>
+                            )}
+
                         <div className="flex items-center space-x-1">
                           {[...Array(5)].map((_, i) => (
                             <button

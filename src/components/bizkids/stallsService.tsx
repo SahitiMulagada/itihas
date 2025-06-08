@@ -26,7 +26,8 @@ export interface Review {
 
 export interface EventReview {
     rvw_id: string;
-    evnt_id: string;
+    evnt_id: number;
+    evnt_hndlr: string;
     usr_id: string;
     rvw_ts: string;
     usr_nm: string;
@@ -75,7 +76,7 @@ class StallsService {
     }
   }
 
-  async getEventReviews(eventId: string): Promise<EventReview[]> {
+  async getEventReviews(eventId: string | number): Promise<EventReview[]> {
     try {
       const response = await service.get(`itihas/event/${eventId}/reviews`);
       return response.data || [];
@@ -115,7 +116,7 @@ class StallsService {
     }
   }
 
-  async submitEventReview(eventId: string, review: Omit<EventReview, 'rvw_id' | 'rvw_ts'>): Promise<EventReview> {
+  async submitEventReview(eventId: string | number, review: Omit<EventReview, 'rvw_id' | 'rvw_ts'>): Promise<EventReview> {
     try {
       const response = await service.post(`itihas/event/${eventId}/reviews`, review);
       return response.data;

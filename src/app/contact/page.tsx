@@ -132,10 +132,9 @@ const client_id = '374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleuser
 
 
 
-           <div className="text-center space-y-6 ">
+           {/* <div className="text-center space-y-6 ">
   <p className="text-gray-600 text-md font-semibold mb-2">Sign in using your Google account</p>
 
-  {/* Google OAuth */}
   <GoogleOAuthProvider clientId={client_id}>
     <div className="flex justify-center">
       <div
@@ -170,7 +169,7 @@ const client_id = '374543033973-ekqtviiojjn3corsoqrureeehs258et4.apps.googleuser
     <span className="text-sm font-medium">OR</span>
     <hr className="flex-grow border-dotted border-t border-gray-300" />
   </div>
-</div>
+</div> */}
 
 
             <form className="space-y-6" onSubmit={handleSubmit}>
