@@ -20,23 +20,7 @@ import { GoogleLogin, googleLogout } from '@react-oauth/google'
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-hot-toast';
 
-const boardMembers = [
-  {
-    name: 'Sarah Johnson',
-    role: 'President',
-    image: '/projects/bizkids/board/placeholders.png'
-  },
-  {
-    name: 'Michael Chen',
-    role: 'Vice President',
-    image: '/projects/kidsbiz/board/placeholders.png'
-  },
-  {
-    name: 'Emma Davis',
-    role: 'Secretary',
-    image: '/projects/kidsbiz/board/placeholders.png'
-  }
-];
+
 
 const floatAnimation = `
   @keyframes float {
@@ -546,13 +530,13 @@ function BizKidsContent() {
                 </div>
                 {/* Desktop View */}
                 <div className="hidden md:block mt-8 overflow-x-auto">
-                  <table className="min-w-full bg-white border rounded-lg overflow-hidden">
-                    <thead className="bg-gray-100">
+                  <table className="min-w-full bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-sm">
+                    <thead className="bg-gray-200 border-b-2 border-gray-300">
                       <tr>
-                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">S.No</th>
-                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">Stall No</th>
-                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">Stall Name</th>
-                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">Young Entrepreneurs</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase border-r border-gray-300">S.No</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase border-r border-gray-300">Stall No</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase border-r border-gray-300">Stall Name</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase border-r border-gray-300">Young Entrepreneurs</th>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase">Categories</th>
                       </tr>
                     </thead>
@@ -567,11 +551,15 @@ function BizKidsContent() {
                           category.cat_nm.toLowerCase().includes(searchLower)
                         );
                       }).map((stall, index) => (
-                        <tr key={index} className="hover:bg-gray-50" onClick={() => router.push(`/projects/rainbow-vista/bizkids/stall/${stall.stl_id}`)}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.stl_nu || '-'}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stall.stl_nm || '-'}</td>
-                          <td className="px-6 py-4 text-sm text-gray-500">
+                        <tr 
+                          key={index} 
+                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 hover:text-black transition-colors duration-150 cursor-pointer border-b border-gray-200`} 
+                          onClick={() => router.push(`/projects/rainbow-vista/bizkids/stall/${stall.stl_id}`)}
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-r border-gray-200">{index + 1}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-r border-gray-200">{stall.stl_nu || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-r border-gray-200">{stall.stl_nm || '-'}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600 border-r border-gray-200">
                             <div className="space-y-2">
                               {stall.entrepreneurs.map((entrepreneur, eIndex) => (
                                 <div key={eIndex} className="flex flex-col">
@@ -582,11 +570,11 @@ function BizKidsContent() {
                               ))}
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-500">
+                          <td className="px-6 py-4 text-sm text-gray-600">
                             <div className="flex flex-wrap gap-2">
                               {stall.categories.map((category, cIndex) => (
                                 <span key={cIndex} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                  {category.cat_nm}
+                                  {category.ctgry_nm}
                                 </span>
                               ))}
                             </div>

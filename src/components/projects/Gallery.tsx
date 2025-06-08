@@ -11,13 +11,14 @@ interface GalleryProps {
   galleryService: GalleryService;
 }
 
-interface FullScreenImageProps {
+interface FullScreenMediaProps {
   src: string;
   alt: string;
+  type: 'image' | 'video';
   onClose: () => void;
 }
 
-const FullScreenImage = ({ src, alt, onClose }: FullScreenImageProps) => (
+const FullScreenMedia = ({ src, alt, type, onClose }: FullScreenMediaProps) => (
   <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
     <button
       onClick={onClose}
@@ -28,20 +29,30 @@ const FullScreenImage = ({ src, alt, onClose }: FullScreenImageProps) => (
       </svg>
     </button>
     <div className="relative w-full h-full max-w-6xl max-h-[90vh]">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-contain"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-      />
+      {type === 'image' ? (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-contain"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+        />
+      ) : (
+        <video
+          src={src}
+          controls
+          autoPlay
+          className="w-full h-full object-contain"
+          style={{ maxHeight: '90vh' }}
+        />
+      )}
     </div>
   </div>
 );
 
 export default function Gallery({ title = "Gallery", galleryService }: GalleryProps) {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
-  const [fullScreenImage, setFullScreenImage] = useState<{ src: string; alt: string } | null>(null);
+  const [fullScreenMedia, setFullScreenMedia] = useState<{ src: string; alt: string; type: 'image' | 'video' } | null>(null);
 
   if (!galleryService) {
     return <div>Loading gallery...</div>;
@@ -50,8 +61,10 @@ export default function Gallery({ title = "Gallery", galleryService }: GalleryPr
   const folders = galleryService.getAllFolders();
   const selectedFolderImages = selectedFolder ? galleryService.getFolderImages(selectedFolder) : [];
 
-  const handleImageClick = (src: string, alt: string) => {
-    setFullScreenImage({ src, alt });
+  const handleMediaClick = (src: string, alt: string) => {
+    const extension = src.split('.').pop()?.toLowerCase();
+    const type = extension === 'mp4' || extension === 'webm' ? 'video' : 'image';
+    setFullScreenMedia({ src, alt, type });
   };
 
   return (
@@ -67,7 +80,7 @@ export default function Gallery({ title = "Gallery", galleryService }: GalleryPr
               <div 
                 key={folder.glry_id}
                 onClick={() => folder.imgs.length === 1 
-                  ? handleImageClick(image.img_url_tx, image.caption || folder.gplry_nm)
+                  ? handleMediaClick(image.img_url_tx, image.dscn_tx || folder.glry_nm)
                   : setSelectedFolder(folder.glry_id)
                 }
                 className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden"
@@ -75,13 +88,13 @@ export default function Gallery({ title = "Gallery", galleryService }: GalleryPr
                 <div className="relative aspect-video w-full">
                   <Image
                     src={folder.cover_img_tx || image.img_url_tx}
-                    alt={folder.gplry_nm}
+                    alt={folder.glry_nm}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{folder.gplry_nm}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{folder.glry_nm}</h3>
                   <p className="text-sm text-gray-500 mt-1">{new Date(folder.glry_dt).toLocaleDateString()}</p>
                   <p className="text-sm text-gray-600 mt-2">{folder.dscn_tx}</p>
                   {folder.imgs.length > 1 && (
@@ -110,7 +123,7 @@ export default function Gallery({ title = "Gallery", galleryService }: GalleryPr
           {/* Event Details */}
           {folders.map(folder => folder.glry_id === selectedFolder && (
             <div key={folder.glry_id} className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{folder.gplry_nm}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{folder.glry_nm}</h2>
               <p className="text-sm text-gray-500 mb-2">{new Date(folder.glry_dt).toLocaleDateString('en-US', { 
                 weekday: 'long',
                 year: 'numeric',
@@ -125,7 +138,7 @@ export default function Gallery({ title = "Gallery", galleryService }: GalleryPr
             {selectedFolderImages.map((image) => (
               <div 
                 key={image.img_id}
-                onClick={() => handleImageClick(image.img_url_tx, image.caption || 'Gallery image')}
+                onClick={() => handleMediaClick(image.img_url_tx, image.caption || folders.find(folder => folder.glry_id === selectedFolder)?.glry_nm || 'Gallery image')}
                 className="relative group aspect-square overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer"
               >
                 <Image
@@ -146,11 +159,12 @@ export default function Gallery({ title = "Gallery", galleryService }: GalleryPr
       )}
 
       {/* Full Screen Image View */}
-      {fullScreenImage && (
-        <FullScreenImage
-          src={fullScreenImage.src}
-          alt={fullScreenImage.alt}
-          onClose={() => setFullScreenImage(null)}
+      {fullScreenMedia && (
+        <FullScreenMedia
+          src={fullScreenMedia.src}
+          alt={fullScreenMedia.alt}
+          type={fullScreenMedia.type}
+          onClose={() => setFullScreenMedia(null)}
         />
       )}
     </div>

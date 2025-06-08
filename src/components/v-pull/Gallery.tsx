@@ -60,7 +60,7 @@ export default function Gallery({ title = "Gallery" }: GalleryProps) {
               <div 
                 key={folder.glry_id}
                 onClick={() => folder.imgs.length === 1 
-                  ? handleImageClick(image.img_url_tx, image.caption || folder.gplry_nm)
+                  ? handleImageClick(image.img_url_tx, image.caption || folder.glry_nm)
                   : setSelectedFolder(folder.glry_id)
                 }
                 className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden"
@@ -68,13 +68,13 @@ export default function Gallery({ title = "Gallery" }: GalleryProps) {
                 <div className="relative aspect-video w-full">
                   <Image
                     src={folder.cover_img_tx || image.img_url_tx}
-                    alt={folder.gplry_nm}
+                    alt={folder.glry_nm}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{folder.gplry_nm}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{folder.glry_nm}</h3>
                   <p className="text-sm text-gray-500 mt-1">{new Date(folder.glry_dt).toLocaleDateString()}</p>
                   <p className="text-sm text-gray-600 mt-2">{folder.dscn_tx}</p>
                   {folder.imgs.length > 1 && (
@@ -103,7 +103,7 @@ export default function Gallery({ title = "Gallery" }: GalleryProps) {
           {/* Event Details */}
           {folders.map(folder => folder.glry_id === selectedFolder && (
             <div key={folder.glry_id} className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{folder.gplry_nm}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{folder.glry_nm}</h2>
               <p className="text-sm text-gray-500 mb-2">{new Date(folder.glry_dt).toLocaleDateString('en-US', { 
                 weekday: 'long',
                 year: 'numeric',

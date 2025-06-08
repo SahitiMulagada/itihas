@@ -3,7 +3,7 @@ import { GalleryFolder, GalleryService } from '../projects/types';
 const galleryFolders: GalleryFolder[] = [
   {
     glry_id: '1',
-    gplry_nm: 'V-Pull Website Launch and Workshop',
+    glry_nm: 'V-Pull Website Launch and Workshop',
     glry_dt: '2025-05-19',
     dscn_tx: 'Website launch event and workshop at Novotel Vizag',
     cover_img_tx: '/projects/v-pull/gallery/vpull-1.jpg',

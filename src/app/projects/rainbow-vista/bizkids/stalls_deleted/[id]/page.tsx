@@ -12,6 +12,7 @@ interface StallDetails {
   category: string;
   coverImage: string;
   profileImage: string;
+  lgo_url_tx?: string;
   entrepreneurs: {
     name: string;
     age: number;
@@ -198,6 +199,18 @@ export default function StallPage({ params }: { params: Promise<{ id: string }> 
 
         {/* Content */}
         <div className="container mx-auto px-4 pt-20 pb-12">
+          {stall.lgo_url_tx && (
+            <div className="mb-8 flex justify-center">
+              <div className="relative w-48 h-48">
+                <Image
+                  src={`/projects/bizkids/stalls/${stall.lgo_url_tx}`}
+                  alt={`${stall.name} logo`}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">

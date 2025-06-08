@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { type Stall, stallsService , type Review } from './stallsService';
+import Image from 'next/image';
+import { type Stall, stallsService, type Review, type Category } from './stallsService';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin, googleLogout } from '@react-oauth/google'
@@ -353,9 +354,35 @@ userId = getUserIdFromToken();
          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 md:p-8 mb-8">
   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
     <div className="flex-1">
+              {stall.lgo_url_tx && (
+          <div className="container mx-auto px-4 py-6 flex justify-center">
+            <div className="relative w-full h-48">
+              <Image
+                src={`/projects/bizkids/stalls/${stall.lgo_url_tx}`}
+                alt={`${stall.stl_nm} logo`}
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+        )}
       <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
         {stall?.stl_nm || `Stall ${stall?.stl_nu || 'N/A'}`}
       </h2>
+
+      {/* Categories */}
+      {stall.categories && stall.categories.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-3">
+          {stall.categories.map((category) => (
+            <span
+              key={category.ctgry_id}
+              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+            >
+              {category.ctgry_nm}
+            </span>
+          ))}
+        </div>
+      )}
 
       <div className="flex items-center mt-2 flex-wrap">
         <div className="flex items-center">
@@ -379,16 +406,7 @@ userId = getUserIdFromToken();
       </div>
     </div>
 
-    <div className="text-left md:text-right flex flex-wrap gap-2">
-      {stall?.categories?.map((cat, index) => (
-        <span
-          key={cat.cat_id || index}
-          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-        >
-          {cat.cat_nm}
-        </span>
-      ))}
-    </div>
+
   </div>
 
   {/* Entrepreneurs */}
