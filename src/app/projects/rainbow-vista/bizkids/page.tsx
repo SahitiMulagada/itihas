@@ -75,7 +75,7 @@ function BizKidsContent() {
     { id: 'stalls', label: 'Registered Stalls' },
     { id: 'board', label: 'Stall Board' },
     { id: 'gallery', label: 'Gallery' },
-    { id: 'reviews', label: 'Reviews' },
+    { id: 'feedback', label: 'Feedback' },
     { id: 'organization', label: 'Organization' }
   ];
 
@@ -808,9 +808,9 @@ function BizKidsContent() {
               </div>
             )}
 
-            {activeTab === 'reviews' && (
+            {activeTab === 'feedback' && (
               <div>
-                <SectionHeading title="Event Reviews" />
+                <SectionHeading title="Feedback" />
                 <div className="max-w-4xl mx-auto">
                   {/* Reviews Stats */}
                   <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
@@ -837,11 +837,11 @@ function BizKidsContent() {
                         {error}
                       </div>
                     )}
-                    <h3 className="text-xl font-semibold mb-4">Write a Review</h3>
+                    <h3 className="text-xl font-semibold mb-4">Please write your feedback</h3>
                     {!isLoggedIn ? (
                       <GoogleOAuthProvider clientId={client_id}>
                         <div className="flex flex-col items-center justify-center space-y-4">
-                          <p className="text-gray-600 text-sm">Sign in with Google to write a review</p>
+                          <p className="text-gray-600 text-sm">Sign in with Google to write your feedback</p>
                           <div className="relative w-full max-w-md">
                             <div className="h-0.5 w-full bg-gray-100 absolute -z-10">
                               <div
@@ -927,7 +927,7 @@ function BizKidsContent() {
                     </div>
                   ) : reviews.length === 0 ? (
                     <div className="text-center py-8">
-                      <p className="text-gray-600">No reviews yet. Be the first to review!</p>
+                      <p className="text-gray-600">No reviews/feedback yet. Be the first to review/give feedback!</p>
                     </div>
                   ) : (
                     <div className="space-y-6">
@@ -993,7 +993,7 @@ function BizKidsContent() {
                   <p className="text-blue-700 font-semibold text-center text-lg">This is an event organized by kids for the kids for non profit.</p>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8 mt-8 px-4">
                   {[
                     { name: 'Sahiti Mulagada', role: 'Team Member & Event Initiator', block: 'K', school: 'Ganges Valley School', image: '/images/sahiti/sahiti.jpg' },
                     { name: 'Adwitha Udumala', role: 'Team Member', block: 'K', school: 'Delhi Public School' , image: '/projects/bizkids/profiles/adwitha.jpg'},
@@ -1002,8 +1002,14 @@ function BizKidsContent() {
                     { name: 'Vidya Chinni', role: 'Team Member', block: 'L', school: 'Allen' , image: '/projects/bizkids/profiles/vidya.jpg'},
                     { name: 'Nishika Choppa', role: 'Team Member', block: 'O', school: 'Ganges Valley School' , image: '/projects/bizkids/profiles/nishika.jpg' }
                   ].map((member) => (
-                    <div key={member.name} className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                      <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden">
+                    <div 
+                      key={member.name} 
+                      className="text-center p-6 bg-white rounded-xl border-2 border-gray-100 shadow-sm 
+                        hover:shadow-lg hover:border-blue-200 hover:scale-105 
+                        transition-all duration-300 ease-in-out"
+                    >
+                      <div className="w-28 h-28 mx-auto mb-6 rounded-full overflow-hidden ring-4 ring-blue-50 shadow-md">
+                        <div className="w-full h-full transform transition-transform duration-300 hover:scale-110">
                         {member.image ? (
                           <div className="relative w-full h-full">
                             <Image
@@ -1014,19 +1020,20 @@ function BizKidsContent() {
                             />
                           </div>
                         ) : (
-                          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                            <span className="text-2xl font-semibold text-blue-600">
+                          <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center transform transition-transform duration-300 hover:scale-110">
+                            <span className="text-3xl font-bold text-blue-600">
                               {member.name.split(' ').map(word => word[0]).join('')}
                             </span>
                           </div>
                         )}
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-800">{member.name}</h3>
-                      <p className="text-blue-600 text-sm mt-1">{member.role}</p>
-                      <p className="text-gray-600 text-sm">Block {member.block}</p>
-                      {member.school && (
-                        <p className="text-gray-600 text-sm">{member.school}</p>
-                      )}
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900 mt-4 group-hover:text-blue-700">{member.name}</h3>
+                      <p className="text-sm font-medium text-blue-600 mt-2">{member.role}</p>
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <p className="text-sm text-gray-600">{member.school}</p>
+                        <p className="text-sm font-medium text-gray-500 mt-1"> {member.block} Block @ Rainbow Vista Rock Gardens</p>
+                      </div>
                     </div>
                   ))}
                 </div>
