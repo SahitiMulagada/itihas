@@ -381,7 +381,7 @@ userId = getUserIdFromToken();
         <div className="flex flex-wrap gap-2 mt-3">
           {stall.categories.map((category) => (
             <span
-              key={category.cat_id}
+              key={category.ctgry_id}
               className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
             >
               {category.ctgry_nm}

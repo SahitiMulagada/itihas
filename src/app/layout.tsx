@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: "Welcome to Itihas - A showcase of projects, thoughts, and innovations in technology.",
   keywords: ["portfolio", "web development", "projects", "blog", "technology"],
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon.jpg',
   },
   other: {
     'link': [
