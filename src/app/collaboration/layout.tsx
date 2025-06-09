@@ -12,7 +12,6 @@ export default function CollaborationLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
-      <LeftMenu menuItems={menuItems} />
       <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
     </div>
   );

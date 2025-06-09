@@ -34,7 +34,7 @@ const Post: React.FC<PostComponentProps> = ({ post, isExpanded, onOpenFullPost }
     const documentCount = post.documents?.length || 0;
 
     return (
-      <div className="mt-4 space-y-4">
+      <div >
         {/* Images */}
         {post.images && post.images.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">

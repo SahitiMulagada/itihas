@@ -9,11 +9,13 @@ import { getIcon } from './icons';
 
 interface LeftMenuProps {
   menuItems: PostGroup[];
+  isCollapsed?: boolean;
+  onToggle?: () => void;
 }
 
 
 
-const LeftMenu: React.FC<LeftMenuProps> = ({ menuItems }) => {
+const LeftMenu: React.FC<LeftMenuProps> = ({ menuItems, isCollapsed = false, onToggle }) => {
   const pathname = usePathname() || '';
   const currentHandler = pathname.split('/').pop() || '';
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,7 +41,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ menuItems }) => {
   }, [menuItems, searchQuery]);
 
   return (
-    <nav className="w-64 bg-white h-full shadow-lg flex flex-col border-r border-gray-200">
+    <div className={`h-full bg-white border-r border-gray-200 overflow-y-auto ${isCollapsed ? 'w-0' : 'w-64'} transition-all duration-300`}>
       <div className="p-4 flex-1 overflow-y-auto">
         <div className="border-b border-gray-200 pb-4">
           <h2 className="text-lg font-semibold text-gray-800 text-center">Collaboration</h2>
@@ -131,7 +133,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ menuItems }) => {
           ))}
         </div>
       </div>
-    </nav>
+    </div>
   );
 };
 

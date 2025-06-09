@@ -62,12 +62,15 @@ const PostFull: React.FC<PostFullProps> = ({ post, onClose, onNext, onPrevious }
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
           <div className="flex items-center justify-between px-6 py-4">
+
+                <div className="items-left">
                   {/* Title */}
-                {post.title && (
+                  {post.title && (
                   <div className="px-4 pt-4">
                     <h2 className="text-xl font-semibold text-gray-900">{post.title}</h2>
                   </div>
                 )}
+                </div>
 
                 <div className="flex items-right space-x-2">
                               <button
