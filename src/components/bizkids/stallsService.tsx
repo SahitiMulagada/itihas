@@ -8,8 +8,8 @@ export interface Entrepreneur {
 }
 
 export interface Category {
-  cat_id?: number;
-  cat_nm: string;
+  ctgry_id?: number;
+  ctgry_nm: string;
 }
 
 export interface Review {

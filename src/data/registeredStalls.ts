@@ -9,8 +9,8 @@ export interface Stall {
     blk_nu: string;
   }[];
   categories: {
-    cat_id?: number;
-    cat_nm: string;
+    ctgry_id?: number;
+    ctgry_nm: string;
   }[];
 }
 

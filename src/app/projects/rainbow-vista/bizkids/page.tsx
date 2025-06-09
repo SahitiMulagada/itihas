@@ -644,7 +644,7 @@ userId = getUserIdFromToken();
                           entrepreneur.schl_nm.toLowerCase().includes(searchLower) ||
                           entrepreneur.blk_nu.toLowerCase().includes(searchLower)
                         ) || stall.categories.some(category =>
-                          category.cat_nm.toLowerCase().includes(searchLower)
+                          category.ctgry_nm.toLowerCase().includes(searchLower)
                         );
                       }).map((stall, index) => (
                         <tr 
@@ -670,7 +670,7 @@ userId = getUserIdFromToken();
                             <div className="flex flex-wrap gap-2">
                               {stall.categories.map((category, cIndex) => (
                                 <span key={cIndex} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                  {category.cat_nm}
+                                  {category.ctgry_nm}
                                 </span>
                               ))}
                             </div>
@@ -691,7 +691,7 @@ userId = getUserIdFromToken();
                       entrepreneur.schl_nm.toLowerCase().includes(searchLower) ||
                       entrepreneur.blk_nu.toLowerCase().includes(searchLower)
                     ) || stall.categories.some(category =>
-                      category.cat_nm.toLowerCase().includes(searchLower)
+                      category.ctgry_nm.toLowerCase().includes(searchLower)
                     );
                   }).map((stall, index) => (
                   <div 
@@ -704,7 +704,7 @@ userId = getUserIdFromToken();
   <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
     <div className="flex items-center space-x-3">
       <span className="text-lg font-bold text-blue-600 group-hover:scale-110 transition-transform">#{index + 1}</span>
-      <span className="text-sm text-gray-500 font-medium">(Stall {stall.stl_nu || '-'}) <b className="text-blue-600">{stall.stl_nm}</b></span>
+      <span className="text-sm text-gray-500 font-medium">(Stall {stall.stl_nu || '-'}) <b className="text-blue-600 font-semibold text-lg">{stall.stl_nm}</b></span>
     </div>
     <div className="flex flex-wrap gap-1">
       {stall.categories.map((category, cIndex) => (
@@ -712,7 +712,7 @@ userId = getUserIdFromToken();
           key={cIndex}
           className="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full border border-blue-100"
         >
-          {category.cat_nm}
+          {category.ctgry_nm}
         </span>
       ))}
     </div>
