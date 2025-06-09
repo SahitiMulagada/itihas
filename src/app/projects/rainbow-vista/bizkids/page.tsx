@@ -573,13 +573,13 @@ userId = getUserIdFromToken();
                   <div className="overflow-x-auto">
                     <div className="pt-5" style={{textIndent: '50px', textAlign: 'justify'}}>The list is based on the reviews on each stall page.</div>
                     <div className="pt-1 pb-5" style={{textIndent: '50px', textAlign: 'justify'}}>You can click on the stall details to go to the stall page.</div>
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
+                    <table className="min-w-full bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-sm">
+                    <thead className="bg-gray-200 border-b-2 border-gray-300">
                         <tr>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stall Name</th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Young Entrepreneurs</th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stars received</th>
+                          <th scope="col" className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase border-r border-gray-300">Rank</th>
+                          <th scope="col" className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase border-r border-gray-300">Stall Name</th>
+                          <th scope="col" className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase border-r border-gray-300">Young Entrepreneurs</th>
+                          <th scope="col" className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase border-r border-gray-300">Stars received</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
