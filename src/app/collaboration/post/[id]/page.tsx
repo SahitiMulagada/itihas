@@ -1,13 +1,20 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { HiArrowLeft } from 'react-icons/hi';
 import Post from '@/components/collaboration/Post';
 import Comments from '@/components/collaboration/Comments';
 
+// Generate static paths for all post IDs
+export async function generateStaticParams() {
+  // Since this is mock data, we'll generate a few static IDs
+  // In a real app, you would fetch these IDs from your data source
+  const postIds = ['1', '2', '3', '4', '5'];
+  
+  return postIds.map((id) => ({
+    id: id,
+  }));
+}
+
 export default function PostPage({ params }: { params: { id: string } }) {
-  const router = useRouter();
   const mockPost = {
     id: params.id,
     pst_grp_id: '1',
@@ -20,7 +27,8 @@ export default function PostPage({ params }: { params: { id: string } }) {
       avatar: 'https://i.pravatar.cc/300'
     },
     createdAt: new Date(),
-    commentsCount: 2
+    commentsCount: 2,
+    allowComments: true
   };
 
   const mockComments = [
