@@ -48,7 +48,7 @@ const galleryFolders: GalleryFolder[] = [
         type_tx: 'image'
       },{
         img_id: '13',
-        img_url_tx: '/projects/bizkids/gallery/event/judges.JPG',
+        img_url_tx: '/projects/bizkids/gallery/event/judges.jpg',
         type_tx: 'image'
       },{
         img_id: '6',
@@ -56,11 +56,11 @@ const galleryFolders: GalleryFolder[] = [
         type_tx: 'image'
       },{
         img_id: '1111',
-        img_url_tx: '/projects/bizkids/gallery/event/stall2.JPG',
+        img_url_tx: '/projects/bizkids/gallery/event/stall2.jpg',
         type_tx: 'image'
       },{
         img_id: '7',
-        img_url_tx: '/projects/bizkids/gallery/event/team1.JPG',
+        img_url_tx: '/projects/bizkids/gallery/event/team1.jpg',
         type_tx: 'image'
       },{
         img_id: '8',

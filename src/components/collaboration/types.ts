@@ -23,8 +23,10 @@ export interface UserInfo {
 }
 
 export interface PostData {
+  id: string;
   pst_grp_id: string;
   tmplt_id: string;
+  title?: string;
   user: UserInfo;
   createdAt: Date;
   location?: string;

@@ -7,7 +7,7 @@ import { HiShare, HiOutlineChat, HiX } from 'react-icons/hi';
 import PostFull from './PostFull';
 import { type PostProps } from './types';
 
-const Post: React.FC<PostProps> = ({ post }) => {
+const Post: React.FC<PostProps> = ({ post, isExpanded }) => {
   const [showFullPost, setShowFullPost] = useState(false);
 
   const formatTimestamp = (date: Date) => {
@@ -95,27 +95,33 @@ const Post: React.FC<PostProps> = ({ post }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      {/* Post Header */}
-      <div className="p-4 flex items-start justify-between border-b border-gray-100">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      {/* Title */}
+      {post.title && !isExpanded && (
+        <div className="px-4 pt-4">
+          <h2 className="text-xl font-semibold text-gray-900">{post.title}</h2>
+        </div>
+      )}
+
+      {/* Header with user info and share button */}
+      <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
         <div className="flex items-center space-x-3">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            {post.user.avatar ? (
+          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+            {post.user?.avatar && (
               <Image
                 src={post.user.avatar}
                 alt={post.user.name}
-                fill
-                className="object-cover"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover"
               />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-500 text-lg font-medium">
-                {post.user.name.charAt(0).toUpperCase()}
-              </div>
             )}
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">{post.user.name}</h3>
-            <p className="text-xs text-gray-500">{formatTimestamp(post.createdAt)}</p>
+            <div className="font-medium text-gray-900">{post.user?.name}</div>
+            <div className="text-sm text-gray-500">
+              {formatTimestamp(new Date(post.createdAt))}
+            </div>
           </div>
         </div>
         <button 

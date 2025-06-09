@@ -34,6 +34,7 @@ export default function PostInput({
   onSubmit,
 }: PostInputProps) {
   // State hooks
+  const [title, setTitle] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeControl, setActiveControl] = useState<number | null>(null);
@@ -140,7 +141,7 @@ export default function PostInput({
       options: pollOptions.filter(opt => opt.trim())
     } : undefined;
 
-    if (!hasDescription && !hasHtmlContent && !hasMedia && !hasLocation && !hasDates && !poll && !hasReview) {
+    if (!hasDescription && !hasHtmlContent && !hasMedia && !hasLocation && !hasDates && !poll && !hasReview && !title) {
       alert('Please add some content to your post before submitting.');
       return;
     }
@@ -156,6 +157,7 @@ export default function PostInput({
       ...formData,
       pst_grp_id,
       tmplt_id: selectedTemplate.tmplt_id,
+      title,
       allowComments: formData.allowComments || false,
       user: mockUser,
       createdAt: new Date(),
@@ -165,9 +167,15 @@ export default function PostInput({
 
     // Reset form
     setFormData({ pst_grp_id, allowComments: false });
+    setTitle('');
     setPollQuestion('');
     setPollOptions([]);
     setCurrentOption('');
+    setActiveControl(null);
+    setIsExpanded(false);
+    if (editor) {
+      editor.commands.clearContent();
+    }
   };
 
   // Only enable rich editor when embedded content is enabled
@@ -245,6 +253,17 @@ export default function PostInput({
 
   return (
     <div className="bg-white rounded-lg shadow-sm">
+      {/* Title Input */}
+      <div className="p-4 border-b border-gray-100">
+        <input
+          type="text"
+          placeholder="Post title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full px-3 py-2 text-lg font-medium placeholder:text-gray-400 focus:outline-none"
+        />
+      </div>
+
       {/* Hidden file inputs */}
       <input
           type="file"

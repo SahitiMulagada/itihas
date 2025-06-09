@@ -48,10 +48,46 @@ const menuItems: PostGroup[] = [
   }
 ];
 
+import { Post } from './types';
+
+export async function getAllPosts(): Promise<Post[]> {
+  try {
+    // First get all groups
+    const groups = await getPostGroups();
+    
+    // Then fetch posts from each group
+    const allPostsPromises = groups.map(group => getPostsByGroup(group.pst_grp_id));
+    const postsArrays = await Promise.all(allPostsPromises);
+    
+    // Flatten the array of arrays into a single array of posts
+    return postsArrays.flat();
+  } catch (error) {
+    console.error('Error fetching all posts:', error);
+    return [];
+  }
+}
+
+export async function getPostsByGroup(groupId: string): Promise<Post[]> {
+  try {
+    // This is a mock implementation. Replace with actual API call.
+    return [];
+  } catch (error) {
+    console.error(`Error fetching posts for group ${groupId}:`, error);
+    return [];
+  }
+}
+
+export async function getPostGroups(): Promise<PostGroup[]> {
+  return [...menuItems].sort((a, b) => a.sqnce_id - b.sqnce_id);
+}
+
 export const collaborationService = {
   getMenuItems: () => {
     return [...menuItems].sort((a, b) => a.sqnce_id - b.sqnce_id);
-  }
+  },
+  getAllPosts,
+  getPostsByGroup,
+  getPostGroups
 };
 
 export type { PostGroup };

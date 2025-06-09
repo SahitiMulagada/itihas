@@ -11,9 +11,9 @@ export default function CollaborationLayout({
   const menuItems = collaborationService.getMenuItems();
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       <LeftMenu menuItems={menuItems} />
-      <main className="flex-1 p-8">{children}</main>
+      <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
     </div>
   );
 }
