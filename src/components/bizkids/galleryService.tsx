@@ -52,7 +52,7 @@ const galleryFolders: GalleryFolder[] = [
         type_tx: 'image'
       },{
         img_id: '6',
-        img_url_tx: '/projects/bizkids/gallery/event/stall7.JPG',
+        img_url_tx: '/projects/bizkids/gallery/event/stall7.jpg',
         type_tx: 'image'
       },{
         img_id: '1111',
