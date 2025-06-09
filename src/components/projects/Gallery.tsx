@@ -83,7 +83,7 @@ export default function Gallery({ title = "Gallery", galleryService }: GalleryPr
                   ? handleMediaClick(image.img_url_tx, image.dscn_tx || folder.glry_nm)
                   : setSelectedFolder(folder.glry_id)
                 }
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden"
+                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden border-2 border-gray-400"
               >
                 <div className="relative aspect-video w-full">
                   <Image

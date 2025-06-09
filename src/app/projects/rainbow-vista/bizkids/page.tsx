@@ -80,7 +80,7 @@ function BizKidsContent() {
     { id: 'board', label: 'Stall Board' },
     { id: 'gallery', label: 'Gallery' },
     { id: 'feedback', label: 'Feedback' },
-    { id: 'organization', label: 'Organization' }
+    { id: 'organization', label: 'Organized by' }
   ];
 
   const fetchReviews = useCallback(async () => {
@@ -561,12 +561,18 @@ userId = getUserIdFromToken();
             {activeTab === 'board' && (
               <div>
                 <SectionHeading title="Top Rated Stalls" />
+
+
+
+
                 {topStallsLoading ? (
                   <div className="flex justify-center items-center py-12">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
+                    <div className="pt-5" style={{textIndent: '50px', textAlign: 'justify'}}>The list is based on the reviews on each stall page.</div>
+                    <div className="pt-1 pb-5" style={{textIndent: '50px', textAlign: 'justify'}}>You can click on the stall details to go to the stall page.</div>
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
@@ -619,6 +625,7 @@ userId = getUserIdFromToken();
                 </div>
                 {/* Desktop View */}
                 <div className="hidden md:block mt-8 overflow-x-auto">
+                <div className="pt-1 pb-5" style={{textIndent: '50px', textAlign: 'justify'}}>You can click on the stall details to go to the stall page.</div>
                   <table className="min-w-full bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-sm">
                     <thead className="bg-gray-200 border-b-2 border-gray-300">
                       <tr>
@@ -676,6 +683,7 @@ userId = getUserIdFromToken();
 
                 {/* Mobile View - Cards */}
                 <div className="md:hidden grid gap-6 mt-8">
+                <div className="pt-1 pb-5" style={{textIndent: '50px', textAlign: 'justify'}}>You can click on the stall details to go to the stall page.</div>
                   {registeredStalls.filter(stall => {
                     const searchLower = searchTerm.toLowerCase();
                     return stall.entrepreneurs.some(entrepreneur => 
