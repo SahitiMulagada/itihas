@@ -20,7 +20,7 @@ const galleryFolders: GalleryFolder[] = [
       },
       {
         img_id: '2',
-        img_url_tx: '/projects/bizkids/gallery/setup/IMG_8261.jpg',
+        img_url_tx: '/projects/bizkids/gallery/setup/IMG_8261.JPG',
         type_tx: 'image'
       },
       {
@@ -38,7 +38,7 @@ const galleryFolders: GalleryFolder[] = [
   {
     glry_id: '2',
     glry_nm: 'Event Day',
-    glry_dt: '2025-06-08',
+    glry_dt: '2025-06-07',
     dscn_tx: 'Images from the main event',
     cover_img_tx: '/projects/bizkids/gallery/event/stall0.JPG',
     imgs: [
@@ -88,7 +88,7 @@ const galleryFolders: GalleryFolder[] = [
   {
     glry_id: '3',
     glry_nm: 'Certificates Distribution',
-    glry_dt: '2025-06-08',
+    glry_dt: '2025-06-07',
     dscn_tx: 'Images during certificate distribution',
     cover_img_tx: '/projects/bizkids/gallery/certificates/IMG_8311.JPG',
     imgs: [

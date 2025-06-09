@@ -1094,7 +1094,7 @@ userId = getUserIdFromToken();
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8 mt-8 px-4">
                   {[
                     { name: 'Sahiti Mulagada', role: 'Team Member & Event Initiator', block: 'K', school: 'Ganges Valley School', image: '/images/sahiti/sahiti.jpg' },
-                    { name: 'Adwitha Udumala', role: 'Team Member', block: 'K', school: 'Delhi Public School' , image: '/projects/bizkids/profiles/adwitha.jpg'},
+                    { name: 'Adwitha Udumala', role: 'Team Member', block: 'K', school: 'Delhi Public School' , image: '/projects/bizkids/profiles/Adwitha.jpg'},
                     { name: 'Akshika Sangal', role: 'Team Member', block: 'H', school: 'Ganges Valley School' , image: '/projects/bizkids/profiles/akshika.jpg'},
                     { name: 'Savar Kokatnur', role: 'Team Member', block: 'M', school: 'Delhi Public School' , image: '/projects/bizkids/profiles/savar.jpg'},
                     { name: 'Vidya Chinni', role: 'Team Member', block: 'L', school: 'Allen' , image: '/projects/bizkids/profiles/vidya.jpg'},
