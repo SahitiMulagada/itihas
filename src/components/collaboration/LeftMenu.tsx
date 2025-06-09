@@ -14,8 +14,8 @@ interface LeftMenuProps {
 
 
 const LeftMenu: React.FC<LeftMenuProps> = ({ menuItems }) => {
-  const pathname = usePathname();
-  const currentHandler = pathname.split('/').pop();
+  const pathname = usePathname() || '';
+  const currentHandler = pathname.split('/').pop() || '';
   const [searchQuery, setSearchQuery] = useState('');
   
   const showSearch = menuItems.length > 5;

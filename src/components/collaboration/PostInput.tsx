@@ -376,7 +376,7 @@ export default function PostInput({
                       onChange={(e) => setFormData({
                         ...formData,
                         dates: {
-                          ...formData.dates,
+                          start: formData.dates?.start || new Date(),
                           end: new Date(e.target.value)
                         }
                       })}
@@ -565,7 +565,7 @@ export default function PostInput({
                           type="button"
                           onClick={() => setFormData({
                             ...formData,
-                            review: { ...formData.review, rating: star }
+                            review: { rating: star, text: formData.review?.text || '' }
                           })}
                           className={`p-1 rounded-full transition-all duration-200 hover:bg-gray-100 group relative
                             ${formData.review?.rating && formData.review.rating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
@@ -581,7 +581,10 @@ export default function PostInput({
                       value={formData.review?.text || ''}
                       onChange={(e) => setFormData({
                         ...formData,
-                        review: { ...formData.review, text: e.target.value }
+                        review: { 
+                          rating: formData.review?.rating || 0,  // Default to 0 if no rating
+                          text: e.target.value 
+                        }
                       })}
                       rows={4}
                       className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"

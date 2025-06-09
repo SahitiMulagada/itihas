@@ -8,6 +8,7 @@ import { postManagementService } from './postManagementService';
 import { type PostData } from './types';
 import PostInput from './PostInput';
 import Post from './Post';
+import PostFull from './PostFull';
 
 interface PageContentProps {
   menuItems: PostGroup[];
@@ -22,6 +23,7 @@ export default function PageContent({ menuItems }: PageContentProps) {
   const params = useParams();
   const handler = params.handler as string;
   const [posts, setPosts] = useState<SavedPost[]>([]);
+  const [selectedPost, setSelectedPost] = useState<SavedPost | null>(null);
   
   const currentItem = menuItems.find(item => item.hndlr_tx === handler);
   const postSettings = currentItem ? postManagementService.getPostSettings(currentItem.pst_grp_id) : null;
@@ -91,9 +93,27 @@ export default function PageContent({ menuItems }: PageContentProps) {
           {/* Posts List */}
           <div className="py-8 space-y-6">
             {posts.map(post => (
-              <Post key={post.id} post={post} />
+              <Post 
+                key={post.id} 
+                post={post} 
+                onOpenFullPost={() => setSelectedPost(post)}
+              />
             ))}
           </div>
+
+          {/* Post Full View */}
+          {selectedPost && (
+            <PostFull
+              post={selectedPost}
+              onClose={() => setSelectedPost(null)}
+              onNext={posts.indexOf(selectedPost) < posts.length - 1
+                ? () => setSelectedPost(posts[posts.indexOf(selectedPost) + 1])
+                : undefined}
+              onPrevious={posts.indexOf(selectedPost) > 0
+                ? () => setSelectedPost(posts[posts.indexOf(selectedPost) - 1])
+                : undefined}
+            />
+          )}
         </div>
       </div>
     </div>

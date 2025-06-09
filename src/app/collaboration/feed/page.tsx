@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import PostComponent from '@/components/collaboration/Post';
+import PostFull from '@/components/collaboration/PostFull';
 import { getAllPosts } from '@/components/collaboration/collaborationService';
-import type { Post } from '@/components/collaboration/types';
+import type { PostData } from '@/components/collaboration/types';
 
 export default function Feed() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPost, setSelectedPost] = useState<PostData | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -40,15 +42,34 @@ export default function Feed() {
     <div className="max-w-3xl mx-auto py-8 px-4">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">Latest Updates</h1>
       
-      {posts.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No posts yet</p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {posts.map((post) => (
-            <PostComponent key={post.pst_id} post={post} />
-          ))}
+      <div className="space-y-6">
+        {posts.map((post) => (
+        <PostComponent
+          key={post.id}
+          post={post}
+          onOpenFullPost={() => setSelectedPost(post)}
+        />
+        ))}
+        {!loading && posts.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No posts yet.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Post Full View */}
+      {selectedPost && (
+        <div className="fixed inset-0 z-50">
+          <PostFull
+            post={selectedPost}
+            onClose={() => setSelectedPost(null)}
+            onNext={posts.indexOf(selectedPost) < posts.length - 1
+              ? () => setSelectedPost(posts[posts.indexOf(selectedPost) + 1])
+              : undefined}
+            onPrevious={posts.indexOf(selectedPost) > 0
+              ? () => setSelectedPost(posts[posts.indexOf(selectedPost) - 1])
+              : undefined}
+          />
         </div>
       )}
     </div>

@@ -5,10 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { HiShare, HiOutlineChat, HiX } from 'react-icons/hi';
 import PostFull from './PostFull';
-import { type PostProps } from './types';
+import { type PostProps, type PostData } from './types';
 
-const Post: React.FC<PostProps> = ({ post, isExpanded }) => {
-  const [showFullPost, setShowFullPost] = useState(false);
+interface PostComponentProps {
+  post: PostData;
+  isExpanded?: boolean;
+  onOpenFullPost?: () => void;
+}
+
+const Post: React.FC<PostComponentProps> = ({ post, isExpanded, onOpenFullPost }) => {
 
   const formatTimestamp = (date: Date) => {
     const now = new Date();
@@ -94,8 +99,18 @@ const Post: React.FC<PostProps> = ({ post, isExpanded }) => {
     );
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (!isExpanded && onOpenFullPost) {
+      e.stopPropagation();
+      onOpenFullPost();
+    }
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div 
+      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer"
+      onClick={handleClick}
+    >
       {/* Title */}
       {post.title && !isExpanded && (
         <div className="px-4 pt-4">
@@ -124,14 +139,21 @@ const Post: React.FC<PostProps> = ({ post, isExpanded }) => {
             </div>
           </div>
         </div>
+        {!isExpanded && (
+
         <button 
           className="p-2 rounded-full hover:bg-gray-100 transition-colors flex items-center gap-1 text-gray-600 text-sm"
-          onClick={() => navigator.share?.({ url: window.location.href })}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigator.share?.({ url: window.location.href });
+          }}
         >
           <HiShare className="w-5 h-5" />
           <span>Share</span>
         </button>
+        )}
       </div>
+    
 
       {/* Post Content */}
       <div className="px-4 py-6 space-y-6">
@@ -184,7 +206,7 @@ const Post: React.FC<PostProps> = ({ post, isExpanded }) => {
                 <button
                   key={index}
                   className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-white hover:border-indigo-500 transition-colors"
-                  onClick={() => setShowFullPost(true)}
+                  onClick={onOpenFullPost}
                 >
                   {option}
                 </button>
@@ -208,7 +230,10 @@ const Post: React.FC<PostProps> = ({ post, isExpanded }) => {
         <div className="pt-4 border-t border-gray-100 flex items-center justify-end text-sm">
           <button 
             className="flex items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors"
-            onClick={() => setShowFullPost(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenFullPost?.();
+            }}
           >
             <HiOutlineChat className="w-5 h-5" />
             <span>{post.commentsCount || 0} comments</span>
@@ -216,20 +241,7 @@ const Post: React.FC<PostProps> = ({ post, isExpanded }) => {
         </div>
       </div>
 
-      {/* Full Post Popup */}
-      {showFullPost && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
-            <button
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
-              onClick={() => setShowFullPost(false)}
-            >
-              <HiX className="w-6 h-6 text-gray-500" />
-            </button>
-            <PostFull post={post} />
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };

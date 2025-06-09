@@ -3,6 +3,7 @@ import { type Template } from './types';
 interface PostSettings {
   pst_grp_id: string;
   tmllts: Template[];
+  controls?: string;
 }
 
 // Sample templates for different post groups

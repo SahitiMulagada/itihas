@@ -56,6 +56,7 @@ export interface PostData {
 export interface PostProps {
   post: PostData;
   isExpanded?: boolean;
+  onOpenFullPost?: () => void;
 }
 
 // Helper function to check if a control is enabled
