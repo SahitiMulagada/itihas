@@ -21,7 +21,7 @@ Now, Itihas is **open source** — because the best ideas grow when shared.
 ## What Itihas Does
 
 ### BizKids — Youth Entrepreneurship Events
-A complete event platform where kids set up stalls, sell products, and learn real-world business skills — all organized by young people, for young people, on a non-profit basis.
+A complete event platform where kids set up stalls, sell products, and learn real-world business skills — all organized by young people, for young people, on a non-profit basis. [Watch BizKids 2025](https://www.youtube.com/watch?v=6Nl_e8sebzM)
 - Stall registration and management
 - Live search across stalls by name, school, or category
 - Review and rating system with Google OAuth
